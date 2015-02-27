@@ -1,0 +1,134 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/local/bin/node', '/usr/local/bin/npm', 'link' ]
+2 info using npm@2.0.0
+3 info using node@v0.11.14
+4 verbose linkPkg /private/var/www/processManager
+5 verbose gentlyRm vacuuming /usr/local/lib/node_modules/Proxess
+6 verbose gentlyRm vacuuming /usr/local/lib/node_modules/Proxess
+7 verbose link build target /usr/local/lib/node_modules/Proxess
+8 verbose install where, what [ '/private/var/www/processManager', [] ]
+9 verbose readDependencies using package.json deps
+10 verbose install where, deps [ '/private/var/www/processManager',
+10 verbose install   [ 'nimbleservice', 'ps-node' ] ]
+11 info preinstall Proxess@0.0.1
+12 verbose readDependencies using package.json deps
+13 verbose already installed skipping ps-node@0.0.3 /private/var/www/processManager
+14 verbose cache add [ 'nimbleservice@latest', null ]
+15 verbose cache add spec="nimbleservice@latest" args=["nimbleservice@latest",null]
+16 verbose parsed spec { raw: 'nimbleservice@latest',
+16 verbose parsed spec   scope: null,
+16 verbose parsed spec   name: 'nimbleservice',
+16 verbose parsed spec   rawSpec: 'latest',
+16 verbose parsed spec   spec: 'latest',
+16 verbose parsed spec   type: 'tag' }
+17 verbose parsed spec { raw: 'nimbleservice@latest',
+17 verbose parsed spec   scope: null,
+17 verbose parsed spec   name: 'nimbleservice',
+17 verbose parsed spec   rawSpec: 'latest',
+17 verbose parsed spec   spec: 'latest',
+17 verbose parsed spec   type: 'tag' }
+18 verbose addNamed [ 'nimbleservice', 'latest' ]
+19 verbose addNamed [ null, null ]
+20 silly lockFile 33947705-nimbleservice-latest nimbleservice@latest
+21 verbose lock nimbleservice@latest /Users/charlie/.npm/33947705-nimbleservice-latest.lock
+22 info addNameTag [ 'nimbleservice', 'latest' ]
+23 verbose mapToRegistry name nimbleservice
+24 verbose mapToRegistry uri https://registry.npmjs.org/nimbleservice
+25 verbose request on initialization, where is /nimbleservice
+26 verbose request after pass 1, where is /nimbleservice
+27 verbose request url raw /nimbleservice
+28 verbose request resolving registry [ 'https://registry.npmjs.org/', './nimbleservice' ]
+29 verbose request after pass 2, where is https://registry.npmjs.org/nimbleservice
+30 verbose request no auth needed
+31 info attempt registry request try #1 at 16:27:28
+32 verbose request id d32426302bf57991
+33 http request GET https://registry.npmjs.org/nimbleservice
+34 http 200 https://registry.npmjs.org/nimbleservice
+35 silly registry.get cb [ 200,
+35 silly registry.get   { date: 'Fri, 27 Feb 2015 00:27:26 GMT',
+35 silly registry.get     server: 'CouchDB/1.6.1 (Erlang OTP/R14B04)',
+35 silly registry.get     etag: '"7R4JK9EBAUKM8VDUC4IJQ5X96"',
+35 silly registry.get     'content-type': 'application/json',
+35 silly registry.get     'cache-control': 'max-age=60',
+35 silly registry.get     'content-length': '22441',
+35 silly registry.get     'accept-ranges': 'bytes',
+35 silly registry.get     via: '1.1 varnish',
+35 silly registry.get     age: '0',
+35 silly registry.get     'x-served-by': 'cache-sjc3135-SJC',
+35 silly registry.get     'x-cache': 'HIT',
+35 silly registry.get     'x-cache-hits': '1',
+35 silly registry.get     'x-timer': 'S1424996846.228461,VS0,VE341',
+35 silly registry.get     vary: 'Accept',
+35 silly registry.get     connection: 'close' } ]
+36 verbose addNamed [ 'nimbleservice', '0.0.18' ]
+37 verbose addNamed [ '0.0.18', '0.0.18' ]
+38 silly lockFile 5f510037-nimbleservice-0-0-18 nimbleservice@0.0.18
+39 verbose lock nimbleservice@0.0.18 /Users/charlie/.npm/5f510037-nimbleservice-0-0-18.lock
+40 silly lockFile 5f510037-nimbleservice-0-0-18 nimbleservice@0.0.18
+41 silly lockFile 5f510037-nimbleservice-0-0-18 nimbleservice@0.0.18
+42 silly lockFile 33947705-nimbleservice-latest nimbleservice@latest
+43 silly lockFile 33947705-nimbleservice-latest nimbleservice@latest
+44 silly resolved [ { name: 'nimbleservice',
+44 silly resolved     version: '0.0.18',
+44 silly resolved     description: 'A node Js Framework for rapidly building microservice API\'s. A Wrapper around express and mongoose with some built in transformations.',
+44 silly resolved     main: './lib/index.js',
+44 silly resolved     author: { name: 'Charlie Mitchell', email: 'charliesemailis@gmail.com' },
+44 silly resolved     contributors: [ [Object] ],
+44 silly resolved     license: 'MIT',
+44 silly resolved     keywords:
+44 silly resolved      [ 'micro service',
+44 silly resolved        'microservice',
+44 silly resolved        'service',
+44 silly resolved        'framework',
+44 silly resolved        'api',
+44 silly resolved        'api only',
+44 silly resolved        'mongoose',
+44 silly resolved        'express',
+44 silly resolved        'node api',
+44 silly resolved        'REST',
+44 silly resolved        'rest generator' ],
+44 silly resolved     bugs:
+44 silly resolved      { url: 'http://github.com/charliemitchell/nimble',
+44 silly resolved        email: 'charliesemailis@gmail.com' },
+44 silly resolved     repository:
+44 silly resolved      { type: 'git',
+44 silly resolved        url: 'http://github.com/charliemitchell/nimble.git' },
+44 silly resolved     bin: { nimble: './bin/nimble.js' },
+44 silly resolved     dependencies:
+44 silly resolved      { 'body-parser': '^1.12.0',
+44 silly resolved        colors: '1.0.3',
+44 silly resolved        'connect-redis': '^2.2.0',
+44 silly resolved        'cookie-parser': '^1.3.4',
+44 silly resolved        express: '3.x.x',
+44 silly resolved        'express-session': '^1.10.3',
+44 silly resolved        lodash: '^3.2.0',
+44 silly resolved        'method-override': '^2.3.1',
+44 silly resolved        mongoose: '3.8.23',
+44 silly resolved        ncp: '^1.0.1',
+44 silly resolved        optimist: '^0.6.1',
+44 silly resolved        redis: '^0.12.1',
+44 silly resolved        sanitizer: '0.1.2' },
+44 silly resolved     readme: '\n# NIMBLE\n##### Currently this project is under heavy development... Expect there to be a bit of version-itus until v1.0.0\nMore Docs Coming Soon.\n\n## Prerequisites\n* [Node.js](http://nodejs.org/) (with NPM)\n\n## Installation\n\n* `(sudo) npm install -g nimbleservice`\n\n## Running / Development\n\n*  to create a new nimble service \n * Create a Folder Named foo: `nimble new foo`\n * Go Inside the folder: `cd foo`\n * Generate a Service that listens to the route bar: `nimble api bar`\n * Start The Server: `nimble s`\n* Visit your app at [http://localhost:4242/bar](http://localhost:4242/bar).\n\n## Some Built In Validations\nNimble comes packaged with some built in validations for your model. We use Google\'s Caja (the sanitize package) as the default sanitizer, furthermore we have built in some really nice features around the mongoose setter. So far we have provided some common transformations.\n* sentence case\n * lor ipsom. dol amore. --> Lor ipsom. Dol amore. \n* lower case\n * Myemail@Mail.com --> myemail@mail.com\n* upper case\n * acme inc --> ACME INC\n* title case\n * acme inc --> Acme Inc\n* number\n * \'1234\' --> 1234 \n* sanitize\n\n## Mimimal setup required...\n### Open your config file...\n```js\n    module.exports = {\n    \n        verbose : false,\n\n        reportGlobalVars : true,\n\n        port : 4242,  // What port should this service handle\n\n        bodyParser : \'json\', // What Kind of API is this [https://www.npmjs.com/package/body-parser]\n        \n        // Used For Session\n        redis : {\n          host: \'localhost\',\n          port: 6379,\n          key : \'sess:\' // <---- Change this to match your session key in redis\n        },\n        cookie : {\n          name : \'yourcookie.sid\',  // <---- Change this to match your cookie name\n        },\n        // MongoDB\n        mongodb : {\n            host : \'localhost\',\n            port : 27017,\n            database : \'yourdatabase\' // <!-- CHANGE THIS to match your database\n        },\n        \n        // CSRF\n        csrf : {\n            // Coming Soon\n        }\n\n    }\n```\n\n### Now Open Up your Model File \n(This will be pre-generated, all you have to do is define your model)\n\n```js\n    /*\n        Desription of Model\n        :: Boilerplate\n        About Mongoose :: mongoosejs.com\n    */\n    var mongoose = require(\'nimbleservice\').mongoose,\n        Schema = mongoose.Schema,\n        validator = require(\'nimbleservice\').validate,\n        setter = require(\'nimbleservice\').setter;\n    /* Edit Your Model Below */\n    \n    var Bar = new Schema({\n        // <--- Define your model in here\n        /* Example\n            name : {\n                type : String,\n                setter : setter.titleCase\n            },\n            address : {\n                type : String\n            }\n        */\n    });\n    \n    // This is put in for your convinience (_id to id)\n    Bar.virtual(\'id\').get(function(){\n        return this._id.toHexString();\n    });\n    \n    Bar.set(\'toJSON\', {\n        virtuals: true\n    });\n\n    mongoose.model(\'Bar\', Bar);\n    module.exports = mongoose.model(\'Bar\');\n```\n\n### Lastly Setup your Policy,\n(this is also pre-generated)\n```js\nmodule.exports = {\n    \n    onFailure : function (req, res) {\n        res.json({auth : false, error : "Not Logged In"});\n    },\n\n    authenticated : function (req, res) {\n        if (req.session) {\n            if (req.session.loggedin) {\n                return true;\n            } else {\n                return false;\n            }\n        } else {\n            return false;\n        }\n    }\n};\n```\n\n\n### AT this point your up and running and have A Fully functioning REST SERVICE\n\n\n\n\n## GITHUB\n* [nimbleservice](http://github.com/charliemitchell/nimble) ',
+44 silly resolved     readmeFilename: 'README.md',
+44 silly resolved     gitHead: '61521a2b14055ca26cbf42863872cd7897a20e71',
+44 silly resolved     _id: 'nimbleservice@0.0.18',
+44 silly resolved     scripts: {},
+44 silly resolved     _shasum: 'ad18e12856dc834c689c08bbb5c5e2c4e8942a51',
+44 silly resolved     _from: 'nimbleservice@latest' } ]
+45 info install nimbleservice@0.0.18 into /private/var/www/processManager
+46 info installOne nimbleservice@0.0.18
+47 verbose stack Error: Appears to be a git repo or submodule.
+47 verbose stack     at /usr/local/lib/node_modules/npm/node_modules/npm-install-checks/index.js:139:15
+47 verbose stack     at Object.oncomplete (fs.js:93:15)
+48 verbose cwd /private/var/www/processManager
+49 error Darwin 14.1.0
+50 error argv "/usr/local/bin/node" "/usr/local/bin/npm" "link"
+51 error node v0.11.14
+52 error npm  v2.0.0
+53 error path /private/var/www/processManager/node_modules/nimbleservice
+54 error code EISGIT
+55 error git Appears to be a git repo or submodule.
+55 error git     /private/var/www/processManager/node_modules/nimbleservice
+55 error git Refusing to remove it. Update manually,
+55 error git or move it out of the way first.
+56 verbose exit [ 1, true ]

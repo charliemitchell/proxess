@@ -1,0 +1,30 @@
+{
+  
+  "name": "Proxess",
+  "version": "0.0.1",
+  "description": "Manages Processes running on your computer",
+  "author": "Charlie Mitchell <charliesemailis@gmail.com>",
+  "main": "./app.js",
+  
+  "bin": {
+    "proxess": "./bin/proxess.js"
+  },
+  
+  "license": "MIT",
+  
+  "keywords" : ["micro service management", "microservice", "service", "management", "api management", "process", "process management"],
+
+  "bugs": {
+    "url": "http://github.com/charliemitchell/proxess",
+    "email": "charliesemailis@gmail.com"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/charliemitchell/proxess.git"
+  },
+
+  "dependencies": {
+    "nimbleservice" : "latest"
+  }
+}
