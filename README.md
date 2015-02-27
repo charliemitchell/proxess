@@ -48,9 +48,31 @@ DELETE /all           "Stops Every Running Process In Your Process Database"
     DELETE /group/:id  "Deletes A Process Group By It's ID"
 ```
 
-# Coming REALLY Soon, An Ember Application To Manage The Processes in your browser! 
-## In The Mean Time Feel Free to write your own client for it.
-### currently using curl or postman :( 
+## Data Structures
+```json
+    // When Creating a process, POST JSON like so... (Same With Updating, But You Should Include The id as well)
+    {
+        "name" : "My Cool Service",
+        "command" : "node",
+        "args" : ["app.js"],
+        "cwd" : "/full/path/to/your/service/"
+    }
+    // ----> Results will be similar to running  'cd /full/path/to/your/service/ && node app.js' in your console.
+
+    // A More Advanced Example
+    {
+        "name" : "My ROOT Service",
+        "command" : "sudo",
+        "args" : ["-p", "mypassword", "dostuff", "--path=", "something"],
+        "cwd" : "/full/path/to/your/service/"
+    }
+    // ----> Results will be similar to running  'cd /full/path/to/your/service/ && sudo -p mypassword dostuff --path= soemthing' in your console.
+```
+
+
+#### Coming REALLY Soon, An Ember Application To Manage The Processes in your browser! 
+##### In The Mean Time Feel Free to write your own client for it.
+##### currently using curl or postman :( 
 
 ## GITHUB
 * [proxess](http://github.com/charliemitchell/proxess) 

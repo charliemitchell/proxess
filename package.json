@@ -1,7 +1,7 @@
 {
   
-  "name": "Proxess",
-  "version": "0.0.1",
+  "name": "proxess",
+  "version": "0.0.2",
   "description": "Manages Processes running on your computer",
   "author": "Charlie Mitchell <charliesemailis@gmail.com>",
   "main": "./app.js",
