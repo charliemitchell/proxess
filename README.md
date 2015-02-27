@@ -48,7 +48,9 @@ DELETE /all           "Stops Every Running Process In Your Process Database"
     DELETE /group/:id  "Deletes A Process Group By It's ID"
 ```
 
-# Coming Soon, An Ember Application To Manage The Processes in a GUI! YAY! (currently using curl or porstman :( 
+# Coming REALLY Soon, An Ember Application To Manage The Processes in your browser! 
+## In The Mean Time Feel Free to write your own client for it.
+### currently using curl or postman :( 
 
 ## GITHUB
 * [proxess](http://github.com/charliemitchell/proxess) 
