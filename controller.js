@@ -85,19 +85,32 @@ module.exports = {
     StartService : function (req, res) {
         if (!serviceIsRunning(req.params.id) ) {
             Model.find({_id: req.params.id},function (a,b) {
-                var svc = require('./proc').start(b[0], function (stdout) {
-                    stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + b[0].name + ' >  ');
-                    console.log(b[0].name + ' >  ' +stdout);
-                });
+                var service = b[0],
+                    svc = require('./proc').start(service, function (stdout) {
+                        stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + b[0].name + ' >  ');
+                        console.log(b[0].name + ' >  ' +stdout);
+                    });
                 
                 pid.push({
-                    model : b[0],
+                    model : service,
                     pid : svc.pid,
                     service : svc
                 });
 
+                svc.on('close', function (code) {
+                    console.log('\n--------------------------------------------------------'.red)
+                    console.log((service.name + " has died with code " + code).red);
+                    console.log('--------------------------------------------------------\n'.red)
+                    pid.forEach(function (entry, index) {
+                        if (entry.model.id === service.id) {
+                            pid.splice(index, 1);
+                        }
+                    });
+                });
+
                 res.send(svc.pid);
             });
+
         } else {
             console.log("  > Nimble: Refusing To Start ".red + (req.params.id).red + " Because it is already running".red)
         }
@@ -140,19 +153,12 @@ module.exports = {
                     });
                         
                     svc.on('close', function (code) {
-                        console.log('\n\n--------------------------------------------------------'.red)
+                        console.log('\n--------------------------------------------------------'.red)
                         console.log((service.name + " has died with code " + code).red);
-                        console.log('--------------------------------------------------------\n\n'.red)
+                        console.log('--------------------------------------------------------\n'.red)
                         pid.forEach(function (entry, index) {
                             if (entry.model.id === service.id) {
-                                entry.dead = true;
-                                entry.service = null; // Free up a bit of memory
-                                entry.pid = null;
-                                entry.died = {
-                                    time : new Date().getTime(),
-                                    signal : code
-                                };
-                                response = "ok";
+                               pid.splice(index, 1);
                             }
                         });
 
