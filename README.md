@@ -4,16 +4,18 @@
 
 ## Prerequisites
 * [Node.js](http://nodejs.org/) (with NPM)
+* [MONGO DB](http://www.mongodb.org/)
 
 ## Installation
 
-* `(sudo) npm install -g proxess`
+`(sudo) npm install -g proxess`
 
-## Running / Development
-
-*  to manage your running services
- * Start the service manager (in your terminal type..): `proxess`
-* Visit your manager at [http://localhost:9011/](http://localhost:9011/).
+## Running Proxess
+To manage your running services, just run the proxess command in your terminal. (from any working directory)
+```sh
+$ proxess
+```
+Then visit your manager at [http://localhost:9011/](http://localhost:9011/).
 
 ## THE API
 ```
@@ -70,9 +72,23 @@ DELETE /all           "Stops Every Running Process In Your Process Database"
 ```
 
 
-#### Coming REALLY Soon, An Ember Application To Manage The Processes in your browser! 
-##### In The Mean Time Feel Free to write your own client for it.
-##### currently using curl or postman :( 
+#### The Client
+The Client is built in Ember JS. In Order to use the client you need to do the following steps...
+```sh
+    cd client
+    npm install
+    bower install
+    ember build
+```
+This was left this way intentionally so that you can have access to The Ember CLI Project in order to make changes to the client as you see fit. For More info about Ember CLI, or Ember in general, see the useful links section below
+
+
+## Useful Links
+* [NimbleService](https://www.npmjs.com/package/nimbleservice) (This is what we built the sever on top of)
+* [Ember.js](http://emberjs.com/) (MVC Client Framework)
+* [Ember CLI](http://www.ember-cli.com/) (CLI for The Ember Framework)
+* [Boot Swatch](http://bootswatch.com/) (A Bootstrap Theming Wrapper)
+
 
 ## GITHUB
 * [proxess](http://github.com/charliemitchell/proxess) 
