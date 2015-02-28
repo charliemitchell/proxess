@@ -1,7 +1,7 @@
 var middleware = require('nimbleservice').middleware.extend({
     // Injects custom Middleware after Router (USEFUL FOR STATIC PAGES)
     custom : function (app, express) {
-        // app.use(express.static(require('path').join(process.cwd(), '/client/dist/')));
+        app.use(express.static(require('path').join(process.cwd(), '/client/dist/')));
     },
 
     // Will get called on every request, befor anything is handled

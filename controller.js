@@ -18,12 +18,30 @@ function serviceIsRunning (id) {
     return false;
 }
 
+function returnServiceListWithStatus (services, callback) {
+    for (var i = 0; i < services.length; i +=1) {
+
+        if (pid.length > 0) {
+            for (var n = 0; n < pid.length; n +=1) {
+                if (pid[n].model._id === services[i]._id) {
+                     services[i].active =  true;
+                } else {
+                     services[i].active = false;
+                }
+            }
+        } else {
+             services[i].active = false;
+        }
+    }
+    callback( services);
+};
+
 module.exports = {
 
     // GETS All Services from the database
     GET : function (req, res) {
-        Model.find(function (a,b) {
-            res.send(b);
+        Model.find().lean().exec(function (error, services) {
+            returnServiceListWithStatus(services, res.send.bind(res));
         });
     },
     
