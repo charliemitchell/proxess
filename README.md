@@ -15,7 +15,7 @@ To manage your running services, just run the proxess command in your terminal. 
 ```sh
 $ proxess
 ```
-Then visit your manager at [http://localhost:9011/](http://localhost:9011/).
+Then visit your manager at [http://localhost:9911/](http://localhost:9911/).
 
 ## THE API
 ```
@@ -25,9 +25,6 @@ POST /process         "Creates A New Processes In The Database"
 GET /process/:id      "Returns A Process Model by it's id"
 PUT /process/:id      "Updates A Process Model by it's id"
 DELETE /process/:id   "Removes A Process Model by it's id"
-
-GET /stats            "Returns Memory Pressure and CPU Usage For Each Process"
-GET /stats/:id        "Returns Memory Pressure and CPU Usage For A Single Process"
 
 GET /alive            "Returns An array of currently running processes managed by this application"
 
@@ -48,6 +45,11 @@ DELETE /all           "Stops Every Running Process In Your Process Database"
     GET /group/:id     "Returns A Process Group By It's ID"
     PUT /group/:id     "Updates A Process Group By It's ID"
     DELETE /group/:id  "Deletes A Process Group By It's ID"
+
+    // Memory & CPU Pressure
+    GET /stats            "Returns Memory Pressure and CPU Usage For Each Process"
+    GET /stats/:id        "Returns Memory Pressure and CPU Usage For A Single Process"
+
 ```
 
 ## Data Structures
