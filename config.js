@@ -1,5 +1,7 @@
 module.exports = {
     
+    sessionless : true,
+
     hideLogo : true,
 
     verbose : false,
