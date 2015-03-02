@@ -20,6 +20,14 @@ module.exports = {
         path : '/alive',
         action : 'getLive',
         // policy : 'authenticated'
+    },{
+        path : '/count/alive',
+        action : 'countLive',
+        // policy : 'authenticated'
+    },{
+        path : '/dashboard',
+        action : 'dashboard',
+        // policy : 'authenticated'
     }],
     
     POST : [{

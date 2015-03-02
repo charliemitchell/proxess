@@ -1,0 +1,51 @@
+<h2> Create A New Process </h2>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel">
+            <div class="panel-heading">
+                <div class="row">
+                    <div class="col-xs-3">
+                        
+                    </div>
+                    <div class="col-xs-9 text-right">
+                        <div>New Configuration</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div style="display:inline-block; width:100px;">Name</div>
+                        <div style="display:inline-block; width:calc(100% - 105px)">
+                            {{input class="full" placeholder="My Simple Python Service" value=model.name}}
+                        </div>
+
+                        <div style="display:inline-block; width:100px;">CMD</div>
+                        <div style="display:inline-block; width:calc(100% - 105px)">
+                            {{input class="full" placeholder="python" value=model.command}}
+                        </div>
+
+                        <div style="display:inline-block; width:100px;">ARGS</div>
+                        <div style="display:inline-block; width:calc(100% - 105px)">
+                            {{input class="full" placeholder="-m, SimpleHTTPServer, 8080" value=controller.args}}
+                        </div>
+
+                        <div style="display:inline-block; width:100px;">CWD</div>
+                        <div style="display:inline-block; width:calc(100% - 105px)">
+                            {{input class="full" placeholder="/Users/charlie/servers/myservice/" value=model.cwd}}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <a {{action 'save'}} href="#/process/new">
+                <div class="panel-footer">
+                    <span class="pull-left">Save</span>
+                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                    <div class="clearfix"></div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    
+</div>

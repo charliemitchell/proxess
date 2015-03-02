@@ -18,30 +18,14 @@ function serviceIsRunning (id) {
     return false;
 }
 
-function returnServiceListWithStatus (services, callback) {
-    for (var i = 0; i < services.length; i +=1) {
 
-        if (pid.length > 0) {
-            for (var n = 0; n < pid.length; n +=1) {
-                if (pid[n].model._id === services[i]._id) {
-                     services[i].active =  true;
-                } else {
-                     services[i].active = false;
-                }
-            }
-        } else {
-             services[i].active = false;
-        }
-    }
-    callback( services);
-};
 
 module.exports = {
 
     // GETS All Services from the database
     GET : function (req, res) {
-        Model.find().lean().exec(function (error, services) {
-            returnServiceListWithStatus(services, res.send.bind(res));
+        Model.find(function (error, services) {
+            res.json(services);
         });
     },
     
@@ -124,9 +108,11 @@ module.exports = {
                             pid.splice(index, 1);
                         }
                     });
+                    global.io.emit("service_died", service);
                 });
 
                 res.send(svc.pid);
+                global.io.emit("service_started", service);
             });
 
         } else {
@@ -157,6 +143,13 @@ module.exports = {
         });
 
         res.json(response);
+    },
+
+    countLive : function (req, res) {
+        res.json({
+            process : pid.length,
+            group : 0 // coming soon
+        });
     },
 
     startAll : function (req, res) {
@@ -204,5 +197,15 @@ module.exports = {
 
         pid = [];
         res.send("ok");
+    },
+
+    dashboard : function (req, res) {
+        Model.find(function (error, services) {
+            res.json({
+                processes : services,
+                running : pid.map(function (process) { return process.model}),
+                runningCount : pid.length
+            });
+        });
     }
 }
