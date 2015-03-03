@@ -18,7 +18,7 @@ function serviceIsRunning (id) {
     return false;
 }
 
-
+var ansi = require('ansi-html');
 
 module.exports = {
 
@@ -91,6 +91,10 @@ module.exports = {
                     svc = require('./proc').start(service, function (stdout) {
                         stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + b[0].name + ' >  ');
                         console.log(b[0].name + ' >  ' +stdout);
+                        global.io.emit("log", {
+                            id : service.id,
+                            log : ansi(stdout) + "<br/>"
+                        });
                     });
                 
                 pid.push({

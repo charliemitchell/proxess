@@ -1,3 +1,11 @@
+.modal-content {
+    background: rgba(0, 0, 0, 0.73);
+}
+
+.modal-title {
+    color : #FFF;
+}
+
 input.full {
   width: 100% !important;
 }

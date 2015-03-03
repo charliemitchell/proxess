@@ -16,6 +16,10 @@ export default Ember.View.extend({
             });
         }.bind(this));
 
+        socket.on('log', function (data) {
+            controller.get('logs').pushObject(data);
+        }.bind(this));
+
         Ember.$("li.active").removeClass('active');
         Ember.$("#dashboard").addClass('active');
     },

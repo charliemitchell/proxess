@@ -107,7 +107,6 @@
 <!-- /.row -->
 
 
-
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
@@ -124,9 +123,13 @@
                             {{else}}
                                 <a class="btn btn-success"  {{action 'start' process}}>start</a>
                             {{/if}}
-                            
                             </span>
-                            <span class="pull-left" style="width:calc(100% - 73px)"><i class="fa fa-fw fa-gear"></i> {{process.name}}</span>
+                            
+                            <span class="text-right">
+                                <a class="btn btn-primary" {{action 'logs' process}}>logs</a>
+                            </span>
+                            
+                            <span class="pull-left" style="width:calc(100% - 137px)"><i class="fa fa-fw fa-gear"></i> {{process.name}}</span>
                         </a>
                     {{/each}}
                     
@@ -136,3 +139,29 @@
     </div>
 </div>
 <!-- /.row -->
+
+
+
+
+
+
+
+<div class="modal" id="logs">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{log.title}}</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{#each entry in log.content}}
+                        {{{entry.log}}}
+                    {{/each}}
+                </p>
+            </div>
+            <div class="modal-footer">
+                <paper-button raised role="button" data-dismiss="modal">Dismiss</paper-button>
+            </div>
+        </div>
+    </div>
+</div>
