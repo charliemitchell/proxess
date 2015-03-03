@@ -6,11 +6,11 @@
     color : #FFF;
 }
 
-a.list-group-item i.fa-bullhorn {
+a.list-group-item i.fa-comment {
     display:none;
 }
 
-a.list-group-item.activity i.fa-bullhorn{
+a.list-group-item.activity i.fa-comment{
     display:inline-block;
     margin-left:10px;
     color: rgb(33, 150, 243);

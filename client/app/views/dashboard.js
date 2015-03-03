@@ -20,6 +20,11 @@ export default Ember.View.extend({
             
             controller.get('logs').pushObject(data);
             
+            // Cap The Amount of Logs to Hold In The Front End
+            if (controller.get('logs').length > 1500) {
+                controller.get('logs').shift();
+            }
+
             this.$('#' + data.id).addClass('activity')
 
             setTimeout(function () {
