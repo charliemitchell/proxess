@@ -1,6 +1,6 @@
 {
   "name": "proxess",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Manages Processes running on your computer",
   "author": "Charlie Mitchell <charliesemailis@gmail.com>",
   "main": "./app.js",
