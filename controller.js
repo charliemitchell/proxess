@@ -18,7 +18,28 @@ function serviceIsRunning (id) {
     return false;
 }
 
-var ansi = require('ansi-html');
+var ansi = require('ansi-html'),
+    proc = require('./proc');
+
+setInterval(function () {
+
+    pid.forEach(function (process) {
+        proc.pmem(process.service, function (pct) {
+            process.pmem = pct;
+            global.io.emit('pmem', {id : process.model.id, mem : pct});
+        });
+
+        proc.pcpu(process.service, function (pct) {
+            process.pcpu = pct;
+            global.io.emit('pcpu', {id : process.model.id, cpu : pct});
+        });
+    });
+
+}, 2500);
+
+
+
+
 
 module.exports = {
 
@@ -93,7 +114,7 @@ module.exports = {
                         console.log(b[0].name + ' >  ' +stdout);
                         global.io.emit("log", {
                             id : service.id,
-                            log : ansi(stdout) + "<br/>"
+                            log : (ansi(stdout) + "<br/>").replace(/\n/g, '<br/>')
                         });
                     });
                 

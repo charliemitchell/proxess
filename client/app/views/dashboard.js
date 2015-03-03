@@ -33,12 +33,22 @@ export default Ember.View.extend({
 
         }.bind(this));
 
+        socket.on('pmem', function (data) {
+            controller.updatePMEM(data);
+        }.bind(this));
+
+        socket.on('pcpu', function (data) {
+            controller.updatePCPU(data);
+        })
+
         Ember.$("li.active").removeClass('active');
         Ember.$("#dashboard").addClass('active');
     },
     willClearRender : function () {
         socket.off('service_started');
         socket.off('service_died');
+        socket.off('pmem');
+        socket.off('pcpu');
     },
 
     updateUI : function (callback) {

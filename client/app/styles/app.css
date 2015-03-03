@@ -6,6 +6,13 @@
     color : #FFF;
 }
 
+/* Correct Bootstrap's Modal.*/
+.modal {
+    position:fixed!important;
+    width: 100%;
+    height : 100%;
+}
+
 a.list-group-item i.fa-comment {
     display:none;
 }
