@@ -6,12 +6,13 @@
 * [Node.js](http://nodejs.org/) (with NPM)
 * [MONGO DB](http://www.mongodb.org/)
 
-## Installation
-
+## Installation 
+Global Installation is reccomended.
 `(sudo) npm install -g proxess`
 
+
 ## Running Proxess
-To manage your running services, just run the proxess command in your terminal. (from any working directory)
+To manage your running services, just run the proxess command in your terminal. (from any working directory, it doesn't matter, we'll point it to the right location)
 ```sh
 $ proxess
 ```
