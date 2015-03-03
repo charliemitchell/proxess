@@ -83,9 +83,12 @@ The Client is built in Ember JS. In Order to use the client you need to do the f
     bower install
     ember build
 ```
-This was left this way intentionally so that you can have access to The Ember CLI Project in order to make changes to the client as you see fit. For More info about Ember CLI, or Ember in general, see the useful links section below
+Currently the view details links are not finished.
 
+This was left this way intentionally so that you can have access to The Ember CLI Project in order to make changes to the client as you see fit. For More info about Ember CLI, or Ember in general, see the useful links section below
+#### The Dashboard
 ![Client Application](/screens/screen1.png?raw=true "The Dashboard")
+#### Adding A Process
 ![Client Application](/screens/screen2.png?raw=true "Add A Process")
 
 ## Useful Links
