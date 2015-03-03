@@ -17,7 +17,15 @@ export default Ember.View.extend({
         }.bind(this));
 
         socket.on('log', function (data) {
+            
             controller.get('logs').pushObject(data);
+            
+            this.$('#' + data.id).addClass('activity')
+
+            setTimeout(function () {
+                this.$('#' + data.id).removeClass('activity');
+            }.bind(this), 1000);
+
         }.bind(this));
 
         Ember.$("li.active").removeClass('active');

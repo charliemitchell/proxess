@@ -6,6 +6,12 @@
     color : #FFF;
 }
 
+a.list-group-item.activity {
+    
+    color: rgb(113, 207, 113);
+    font-weight: 700;
+}
+
 input.full {
   width: 100% !important;
 }

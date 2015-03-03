@@ -116,7 +116,7 @@
             <div class="panel-body">
                 <div class="list-group">
                     {{#each process in model.processes}}
-                        <a class="list-group-item">
+                        <a class="list-group-item" id="{{unbound process.id}}">
                             <span class="text-right">
                             {{#if process.alive}}
                                 <a class="btn btn-danger" {{action 'kill' process}}>stop</a>
