@@ -74,7 +74,7 @@ DELETE /all           "Stops Every Running Process In Your Process Database"
 ```
 
 
-#### The Client (NOT AVAILABLE YET!! COMING SOON)
+# The Client (BETA NOW AVAILABLE!!)
 The Client is built in Ember JS. In Order to use the client you need to do the following steps...
 ```sh
     cd client

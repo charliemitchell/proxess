@@ -39,8 +39,6 @@ setInterval(function () {
 
 
 
-
-
 module.exports = {
 
     // GETS All Services from the database
