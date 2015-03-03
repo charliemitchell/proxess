@@ -35,7 +35,7 @@ setInterval(function () {
         });
     });
 
-}, 2500);
+}, 1200);
 
 
 
