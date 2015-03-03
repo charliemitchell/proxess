@@ -6,10 +6,27 @@
     color : #FFF;
 }
 
-a.list-group-item.activity {
-    
-    color: rgb(113, 207, 113);
-    font-weight: 700;
+a.list-group-item i.fa-bullhorn {
+    display:none;
+}
+
+a.list-group-item.activity i.fa-bullhorn{
+    display:inline-block;
+    margin-left:10px;
+    color: rgb(33, 150, 243);
+    font-size:23px;
+    -webkit-animation-name: spinnerRotate;
+    -webkit-animation-duration: 0.3s;
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-timing-function: linear;
+    -moz-animation-name: spinnerRotate;
+    -moz-animation-duration: 0.3s;
+    -moz-animation-iteration-count: infinite;
+    -moz-animation-timing-function: linear;
+    -ms-animation-name: spinnerRotate;
+    -ms-animation-duration: 0.3s;
+    -ms-animation-iteration-count: infinite;
+    -ms-animation-timing-function: linear;
 }
 
 input.full {
@@ -81,3 +98,43 @@ input.full {
 .panel-yellow a:hover {
     color: #df8a13;
 }
+
+
+
+
+
+
+@-webkit-keyframes spinnerRotate
+{
+    from{
+        color: rgb(33, 150, 243);
+        
+    }
+    to{
+        color: #e51c23;
+        
+    }
+}
+@-moz-keyframes spinnerRotate
+{
+    from{
+        color: rgb(33, 150, 243);
+        font-size:23px;
+    }
+    to{
+        color: #e51c23;
+        
+    }
+}
+@-ms-keyframes spinnerRotate
+{
+    from{
+        color: rgb(33, 150, 243);
+        
+    }
+    to{
+        color: #e51c23;
+        
+    }
+}
+
