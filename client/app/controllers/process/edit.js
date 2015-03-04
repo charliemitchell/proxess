@@ -6,12 +6,16 @@ export default Ember.Controller.extend({
     cwd : '',
     name : '',
 
+    transformArgs : function () {
+        return this.get('args').split(',').without('');
+    },
+
     actions : {
 
         save : function () {
             var data = {
                 command : this.get('command'),
-                args : this.get('args').slice(','),
+                args : this.transformArgs(),
                 cwd  : this.get('cwd'),
                 name : this.get('name'),
                 id : this.get('model.id'),

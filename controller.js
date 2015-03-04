@@ -87,9 +87,13 @@ module.exports = {
 
     // Gets Stats on All Services
     stats : function (req, res) {
-        res.json({
-            stat : 0
-        });
+        res.json(pid.map(function (process) {
+            return {
+                model : process.model,
+                pcpu : process.pcpu,
+                pmem : process.pmem
+            }
+        }));
     },
 
     // Gets Stats on Single Service

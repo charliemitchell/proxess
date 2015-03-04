@@ -85,8 +85,6 @@ The Client is built in Ember JS. In Order to edit the client you need to do the 
 ```
 This was left this way intentionally so that you can have access to The Ember CLI Project in order to make changes to the client as you see fit. For More info about Ember CLI, or Ember in general, see the useful links section below.
 
-Currently the "view details" links are not finished on the dashboard.
-
 
 #### The Dashboard
 ![Client Application](/screens/screen1.png?raw=true "The Dashboard")

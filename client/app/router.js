@@ -11,6 +11,8 @@ Router.map(function() {
     this.route('edit' , {path : 'edit/:id'});
     this.route('manage');
     this.route('list');
+    this.route('cpu');
+    this.route('memory');
   });
   this.route('dashboard');
 });

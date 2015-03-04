@@ -112,12 +112,16 @@ define('client/controllers/process/edit', ['exports', 'ember'], function (export
         cwd: "",
         name: "",
 
+        transformArgs: function transformArgs() {
+            return this.get("args").split(",").without("");
+        },
+
         actions: {
 
             save: function save() {
                 var data = {
                     command: this.get("command"),
-                    args: this.get("args").slice(","),
+                    args: this.transformArgs(),
                     cwd: this.get("cwd"),
                     name: this.get("name"),
                     id: this.get("model.id"),
@@ -304,6 +308,8 @@ define('client/router', ['exports', 'ember', 'client/config/environment'], funct
       this.route("edit", { path: "edit/:id" });
       this.route("manage");
       this.route("list");
+      this.route("cpu");
+      this.route("memory");
     });
     this.route("dashboard");
   });
@@ -340,6 +346,28 @@ define('client/routes/process', ['exports', 'ember'], function (exports, Ember) 
 	exports['default'] = Ember['default'].Route.extend({});
 
 });
+define('client/routes/process/cpu', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    exports['default'] = Ember['default'].Route.extend({
+        model: function model() {
+            return Ember['default'].$.getJSON("/stats").then(function (alive) {
+
+                // alive.processes.forEach(function (process) {
+                //     if (alive.running.findBy('id', process.id)) {
+                //         process.alive = true;
+                //     } else {
+                //         process.alive = false;
+                //     }
+                // });
+
+                return alive;
+            });
+        }
+    });
+
+});
 define('client/routes/process/edit', ['exports', 'ember'], function (exports, Ember) {
 
     'use strict';
@@ -371,6 +399,28 @@ define('client/routes/process/manage', ['exports', 'ember'], function (exports, 
 	'use strict';
 
 	exports['default'] = Ember['default'].Route.extend({});
+
+});
+define('client/routes/process/memory', ['exports', 'ember'], function (exports, Ember) {
+
+    'use strict';
+
+    exports['default'] = Ember['default'].Route.extend({
+        model: function model() {
+            return Ember['default'].$.getJSON("/stats").then(function (alive) {
+
+                // alive.processes.forEach(function (process) {
+                //     if (alive.running.findBy('id', process.id)) {
+                //         process.alive = true;
+                //     } else {
+                //         process.alive = false;
+                //     }
+                // });
+
+                return alive;
+            });
+        }
+    });
 
 });
 define('client/routes/process/new', ['exports', 'ember'], function (exports, Ember) {
@@ -1110,7 +1160,6 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         var el4 = dom.createTextNode("\n            ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("a");
-        dom.setAttribute(el4,"href","#");
         var el5 = dom.createTextNode("\n                ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
@@ -1298,7 +1347,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         var el4 = dom.createTextNode("\n            ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("a");
-        dom.setAttribute(el4,"href","#");
+        dom.setAttribute(el4,"href","#/process/memory");
         var el5 = dom.createTextNode("\n                ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
@@ -1392,7 +1441,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         var el4 = dom.createTextNode("\n            ");
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("a");
-        dom.setAttribute(el4,"href","#");
+        dom.setAttribute(el4,"href","#/process/cpu");
         var el5 = dom.createTextNode("\n                ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
@@ -1691,6 +1740,170 @@ define('client/templates/process', ['exports'], function (exports) {
         if (this.cachedFragment) { dom.repairClonedNode(fragment,[0]); }
         var morph0 = dom.createMorphAt(fragment,0,1,contextualElement);
         content(env, morph0, context, "outlet");
+        return fragment;
+      }
+    };
+  }()));
+
+});
+define('client/templates/process/cpu', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        isHTMLBars: true,
+        blockParams: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        build: function build(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("                        ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("a");
+          dom.setAttribute(el1,"class","list-group-item");
+          var el2 = dom.createTextNode("\n\n                            ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("span");
+          dom.setAttribute(el2,"class","text-right");
+          var el3 = dom.createTextNode("\n                                ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n                            ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n                            \n                            ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("span");
+          dom.setAttribute(el2,"class","pull-left");
+          dom.setAttribute(el2,"style","width:calc(100% - 143px)");
+          var el3 = dom.createElement("i");
+          dom.setAttribute(el3,"class","fa fa-fw fa-gear");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(" ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(" ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n                        ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        render: function render(context, env, contextualElement) {
+          var dom = env.dom;
+          var hooks = env.hooks, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, content = hooks.content;
+          dom.detectNamespace(contextualElement);
+          var fragment;
+          if (env.useFragmentCache && dom.canClone) {
+            if (this.cachedFragment === null) {
+              fragment = this.build(dom);
+              if (this.hasRendered) {
+                this.cachedFragment = fragment;
+              } else {
+                this.hasRendered = true;
+              }
+            }
+            if (this.cachedFragment) {
+              fragment = dom.cloneNode(this.cachedFragment, true);
+            }
+          } else {
+            fragment = this.build(dom);
+          }
+          var element0 = dom.childAt(fragment, [1]);
+          var attrMorph0 = dom.createAttrMorph(element0, 'id');
+          var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),0,1);
+          var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),1,2);
+          attribute(env, attrMorph0, element0, "id", concat(env, [subexpr(env, context, "unbound", [get(env, context, "process.id")], {})]));
+          content(env, morph0, context, "process.pcpu");
+          content(env, morph1, context, "process.model.name");
+          return fragment;
+        }
+      };
+    }());
+    return {
+      isHTMLBars: true,
+      blockParams: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      build: function build(dom) {
+        var el0 = dom.createElement("div");
+        dom.setAttribute(el0,"class","row");
+        var el1 = dom.createTextNode("\n    ");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","col-lg-12");
+        var el2 = dom.createTextNode("\n        ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","panel panel-default");
+        var el3 = dom.createTextNode("\n            ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","panel-heading");
+        var el4 = dom.createTextNode("\n                ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("h3");
+        dom.setAttribute(el4,"class","panel-title");
+        var el5 = dom.createElement("i");
+        dom.setAttribute(el5,"class","fa fa-database fa-fw");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode(" Your Stored Processes");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n            ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n            ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","panel-body");
+        var el4 = dom.createTextNode("\n                ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4,"class","list-group");
+        var el5 = dom.createTextNode("\n");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("                    \n                ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n            ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n        ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      render: function render(context, env, contextualElement) {
+        var dom = env.dom;
+        var hooks = env.hooks, get = hooks.get, block = hooks.block;
+        dom.detectNamespace(contextualElement);
+        var fragment;
+        if (env.useFragmentCache && dom.canClone) {
+          if (this.cachedFragment === null) {
+            fragment = this.build(dom);
+            if (this.hasRendered) {
+              this.cachedFragment = fragment;
+            } else {
+              this.hasRendered = true;
+            }
+          }
+          if (this.cachedFragment) {
+            fragment = dom.cloneNode(this.cachedFragment, true);
+          }
+        } else {
+          fragment = this.build(dom);
+        }
+        var morph0 = dom.createMorphAt(dom.childAt(fragment, [1, 1, 3, 1]),0,1);
+        block(env, morph0, context, "each", [get(env, context, "model")], {"keyword": "process"}, child0, null);
         return fragment;
       }
     };
@@ -2409,6 +2622,170 @@ define('client/templates/process/manage', ['exports'], function (exports) {
   }()));
 
 });
+define('client/templates/process/memory', ['exports'], function (exports) {
+
+  'use strict';
+
+  exports['default'] = Ember.HTMLBars.template((function() {
+    var child0 = (function() {
+      return {
+        isHTMLBars: true,
+        blockParams: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        build: function build(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode("                        ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("a");
+          dom.setAttribute(el1,"class","list-group-item");
+          var el2 = dom.createTextNode("\n\n                            ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("span");
+          dom.setAttribute(el2,"class","text-right");
+          var el3 = dom.createTextNode("\n                                ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode("\n                            ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n                            \n                            ");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createElement("span");
+          dom.setAttribute(el2,"class","pull-left");
+          dom.setAttribute(el2,"style","width:calc(100% - 143px)");
+          var el3 = dom.createElement("i");
+          dom.setAttribute(el3,"class","fa fa-fw fa-gear");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(" ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(" ");
+          dom.appendChild(el2, el3);
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("\n                        ");
+          dom.appendChild(el1, el2);
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        render: function render(context, env, contextualElement) {
+          var dom = env.dom;
+          var hooks = env.hooks, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, content = hooks.content;
+          dom.detectNamespace(contextualElement);
+          var fragment;
+          if (env.useFragmentCache && dom.canClone) {
+            if (this.cachedFragment === null) {
+              fragment = this.build(dom);
+              if (this.hasRendered) {
+                this.cachedFragment = fragment;
+              } else {
+                this.hasRendered = true;
+              }
+            }
+            if (this.cachedFragment) {
+              fragment = dom.cloneNode(this.cachedFragment, true);
+            }
+          } else {
+            fragment = this.build(dom);
+          }
+          var element0 = dom.childAt(fragment, [1]);
+          var attrMorph0 = dom.createAttrMorph(element0, 'id');
+          var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),0,1);
+          var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),1,2);
+          attribute(env, attrMorph0, element0, "id", concat(env, [subexpr(env, context, "unbound", [get(env, context, "process.id")], {})]));
+          content(env, morph0, context, "process.pmem");
+          content(env, morph1, context, "process.model.name");
+          return fragment;
+        }
+      };
+    }());
+    return {
+      isHTMLBars: true,
+      blockParams: 0,
+      cachedFragment: null,
+      hasRendered: false,
+      build: function build(dom) {
+        var el0 = dom.createElement("div");
+        dom.setAttribute(el0,"class","row");
+        var el1 = dom.createTextNode("\n    ");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","col-lg-12");
+        var el2 = dom.createTextNode("\n        ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","panel panel-default");
+        var el3 = dom.createTextNode("\n            ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","panel-heading");
+        var el4 = dom.createTextNode("\n                ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("h3");
+        dom.setAttribute(el4,"class","panel-title");
+        var el5 = dom.createElement("i");
+        dom.setAttribute(el5,"class","fa fa-database fa-fw");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode(" Your Stored Processes");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n            ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n            ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","panel-body");
+        var el4 = dom.createTextNode("\n                ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4,"class","list-group");
+        var el5 = dom.createTextNode("\n");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("                    \n                ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n            ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n        ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
+        return el0;
+      },
+      render: function render(context, env, contextualElement) {
+        var dom = env.dom;
+        var hooks = env.hooks, get = hooks.get, block = hooks.block;
+        dom.detectNamespace(contextualElement);
+        var fragment;
+        if (env.useFragmentCache && dom.canClone) {
+          if (this.cachedFragment === null) {
+            fragment = this.build(dom);
+            if (this.hasRendered) {
+              this.cachedFragment = fragment;
+            } else {
+              this.hasRendered = true;
+            }
+          }
+          if (this.cachedFragment) {
+            fragment = dom.cloneNode(this.cachedFragment, true);
+          }
+        } else {
+          fragment = this.build(dom);
+        }
+        var morph0 = dom.createMorphAt(dom.childAt(fragment, [1, 1, 3, 1]),0,1);
+        block(env, morph0, context, "each", [get(env, context, "model")], {"keyword": "process"}, child0, null);
+        return fragment;
+      }
+    };
+  }()));
+
+});
 define('client/templates/process/new', ['exports'], function (exports) {
 
   'use strict';
@@ -2658,7 +3035,7 @@ define('client/tests/controllers/process/edit.jshint', function () {
 
   module('JSHint - controllers/process');
   test('controllers/process/edit.js should pass jshint', function() { 
-    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 39, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 40, col 63, Missing semicolon.\n\n2 errors'); 
+    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 43, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 44, col 63, Missing semicolon.\n\n2 errors'); 
   });
 
 });
@@ -2809,6 +3186,16 @@ define('client/tests/routes/process.jshint', function () {
   });
 
 });
+define('client/tests/routes/process/cpu.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - routes/process');
+  test('routes/process/cpu.js should pass jshint', function() { 
+    ok(true, 'routes/process/cpu.js should pass jshint.'); 
+  });
+
+});
 define('client/tests/routes/process/edit.jshint', function () {
 
   'use strict';
@@ -2836,6 +3223,16 @@ define('client/tests/routes/process/manage.jshint', function () {
   module('JSHint - routes/process');
   test('routes/process/manage.js should pass jshint', function() { 
     ok(true, 'routes/process/manage.js should pass jshint.'); 
+  });
+
+});
+define('client/tests/routes/process/memory.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - routes/process');
+  test('routes/process/memory.js should pass jshint', function() { 
+    ok(true, 'routes/process/memory.js should pass jshint.'); 
   });
 
 });
@@ -3130,6 +3527,31 @@ define('client/tests/unit/routes/process-test.jshint', function () {
   });
 
 });
+define('client/tests/unit/routes/process/cpu-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor("route:process/cpu", {});
+
+  ember_qunit.test("it exists", function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('client/tests/unit/routes/process/cpu-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/routes/process');
+  test('unit/routes/process/cpu-test.js should pass jshint', function() { 
+    ok(true, 'unit/routes/process/cpu-test.js should pass jshint.'); 
+  });
+
+});
 define('client/tests/unit/routes/process/edit-test', ['ember-qunit'], function (ember_qunit) {
 
   'use strict';
@@ -3202,6 +3624,31 @@ define('client/tests/unit/routes/process/manage-test.jshint', function () {
   module('JSHint - unit/routes/process');
   test('unit/routes/process/manage-test.js should pass jshint', function() { 
     ok(true, 'unit/routes/process/manage-test.js should pass jshint.'); 
+  });
+
+});
+define('client/tests/unit/routes/process/memory-test', ['ember-qunit'], function (ember_qunit) {
+
+  'use strict';
+
+  ember_qunit.moduleFor("route:process/memory", {});
+
+  ember_qunit.test("it exists", function (assert) {
+    var route = this.subject();
+    assert.ok(route);
+  });
+
+  // Specify the other units that are required for this test.
+  // needs: ['controller:foo']
+
+});
+define('client/tests/unit/routes/process/memory-test.jshint', function () {
+
+  'use strict';
+
+  module('JSHint - unit/routes/process');
+  test('unit/routes/process/memory-test.js should pass jshint', function() { 
+    ok(true, 'unit/routes/process/memory-test.js should pass jshint.'); 
   });
 
 });
@@ -3477,7 +3924,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.432e673b"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.80776022"});
 }
 
 /* jshint ignore:end */
