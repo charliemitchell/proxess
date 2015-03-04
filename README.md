@@ -76,16 +76,18 @@ DELETE /all           "Stops Every Running Process In Your Process Database"
 
 
 # The Client (BETA NOW AVAILABLE!!)
-The Client is built in Ember JS. In Order to use the client you need to do the following steps...
+The Client is built in Ember JS. In Order to edit the client you need to do the following steps... (on mac)
 ```sh
-    cd client
+    cd /usr/local/lib/node_modules/proxess/client
     npm install
     bower install
     ember build
 ```
-Currently the view details links are not finished.
+This was left this way intentionally so that you can have access to The Ember CLI Project in order to make changes to the client as you see fit. For More info about Ember CLI, or Ember in general, see the useful links section below.
 
-This was left this way intentionally so that you can have access to The Ember CLI Project in order to make changes to the client as you see fit. For More info about Ember CLI, or Ember in general, see the useful links section below
+Currently the "view details" links are not finished on the dashboard.
+
+
 #### The Dashboard
 ![Client Application](/screens/screen1.png?raw=true "The Dashboard")
 #### Adding A Process
