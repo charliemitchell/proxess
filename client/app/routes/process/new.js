@@ -6,7 +6,8 @@ export default Ember.Route.extend({
             name : '',
             cmd: '',
             cwd : '',
-            args : []
+            args : [],
+            stopcmd: ''
         };
     }
 });
