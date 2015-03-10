@@ -11,7 +11,7 @@
 <!-- /.row -->
 
 <div class="row">
-    
+
     <div class="col-lg-3 col-md-3 col-sm-6">
         <div class="panel panel-green">
             <div class="panel-heading">
@@ -116,23 +116,23 @@
             <div class="panel-body">
                 <div class="list-group">
                     {{#each process in model.processes}}
-                        <a class="list-group-item" id="{{unbound process.id}}">
-                            <span class="text-right">
+                    <a class="list-group-item" id="{{unbound process.id}}">
+                        <span class="text-right">
                             {{#if process.running}}
                                 <a class="btn btn-danger" {{action 'kill' process}}>stop</a>
                             {{else}}
                                 <a {{bind-attr class=":btn :btn-success"}} {{action 'start' process}}>start</a>
                             {{/if}}
                             </span>
-                            
-                            <span class="text-right">
+
+                        <span class="text-right">
                                 <a class="btn btn-primary" {{action 'logs' process}}>logs</a>
                             </span>
-                            
-                            <span class="pull-left" style="width:calc(100% - 143px); font-size: 24px; font-weight: 300"><i class="fa fa-fw fa-gear"></i> {{process.name}} <i class="fa fa-fw fa-comment"></i></span>
-                        </a>
+
+                        <span class="pull-left" style="width:calc(100% - 143px); font-size: 24px; font-weight: 300"><i class="fa fa-fw fa-gear"></i> {{process.name}} <i class="fa fa-fw fa-comment"></i></span>
+                    </a>
                     {{/each}}
-                    
+
                 </div>
             </div>
         </div>
@@ -142,27 +142,27 @@
 
 
 
-<div class="modal" id="build">
+<div class="modal" id="custombuild">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Build Command</h4>
             </div>
             <div class="modal-body">
-                <p>
-                    {{#each arg in controller.service.args}}
-                        <select class="form-control options">
-                        {{#each opt in arg}}
-                            <option value="{{unbound opt}}">{{unbound opt}}</option>
-                        {{/each}}
-                        </select>
-                        <br/>
+                {{#each arg in controller.service.args}}
+                    <div style="margin-bottom:5rem">
+                    {{#each opt in arg}}                   
+                    <div>
+                        <input type="radio" name="{{unbound arg}}" id="{{unbound opt}}" value="{{unbound opt}}" class="radio">
+                        <label for="{{unbound opt}}">{{unbound opt}}</label>
+                    </div>
                     {{/each}}
-                </p>
+                    </div>
+                {{/each}}
             </div>
             <div class="modal-footer">
                 <a class="btn btn-default" data-dismiss="modal">Close</a>
-                <a class="btn btn-success" {{action 'start'}}  data-dismiss="modal">Run</a>
+                <a class="btn btn-success" {{action 'start'}} data-dismiss="modal">Run</a>
             </div>
         </div>
     </div>
@@ -178,9 +178,7 @@
             </div>
             <div class="modal-body">
                 <p>
-                    {{#each entry in log.content}}
-                        {{{entry.log}}}
-                    {{/each}}
+                    {{#each entry in log.content}} {{{entry.log}}} {{/each}}
                 </p>
             </div>
             <div class="modal-footer">

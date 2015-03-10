@@ -48,7 +48,7 @@ export default Ember.Controller.extend({
             var pid = process ? process.id : this.get('id');
             var newservice = this.get('service');
             if (!process) {
-                var options = $('#build .options :selected');
+                var options = $('#custombuild .modal-body input:checked');
                 for (var i = 0; i < options.length; i++) {
                     newservice.args[i] = $(options[i]).val();
                 }
@@ -70,7 +70,7 @@ export default Ember.Controller.extend({
                         }
                         this.set('id', data.service.id);
                         this.set('service', data.service);
-                        Ember.$('#build').modal('show');
+                        Ember.$('#custombuild').modal('show');
                     }
                 }.bind(this)
             });

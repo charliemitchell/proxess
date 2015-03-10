@@ -31,60 +31,44 @@ define('client/controllers/dashboard', ['exports', 'ember'], function (exports, 
     'use strict';
 
     exports['default'] = Ember['default'].Controller.extend({
-
         logs: Ember['default'].A(),
-
         log: {
             title: "",
             content: []
         },
-
         totalPMEM: 0,
         totalPCPU: 0,
-
+        service: false,
+        id: "",
         updatePMEM: function updatePMEM(proc) {
             var total = 0;
-
             proc.mem = parseFloat(proc.mem.replace(/[^0-9\.]+/g, ""));
-
             var process = this.get("model.processes").findBy("id", proc.id),
                 idx = this.get("model.processes").indexOf(process);
-
             this.set("model.processes." + idx + ".pmem", proc.mem);
-
             this.get("model.processes").forEach(function (p) {
                 total += p.pmem || 0;
             });
-
             this.set("totalPMEM", total.toFixed(2));
         },
-
         updatePCPU: function updatePCPU(proc) {
             var total = 0;
-
             proc.cpu = parseFloat(proc.cpu.replace(/[^0-9\.]+/g, ""));
-
             var process = this.get("model.processes").findBy("id", proc.id),
                 idx = this.get("model.processes").indexOf(process);
-
             this.set("model.processes." + idx + ".pcpu", proc.cpu);
-
             this.get("model.processes").forEach(function (p) {
                 total += p.pcpu || 0;
             });
             total = total > 100 ? 100 : total;
-
             this.set("totalPCPU", total.toFixed(2));
         },
-
         actions: {
-
             logs: function logs(process) {
                 this.set("log.title", process.name);
                 this.set("log.content", this.get("logs").filterBy("id", process.id));
                 Ember['default'].$("#logs").modal("show");
             },
-
             kill: function kill(process) {
                 Ember['default'].$.ajax({
                     type: "DELETE",
@@ -92,10 +76,34 @@ define('client/controllers/dashboard', ['exports', 'ember'], function (exports, 
                 });
             },
             start: function start(process) {
-                console.log(process);
+                var pid = process ? process.id : this.get("id");
+                var newservice = this.get("service");
+                if (!process) {
+                    var options = $("#custombuild .modal-body input:checked");
+                    for (var i = 0; i < options.length; i++) {
+                        newservice.args[i] = $(options[i]).val();
+                    }
+                }
                 Ember['default'].$.ajax({
                     type: "POST",
-                    url: "/execute/" + process.id
+                    url: "/execute/" + pid,
+                    data: JSON.stringify({
+                        service: process ? false : newservice
+                    }),
+                    success: (function (data) {
+                        if (data.service && data.needbuild) {
+                            for (var i = 0; i < data.service.args.length; i++) {
+                                if (data.service.args[i].match(/\?/g)) {
+                                    data.service.args[i] = data.service.args[i].replace(/[\?\[\]]/g, "").split(":");
+                                } else {
+                                    data.service.args[i] = [data.service.args[i]];
+                                }
+                            }
+                            this.set("id", data.service.id);
+                            this.set("service", data.service);
+                            Ember['default'].$("#custombuild").modal("show");
+                        }
+                    }).bind(this)
                 });
             }
         }
@@ -125,7 +133,9 @@ define('client/controllers/process/edit', ['exports', 'ember'], function (export
                     cwd: this.get("cwd"),
                     name: this.get("name"),
                     id: this.get("model.id"),
-                    _id: this.get("model._id") };
+                    _id: this.get("model._id"),
+                    stopcmd: this.get("model.stopcmd")
+                };
 
                 Ember['default'].$.ajax({
                     type: "PUT",
@@ -325,13 +335,14 @@ define('client/routes/dashboard', ['exports', 'ember'], function (exports, Ember
         model: function model() {
             return Ember['default'].$.getJSON("/dashboard").then(function (alive) {
 
-                alive.processes.forEach(function (process) {
-                    if (alive.running.findBy("id", process.id)) {
-                        process.alive = true;
-                    } else {
-                        process.alive = false;
-                    }
-                });
+                // Replaced by process.running key
+                // alive.processes.forEach(function (process) {
+                //     if (alive.running.findBy('id', process.id)) {
+                //         process.alive = true;
+                //     } else {
+                //         process.alive = false;
+                //     }
+                // });
 
                 return alive;
             });
@@ -433,7 +444,8 @@ define('client/routes/process/new', ['exports', 'ember'], function (exports, Emb
                 name: "",
                 cmd: "",
                 cwd: "",
-                args: []
+                args: [],
+                stopcmd: ""
             };
         }
     });
@@ -874,8 +886,8 @@ define('client/templates/dashboard', ['exports'], function (exports) {
             } else {
               fragment = this.build(dom);
             }
-            var element1 = dom.childAt(fragment, [1]);
-            element(env, element1, context, "action", ["kill", get(env, context, "process")], {});
+            var element4 = dom.childAt(fragment, [1]);
+            element(env, element4, context, "action", ["kill", get(env, context, "process")], {});
             return fragment;
           }
         };
@@ -891,7 +903,6 @@ define('client/templates/dashboard', ['exports'], function (exports) {
             var el1 = dom.createTextNode("                                ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("a");
-            dom.setAttribute(el1,"class","btn btn-success");
             var el2 = dom.createTextNode("start");
             dom.appendChild(el1, el2);
             dom.appendChild(el0, el1);
@@ -901,7 +912,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
           },
           render: function render(context, env, contextualElement) {
             var dom = env.dom;
-            var hooks = env.hooks, get = hooks.get, element = hooks.element;
+            var hooks = env.hooks, element = hooks.element, get = hooks.get;
             dom.detectNamespace(contextualElement);
             var fragment;
             if (env.useFragmentCache && dom.canClone) {
@@ -919,8 +930,9 @@ define('client/templates/dashboard', ['exports'], function (exports) {
             } else {
               fragment = this.build(dom);
             }
-            var element0 = dom.childAt(fragment, [1]);
-            element(env, element0, context, "action", ["start", get(env, context, "process")], {});
+            var element3 = dom.childAt(fragment, [1]);
+            element(env, element3, context, "bind-attr", [], {"class": ":btn :btn-success"});
+            element(env, element3, context, "action", ["start", get(env, context, "process")], {});
             return fragment;
           }
         };
@@ -932,11 +944,11 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         hasRendered: false,
         build: function build(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("                        ");
+          var el1 = dom.createTextNode("                    ");
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("a");
           dom.setAttribute(el1,"class","list-group-item");
-          var el2 = dom.createTextNode("\n                            ");
+          var el2 = dom.createTextNode("\n                        ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("span");
           dom.setAttribute(el2,"class","text-right");
@@ -945,7 +957,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
           var el3 = dom.createTextNode("                            ");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                            \n                            ");
+          var el2 = dom.createTextNode("\n\n                        ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("span");
           dom.setAttribute(el2,"class","text-right");
@@ -959,11 +971,11 @@ define('client/templates/dashboard', ['exports'], function (exports) {
           var el3 = dom.createTextNode("\n                            ");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                            \n                            ");
+          var el2 = dom.createTextNode("\n\n                        ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("span");
           dom.setAttribute(el2,"class","pull-left");
-          dom.setAttribute(el2,"style","width:calc(100% - 143px)");
+          dom.setAttribute(el2,"style","width:calc(100% - 143px); font-size: 24px; font-weight: 300");
           var el3 = dom.createElement("i");
           dom.setAttribute(el3,"class","fa fa-fw fa-gear");
           dom.appendChild(el2, el3);
@@ -975,7 +987,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
           dom.setAttribute(el3,"class","fa fa-fw fa-comment");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                        ");
+          var el2 = dom.createTextNode("\n                    ");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
@@ -1002,20 +1014,85 @@ define('client/templates/dashboard', ['exports'], function (exports) {
           } else {
             fragment = this.build(dom);
           }
-          var element2 = dom.childAt(fragment, [1]);
-          var element3 = dom.childAt(element2, [3, 1]);
-          var attrMorph0 = dom.createAttrMorph(element2, 'id');
-          var morph0 = dom.createMorphAt(dom.childAt(element2, [1]),0,1);
-          var morph1 = dom.createMorphAt(dom.childAt(element2, [5]),1,2);
-          attribute(env, attrMorph0, element2, "id", concat(env, [subexpr(env, context, "unbound", [get(env, context, "process.id")], {})]));
-          block(env, morph0, context, "if", [get(env, context, "process.alive")], {}, child0, child1);
-          element(env, element3, context, "action", ["logs", get(env, context, "process")], {});
+          var element5 = dom.childAt(fragment, [1]);
+          var element6 = dom.childAt(element5, [3, 1]);
+          var attrMorph0 = dom.createAttrMorph(element5, 'id');
+          var morph0 = dom.createMorphAt(dom.childAt(element5, [1]),0,1);
+          var morph1 = dom.createMorphAt(dom.childAt(element5, [5]),1,2);
+          attribute(env, attrMorph0, element5, "id", concat(env, [subexpr(env, context, "unbound", [get(env, context, "process.id")], {})]));
+          block(env, morph0, context, "if", [get(env, context, "process.running")], {}, child0, child1);
+          element(env, element6, context, "action", ["logs", get(env, context, "process")], {});
           content(env, morph1, context, "process.name");
           return fragment;
         }
       };
     }());
     var child1 = (function() {
+      var child0 = (function() {
+        return {
+          isHTMLBars: true,
+          blockParams: 0,
+          cachedFragment: null,
+          hasRendered: false,
+          build: function build(dom) {
+            var el0 = dom.createDocumentFragment();
+            var el1 = dom.createTextNode("                    ");
+            dom.appendChild(el0, el1);
+            var el1 = dom.createElement("div");
+            var el2 = dom.createTextNode("\n                        ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("input");
+            dom.setAttribute(el2,"type","radio");
+            dom.setAttribute(el2,"class","radio");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n                        ");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createElement("label");
+            dom.appendChild(el1, el2);
+            var el2 = dom.createTextNode("\n                    ");
+            dom.appendChild(el1, el2);
+            dom.appendChild(el0, el1);
+            var el1 = dom.createTextNode("\n");
+            dom.appendChild(el0, el1);
+            return el0;
+          },
+          render: function render(context, env, contextualElement) {
+            var dom = env.dom;
+            var hooks = env.hooks, get = hooks.get, subexpr = hooks.subexpr, concat = hooks.concat, attribute = hooks.attribute, inline = hooks.inline;
+            dom.detectNamespace(contextualElement);
+            var fragment;
+            if (env.useFragmentCache && dom.canClone) {
+              if (this.cachedFragment === null) {
+                fragment = this.build(dom);
+                if (this.hasRendered) {
+                  this.cachedFragment = fragment;
+                } else {
+                  this.hasRendered = true;
+                }
+              }
+              if (this.cachedFragment) {
+                fragment = dom.cloneNode(this.cachedFragment, true);
+              }
+            } else {
+              fragment = this.build(dom);
+            }
+            var element0 = dom.childAt(fragment, [1]);
+            var element1 = dom.childAt(element0, [1]);
+            var element2 = dom.childAt(element0, [3]);
+            var attrMorph0 = dom.createAttrMorph(element1, 'name');
+            var attrMorph1 = dom.createAttrMorph(element1, 'id');
+            var attrMorph2 = dom.createAttrMorph(element1, 'value');
+            var morph0 = dom.createMorphAt(element2,-1,-1);
+            var attrMorph3 = dom.createAttrMorph(element2, 'for');
+            attribute(env, attrMorph0, element1, "name", concat(env, [subexpr(env, context, "unbound", [get(env, context, "arg")], {})]));
+            attribute(env, attrMorph1, element1, "id", concat(env, [subexpr(env, context, "unbound", [get(env, context, "opt")], {})]));
+            attribute(env, attrMorph2, element1, "value", concat(env, [subexpr(env, context, "unbound", [get(env, context, "opt")], {})]));
+            attribute(env, attrMorph3, element2, "for", concat(env, [subexpr(env, context, "unbound", [get(env, context, "opt")], {})]));
+            inline(env, morph0, context, "unbound", [get(env, context, "opt")], {});
+            return fragment;
+          }
+        };
+      }());
       return {
         isHTMLBars: true,
         blockParams: 0,
@@ -1023,9 +1100,56 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         hasRendered: false,
         build: function build(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("                        ");
+          var el1 = dom.createTextNode("                    ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createElement("div");
+          dom.setAttribute(el1,"style","margin-bottom:5rem");
+          var el2 = dom.createTextNode("\n");
+          dom.appendChild(el1, el2);
+          var el2 = dom.createTextNode("                    ");
+          dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
+          dom.appendChild(el0, el1);
+          return el0;
+        },
+        render: function render(context, env, contextualElement) {
+          var dom = env.dom;
+          var hooks = env.hooks, get = hooks.get, block = hooks.block;
+          dom.detectNamespace(contextualElement);
+          var fragment;
+          if (env.useFragmentCache && dom.canClone) {
+            if (this.cachedFragment === null) {
+              fragment = this.build(dom);
+              if (this.hasRendered) {
+                this.cachedFragment = fragment;
+              } else {
+                this.hasRendered = true;
+              }
+            }
+            if (this.cachedFragment) {
+              fragment = dom.cloneNode(this.cachedFragment, true);
+            }
+          } else {
+            fragment = this.build(dom);
+          }
+          var morph0 = dom.createMorphAt(dom.childAt(fragment, [1]),0,1);
+          block(env, morph0, context, "each", [get(env, context, "arg")], {"keyword": "opt"}, child0, null);
+          return fragment;
+        }
+      };
+    }());
+    var child2 = (function() {
+      return {
+        isHTMLBars: true,
+        blockParams: 0,
+        cachedFragment: null,
+        hasRendered: false,
+        build: function build(dom) {
+          var el0 = dom.createDocumentFragment();
+          var el1 = dom.createTextNode(" ");
+          dom.appendChild(el0, el1);
+          var el1 = dom.createTextNode(" ");
           dom.appendChild(el0, el1);
           return el0;
         },
@@ -1105,7 +1229,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","row");
-        var el2 = dom.createTextNode("\n    \n    ");
+        var el2 = dom.createTextNode("\n\n    ");
         dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"class","col-lg-3 col-md-3 col-sm-6");
@@ -1524,7 +1648,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         dom.setAttribute(el5,"class","list-group");
         var el6 = dom.createTextNode("\n");
         dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("                    \n                ");
+        var el6 = dom.createTextNode("\n                ");
         dom.appendChild(el5, el6);
         dom.appendChild(el4, el5);
         var el5 = dom.createTextNode("\n            ");
@@ -1543,7 +1667,75 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createComment(" /.row ");
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n\n\n\n\n\n\n");
+        var el1 = dom.createTextNode("\n\n\n\n");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createElement("div");
+        dom.setAttribute(el1,"class","modal");
+        dom.setAttribute(el1,"id","custombuild");
+        var el2 = dom.createTextNode("\n    ");
+        dom.appendChild(el1, el2);
+        var el2 = dom.createElement("div");
+        dom.setAttribute(el2,"class","modal-dialog");
+        var el3 = dom.createTextNode("\n        ");
+        dom.appendChild(el2, el3);
+        var el3 = dom.createElement("div");
+        dom.setAttribute(el3,"class","modal-content");
+        var el4 = dom.createTextNode("\n            ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4,"class","modal-header");
+        var el5 = dom.createTextNode("\n                ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("h4");
+        dom.setAttribute(el5,"class","modal-title");
+        var el6 = dom.createTextNode("Build Command");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n            ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n            ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4,"class","modal-body");
+        var el5 = dom.createTextNode("\n");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("            ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n            ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("div");
+        dom.setAttribute(el4,"class","modal-footer");
+        var el5 = dom.createTextNode("\n                ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("a");
+        dom.setAttribute(el5,"class","btn btn-default");
+        dom.setAttribute(el5,"data-dismiss","modal");
+        var el6 = dom.createTextNode("Close");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n                ");
+        dom.appendChild(el4, el5);
+        var el5 = dom.createElement("a");
+        dom.setAttribute(el5,"class","btn btn-success");
+        dom.setAttribute(el5,"data-dismiss","modal");
+        var el6 = dom.createTextNode("Run");
+        dom.appendChild(el5, el6);
+        dom.appendChild(el4, el5);
+        var el5 = dom.createTextNode("\n            ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode("\n        ");
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n    ");
+        dom.appendChild(el2, el3);
+        dom.appendChild(el1, el2);
+        var el2 = dom.createTextNode("\n");
+        dom.appendChild(el1, el2);
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n\n\n\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","modal");
@@ -1575,9 +1767,9 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         var el5 = dom.createTextNode("\n                ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("p");
-        var el6 = dom.createTextNode("\n");
+        var el6 = dom.createTextNode("\n                    ");
         dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("                ");
+        var el6 = dom.createTextNode("\n                ");
         dom.appendChild(el5, el6);
         dom.appendChild(el4, el5);
         var el5 = dom.createTextNode("\n            ");
@@ -1589,11 +1781,10 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         dom.setAttribute(el4,"class","modal-footer");
         var el5 = dom.createTextNode("\n                ");
         dom.appendChild(el4, el5);
-        var el5 = dom.createElement("paper-button");
-        dom.setAttribute(el5,"raised","");
-        dom.setAttribute(el5,"role","button");
+        var el5 = dom.createElement("a");
+        dom.setAttribute(el5,"class","btn btn-default");
         dom.setAttribute(el5,"data-dismiss","modal");
-        var el6 = dom.createTextNode("Dismiss");
+        var el6 = dom.createTextNode("Close");
         dom.appendChild(el5, el6);
         dom.appendChild(el4, el5);
         var el5 = dom.createTextNode("\n            ");
@@ -1608,11 +1799,13 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         var el2 = dom.createTextNode("\n");
         dom.appendChild(el1, el2);
         dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
+        dom.appendChild(el0, el1);
         return el0;
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, content = hooks.content, get = hooks.get, block = hooks.block;
+        var hooks = env.hooks, content = hooks.content, get = hooks.get, block = hooks.block, element = hooks.element;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -1630,20 +1823,25 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element4 = dom.childAt(fragment, [6]);
-        var element5 = dom.childAt(fragment, [14, 1, 1]);
-        var morph0 = dom.createMorphAt(dom.childAt(element4, [1, 1, 1, 1, 3, 1]),-1,-1);
-        var morph1 = dom.createMorphAt(dom.childAt(element4, [5, 1, 1, 1, 3, 1]),-1,0);
-        var morph2 = dom.createMorphAt(dom.childAt(element4, [7, 1, 1, 1, 3, 1]),-1,0);
+        var element7 = dom.childAt(fragment, [6]);
+        var element8 = dom.childAt(fragment, [14, 1, 1]);
+        var element9 = dom.childAt(element8, [5, 3]);
+        var element10 = dom.childAt(fragment, [16, 1, 1]);
+        var morph0 = dom.createMorphAt(dom.childAt(element7, [1, 1, 1, 1, 3, 1]),-1,-1);
+        var morph1 = dom.createMorphAt(dom.childAt(element7, [5, 1, 1, 1, 3, 1]),-1,0);
+        var morph2 = dom.createMorphAt(dom.childAt(element7, [7, 1, 1, 1, 3, 1]),-1,0);
         var morph3 = dom.createMorphAt(dom.childAt(fragment, [10, 1, 1, 3, 1]),0,1);
-        var morph4 = dom.createMorphAt(dom.childAt(element5, [1, 1]),-1,-1);
-        var morph5 = dom.createMorphAt(dom.childAt(element5, [3, 1]),0,1);
+        var morph4 = dom.createMorphAt(dom.childAt(element8, [3]),0,1);
+        var morph5 = dom.createMorphAt(dom.childAt(element10, [1, 1]),-1,-1);
+        var morph6 = dom.createMorphAt(dom.childAt(element10, [3, 1]),0,1);
         content(env, morph0, context, "model.runningCount");
         content(env, morph1, context, "totalPMEM");
         content(env, morph2, context, "totalPCPU");
         block(env, morph3, context, "each", [get(env, context, "model.processes")], {"keyword": "process"}, child0, null);
-        content(env, morph4, context, "log.title");
-        block(env, morph5, context, "each", [get(env, context, "log.content")], {"keyword": "entry"}, child1, null);
+        block(env, morph4, context, "each", [get(env, context, "controller.service.args")], {"keyword": "arg"}, child1, null);
+        element(env, element9, context, "action", ["start"], {});
+        content(env, morph5, context, "log.title");
+        block(env, morph6, context, "each", [get(env, context, "log.content")], {"keyword": "entry"}, child2, null);
         return fragment;
       }
     };
@@ -2047,6 +2245,22 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var el8 = dom.createTextNode("\n                        ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:100px;");
+        var el8 = dom.createTextNode("STOP CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:calc(100% - 105px)");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                    ");
         dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
@@ -2314,23 +2528,25 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var morph3 = dom.createMorphAt(dom.childAt(element3, [7]),0,1);
         var morph4 = dom.createMorphAt(dom.childAt(element3, [11]),0,1);
         var morph5 = dom.createMorphAt(dom.childAt(element3, [15]),0,1);
-        var morph6 = dom.createMorphAt(dom.childAt(element6, [1, 1]),0,1);
-        var morph7 = dom.createMorphAt(dom.childAt(element7, [3]),0,1);
-        var morph8 = dom.createMorphAt(dom.childAt(element7, [7]),0,1);
-        var morph9 = dom.createMorphAt(dom.childAt(element7, [11]),0,1);
-        var morph10 = dom.createMorphAt(dom.childAt(element7, [15]),0,1);
+        var morph6 = dom.createMorphAt(dom.childAt(element3, [19]),0,1);
+        var morph7 = dom.createMorphAt(dom.childAt(element6, [1, 1]),0,1);
+        var morph8 = dom.createMorphAt(dom.childAt(element7, [3]),0,1);
+        var morph9 = dom.createMorphAt(dom.childAt(element7, [7]),0,1);
+        var morph10 = dom.createMorphAt(dom.childAt(element7, [11]),0,1);
+        var morph11 = dom.createMorphAt(dom.childAt(element7, [15]),0,1);
         content(env, morph0, context, "model.name");
         content(env, morph1, context, "model.name");
         inline(env, morph2, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "name")});
         inline(env, morph3, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "command")});
         inline(env, morph4, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "args")});
         inline(env, morph5, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "cwd")});
+        inline(env, morph6, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.stopcmd")});
         element(env, element4, context, "action", ["save"], {});
-        content(env, morph6, context, "model.name");
         content(env, morph7, context, "model.name");
-        content(env, morph8, context, "model.command");
-        inline(env, morph9, context, "to-string", [get(env, context, "model.args")], {});
-        content(env, morph10, context, "model.cwd");
+        content(env, morph8, context, "model.name");
+        content(env, morph9, context, "model.command");
+        inline(env, morph10, context, "to-string", [get(env, context, "model.args")], {});
+        content(env, morph11, context, "model.cwd");
         element(env, element8, context, "action", ["revert"], {});
         element(env, element9, context, "action", ["remove"], {});
         return fragment;
@@ -2917,6 +3133,22 @@ define('client/templates/process/new', ['exports'], function (exports) {
         var el8 = dom.createTextNode("\n                        ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:100px;");
+        var el8 = dom.createTextNode("STOP CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:calc(100% - 105px)");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                    ");
         dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
@@ -2998,10 +3230,12 @@ define('client/templates/process/new', ['exports'], function (exports) {
         var morph1 = dom.createMorphAt(dom.childAt(element1, [7]),0,1);
         var morph2 = dom.createMorphAt(dom.childAt(element1, [11]),0,1);
         var morph3 = dom.createMorphAt(dom.childAt(element1, [15]),0,1);
+        var morph4 = dom.createMorphAt(dom.childAt(element1, [19]),0,1);
         inline(env, morph0, context, "input", [], {"class": "full", "placeholder": "My Simple Python Service", "value": get(env, context, "model.name")});
         inline(env, morph1, context, "input", [], {"class": "full", "placeholder": "python", "value": get(env, context, "model.command")});
         inline(env, morph2, context, "input", [], {"class": "full", "placeholder": "-m, SimpleHTTPServer, 8080", "value": get(env, context, "controller.args")});
         inline(env, morph3, context, "input", [], {"class": "full", "placeholder": "/Users/charlie/servers/myservice/", "value": get(env, context, "model.cwd")});
+        inline(env, morph4, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.stopcmd")});
         element(env, element2, context, "action", ["save"], {});
         return fragment;
       }
@@ -3025,7 +3259,7 @@ define('client/tests/controllers/dashboard.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/dashboard.js should pass jshint', function() { 
-    ok(true, 'controllers/dashboard.js should pass jshint.'); 
+    ok(false, 'controllers/dashboard.js should pass jshint.\ncontrollers/dashboard.js: line 51, col 31, \'$\' is not defined.\ncontrollers/dashboard.js: line 53, col 42, \'$\' is not defined.\n\n2 errors'); 
   });
 
 });
@@ -3752,7 +3986,7 @@ define('client/tests/views/dashboard.jshint', function () {
 
   module('JSHint - views');
   test('views/dashboard.js should pass jshint', function() { 
-    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 28, col 55, Missing semicolon.\nviews/dashboard.js: line 42, col 11, Missing semicolon.\nviews/dashboard.js: line 7, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 13, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 19, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 36, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 40, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 48, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 49, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 50, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 51, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 7, col 48, \'data\' is defined but never used.\nviews/dashboard.js: line 13, col 45, \'data\' is defined but never used.\n\n13 errors'); 
+    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 22, col 55, Missing semicolon.\nviews/dashboard.js: line 32, col 11, Missing semicolon.\nviews/dashboard.js: line 6, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 11, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 16, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 27, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 30, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 40, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 41, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 42, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 43, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 6, col 48, \'data\' is defined but never used.\nviews/dashboard.js: line 11, col 45, \'data\' is defined but never used.\n\n13 errors'); 
   });
 
 });
@@ -3799,58 +4033,49 @@ define('client/views/dashboard', ['exports', 'ember'], function (exports, Ember)
                     controller.set("model", model);
                 });
             }).bind(this));
-
             socket.on("service_died", (function (data) {
                 this.updateUI(function (model) {
                     controller.set("model", model);
                 });
             }).bind(this));
-
             socket.on("log", (function (data) {
-
                 controller.get("logs").pushObject(data);
-
                 // Cap The Amount of Logs to Hold In The Front End
                 if (controller.get("logs").length > 1500) {
                     controller.get("logs").shift();
                 }
-
                 this.$("#" + data.id).addClass("activity");
-
                 setTimeout((function () {
                     this.$("#" + data.id).removeClass("activity");
                 }).bind(this), 1000);
             }).bind(this));
-
             socket.on("pmem", (function (data) {
                 controller.updatePMEM(data);
             }).bind(this));
-
             socket.on("pcpu", function (data) {
                 controller.updatePCPU(data);
             });
-
             Ember['default'].$("li.active").removeClass("active");
             Ember['default'].$("#dashboard").addClass("active");
         },
         willClearRender: function willClearRender() {
+            var controller = this.get("controller");
+            controller.set("service", false);
+            controller.set("id", "");
             socket.off("service_started");
             socket.off("service_died");
             socket.off("pmem");
             socket.off("pcpu");
         },
-
         updateUI: function updateUI(callback) {
             Ember['default'].$.getJSON("/dashboard").then(function (alive) {
-
-                alive.processes.forEach(function (process) {
-                    if (alive.running.findBy("id", process.id)) {
-                        process.alive = true;
-                    } else {
-                        process.alive = false;
-                    }
-                });
-
+                // alive.processes.forEach(function (process) {
+                //     if (alive.running.findBy('id', process.id)) {
+                //         process.alive = true;
+                //     } else {
+                //         process.alive = false;
+                //     }
+                // });
                 callback(alive);
             });
         }
@@ -3924,7 +4149,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.80776022"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.7ef238be"});
 }
 
 /* jshint ignore:end */
