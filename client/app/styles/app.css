@@ -69,7 +69,7 @@
 
 /* radio focus */
 #custombuild .modal-content input.radio:focus ~ label:before {
-    box-shadow: 0 0 0 3px #999;
+    /*box-shadow: 0 0 0 3px #999;*/
 }
 
 #custombuild .modal-title {
