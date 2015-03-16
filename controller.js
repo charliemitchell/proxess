@@ -139,6 +139,7 @@ module.exports = {
             }
 
             function start() {
+                var started = false;
                 var svc = require('./proc').start(service, function (stdout) {
                     stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + service.name + ' >  ');
                     console.log(service.name + ' >  ' + stdout);
@@ -146,17 +147,21 @@ module.exports = {
                         id: service.id,
                         log: (ansi(stdout) + "<br/>").replace(/\n/g, '<br/>')
                     });
-                    Model.findByIdAndUpdate(service.id, {
-                        running: true
-                    }, function (err, doc) {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            global.io.emit("service_started", service);
-                        }
-                    });
+                    console.log('started', started);
+                    if (!started) {
+                        Model.findByIdAndUpdate(service.id, { //update service status into mongodb
+                            running: true
+                        }, function (err, doc) {
+                            if (err) {
+                                console.log(err);
+                            } else {
+                                global.io.emit("service_started", service);
+                                started = true;
+                            }
+                        });
+                    }
                 });
-                pid.push({
+                pid.push({ //add the service to temp array
                     model: service,
                     pid: svc.pid,
                     service: svc
@@ -168,15 +173,16 @@ module.exports = {
                     pid.forEach(function (entry, index) {
                         if (entry.model.id === service.id) {
                             pid.splice(index, 1);
-                            Model.findByIdAndUpdate(entry.model.id, {
-                                running: false
-                            }, function (err, doc) {
-                                if (err) {
-                                    console.log(err);
-                                } else {
-                                    global.io.emit("service_died", service);
-                                }
-                            });
+                        }
+                    });
+                    Model.findByIdAndUpdate(service.id, {
+                        running: false
+                    }, function (err, doc) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            started = false;
+                            global.io.emit("service_died", service);
                         }
                     });
                 });
@@ -196,7 +202,7 @@ module.exports = {
         async.parallel({
             one: function (callback) {
                 pid.forEach(function (entry, index) {
-                    if (entry.model.id === req.params.id) {                        
+                    if (entry.model.id === req.params.id) {
                         entry.service.kill('SIGINT');
                         pid.splice(index, 1);
                         response = "ok";
@@ -204,7 +210,7 @@ module.exports = {
                 });
                 callback(null, true);
             },
-            two: function (callback) {                
+            two: function (callback) {
                 Model.findByIdAndUpdate(req.params.id, {
                     running: false
                 }, function (err, doc) {

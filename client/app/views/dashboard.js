@@ -4,11 +4,13 @@ export default Ember.View.extend({
         var controller = this.get('controller');
         
         socket.on('service_started', function (data) {
+            console.log('service_started');
             this.updateUI(function (model) {
                 controller.set('model', model);
             });
         }.bind(this));
         socket.on('service_died', function (data) {
+            console.log('service_died');
             this.updateUI(function (model) {
                 controller.set('model', model);
             });

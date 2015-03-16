@@ -3986,7 +3986,7 @@ define('client/tests/views/dashboard.jshint', function () {
 
   module('JSHint - views');
   test('views/dashboard.js should pass jshint', function() { 
-    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 22, col 55, Missing semicolon.\nviews/dashboard.js: line 32, col 11, Missing semicolon.\nviews/dashboard.js: line 6, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 11, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 16, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 27, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 30, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 40, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 41, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 42, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 43, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 6, col 48, \'data\' is defined but never used.\nviews/dashboard.js: line 11, col 45, \'data\' is defined but never used.\n\n13 errors'); 
+    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 24, col 55, Missing semicolon.\nviews/dashboard.js: line 34, col 11, Missing semicolon.\nviews/dashboard.js: line 6, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 12, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 18, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 29, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 32, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 42, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 43, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 44, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 45, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 6, col 48, \'data\' is defined but never used.\nviews/dashboard.js: line 12, col 45, \'data\' is defined but never used.\n\n13 errors'); 
   });
 
 });
@@ -4029,11 +4029,13 @@ define('client/views/dashboard', ['exports', 'ember'], function (exports, Ember)
             var controller = this.get("controller");
 
             socket.on("service_started", (function (data) {
+                console.log("service_started");
                 this.updateUI(function (model) {
                     controller.set("model", model);
                 });
             }).bind(this));
             socket.on("service_died", (function (data) {
+                console.log("service_died");
                 this.updateUI(function (model) {
                     controller.set("model", model);
                 });
