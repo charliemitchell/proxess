@@ -24,7 +24,7 @@ module.exports = {
     // MongoDB
     mongodb : {
         host : 'localhost',
-        port : 27019,
+        port : 27017,
         database : 'processes'
     },
     

@@ -150,9 +150,9 @@
             </div>
             <div class="modal-body">
                 {{#each arg in controller.service.args}}
-                    <div style="margin-bottom:5rem">
-                    {{#each opt in arg}}                   
                     <div>
+                    {{#each opt in arg}}                   
+                    <div style="display: inline-block">
                         <input type="radio" name="{{unbound arg}}" id="{{unbound opt}}" value="{{unbound opt}}" class="radio">
                         <label for="{{unbound opt}}">{{unbound opt}}</label>
                     </div>

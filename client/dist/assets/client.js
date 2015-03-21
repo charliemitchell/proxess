@@ -1039,6 +1039,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
             var el1 = dom.createTextNode("                    ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("div");
+            dom.setAttribute(el1,"style","display: inline-block");
             var el2 = dom.createTextNode("\n                        ");
             dom.appendChild(el1, el2);
             var el2 = dom.createElement("input");
@@ -1103,7 +1104,6 @@ define('client/templates/dashboard', ['exports'], function (exports) {
           var el1 = dom.createTextNode("                    ");
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("div");
-          dom.setAttribute(el1,"style","margin-bottom:5rem");
           var el2 = dom.createTextNode("\n");
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("                    ");
@@ -4151,7 +4151,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.7ef238be"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.1587cd52"});
 }
 
 /* jshint ignore:end */

@@ -155,8 +155,11 @@ module.exports = {
                             if (err) {
                                 console.log(err);
                             } else {
-                                global.io.emit("service_started", service);
-                                started = true;
+                                console.log(doc)
+                                if (doc) {
+                                    global.io.emit("service_started", service);
+                                    started = true;
+                                }
                             }
                         });
                     }
