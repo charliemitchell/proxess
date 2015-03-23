@@ -2278,19 +2278,13 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
         dom.setAttribute(el5,"class","panel-footer");
-        var el6 = dom.createTextNode("\n                    ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("span");
-        dom.setAttribute(el6,"class","pull-left");
-        var el7 = dom.createTextNode("Save");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
+        dom.setAttribute(el5,"style","font-size:23px");
         var el6 = dom.createTextNode("\n                    ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("span");
         dom.setAttribute(el6,"class","pull-right");
         var el7 = dom.createElement("i");
-        dom.setAttribute(el7,"class","fa fa-arrow-circle-right");
+        dom.setAttribute(el7,"class","fa fa-fw fa-save");
         dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n                    ");
@@ -2480,7 +2474,7 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("button");
         dom.setAttribute(el3,"type","button");
-        dom.setAttribute(el3,"class","btn btn-primary");
+        dom.setAttribute(el3,"class","btn btn-danger");
         var el4 = dom.createTextNode("Delete This Process");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
@@ -2568,7 +2562,8 @@ define('client/templates/process/list', ['exports'], function (exports) {
           cachedFragment: null,
           hasRendered: false,
           build: function build(dom) {
-            var el0 = dom.createTextNode("edit");
+            var el0 = dom.createElement("i");
+            dom.setAttribute(el0,"class","fa fa-fw fa-pencil");
             return el0;
           },
           render: function render(context, env, contextualElement) {
@@ -2608,18 +2603,22 @@ define('client/templates/process/list', ['exports'], function (exports) {
           var el2 = dom.createTextNode("\n                            ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("span");
-          dom.setAttribute(el2,"class","badge");
+          dom.setAttribute(el2,"class","pull-right");
+          dom.setAttribute(el2,"style","font-size: 24px; font-weight: 300");
           var el3 = dom.createTextNode("\n                                ");
           dom.appendChild(el2, el3);
           var el3 = dom.createTextNode("\n                            ");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                            ");
+          var el2 = dom.createTextNode("                            \n                            ");
           dom.appendChild(el1, el2);
-          var el2 = dom.createElement("i");
-          dom.setAttribute(el2,"class","fa fa-fw fa-gear");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode(" ");
+          var el2 = dom.createElement("span");
+          dom.setAttribute(el2,"style","width:calc(100% - 143px); font-size: 24px; font-weight: 300");
+          var el3 = dom.createElement("i");
+          dom.setAttribute(el3,"class","fa fa-fw fa-gear");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(" ");
+          dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n                        ");
           dom.appendChild(el1, el2);
@@ -2650,7 +2649,7 @@ define('client/templates/process/list', ['exports'], function (exports) {
           }
           var element0 = dom.childAt(fragment, [1]);
           var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),0,1);
-          var morph1 = dom.createMorphAt(element0,4,5);
+          var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),1,-1);
           block(env, morph0, context, "link-to", ["process.edit", get(env, context, "process.id")], {}, child0, null);
           content(env, morph1, context, "process.name");
           return fragment;
@@ -4151,7 +4150,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.1587cd52"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.567dd9c1"});
 }
 
 /* jshint ignore:end */

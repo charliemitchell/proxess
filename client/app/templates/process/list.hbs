@@ -22,10 +22,10 @@
                 <div class="list-group">
                     {{#each process in model}}
                         <a class="list-group-item">
-                            <span class="badge">
-                                {{#link-to 'process.edit' process.id}}edit{{/link-to}}
-                            </span>
-                            <i class="fa fa-fw fa-gear"></i> {{process.name}}
+                            <span class="pull-right" style="font-size: 24px; font-weight: 300">
+                                {{#link-to 'process.edit' process.id}}<i class="fa fa-fw fa-pencil"></i>{{/link-to}}
+                            </span>                            
+                            <span style="width:calc(100% - 143px); font-size: 24px; font-weight: 300"><i class="fa fa-fw fa-gear"></i> {{process.name}}</span>
                         </a>
                     {{/each}}
                     

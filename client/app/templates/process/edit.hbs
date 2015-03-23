@@ -44,9 +44,8 @@
 
             </div>
             <a {{action 'save'}} style="cursor:pointer">
-                <div class="panel-footer">
-                    <span class="pull-left">Save</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                <div class="panel-footer" style="font-size:23px">
+                    <span class="pull-right"><i class="fa fa-fw fa-save"></i></span>
                     <div class="clearfix"></div>
                 </div>
             </a>
@@ -102,6 +101,6 @@
 
 <div class="row">
     <div class="col-sm-12 text-right">
-        <button type="button" class="btn btn-primary" {{action 'remove'}}>Delete This Process</button>
+        <button type="button" class="btn btn-danger" {{action 'remove'}}>Delete This Process</button>
     </div>
 </div>
