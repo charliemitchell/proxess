@@ -28,6 +28,10 @@ module.exports = {
         path : '/dashboard',
         action : 'dashboard',
         // policy : 'authenticated'
+    },{
+        path : '/status/:id',
+        action : 'checkStatus',
+        // policy : 'authenticated'
     }],
     
     POST : [{

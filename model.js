@@ -28,6 +28,9 @@ var process = new Schema({
     },
     running: {
         type: Boolean
+    },
+    checkcmd: {
+        type: String
     }
 });
 process.virtual('id').get(function () {

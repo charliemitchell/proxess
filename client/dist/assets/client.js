@@ -134,7 +134,8 @@ define('client/controllers/process/edit', ['exports', 'ember'], function (export
                     name: this.get("name"),
                     id: this.get("model.id"),
                     _id: this.get("model._id"),
-                    stopcmd: this.get("model.stopcmd")
+                    stopcmd: this.get("model.stopcmd"),
+                    checkcmd: this.get("model.checkcmd")
                 };
 
                 Ember['default'].$.ajax({
@@ -445,7 +446,8 @@ define('client/routes/process/new', ['exports', 'ember'], function (exports, Emb
                 cmd: "",
                 cwd: "",
                 args: [],
-                stopcmd: ""
+                stopcmd: "",
+                checkcmd: ""
             };
         }
     });
@@ -855,7 +857,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
           hasRendered: false,
           build: function build(dom) {
             var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("                                ");
+            var el1 = dom.createTextNode("                            ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("a");
             dom.setAttribute(el1,"class","btn btn-danger");
@@ -900,7 +902,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
           hasRendered: false,
           build: function build(dom) {
             var el0 = dom.createDocumentFragment();
-            var el1 = dom.createTextNode("                                ");
+            var el1 = dom.createTextNode("                            ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("a");
             var el2 = dom.createTextNode("start");
@@ -954,21 +956,21 @@ define('client/templates/dashboard', ['exports'], function (exports) {
           dom.setAttribute(el2,"class","text-right");
           var el3 = dom.createTextNode("\n");
           dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("                            ");
+          var el3 = dom.createTextNode("                        ");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n\n                        ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("span");
           dom.setAttribute(el2,"class","text-right");
-          var el3 = dom.createTextNode("\n                                ");
+          var el3 = dom.createTextNode("\n                            ");
           dom.appendChild(el2, el3);
           var el3 = dom.createElement("a");
           dom.setAttribute(el3,"class","btn btn-primary");
           var el4 = dom.createTextNode("logs");
           dom.appendChild(el3, el4);
           dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n                            ");
+          var el3 = dom.createTextNode("\n                        ");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n\n                        ");
@@ -2261,6 +2263,22 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var el8 = dom.createTextNode("\n                        ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:100px;");
+        var el8 = dom.createTextNode("CHECK CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:calc(100% - 105px)");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                    ");
         dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
@@ -2529,11 +2547,12 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var morph4 = dom.createMorphAt(dom.childAt(element3, [11]),0,1);
         var morph5 = dom.createMorphAt(dom.childAt(element3, [15]),0,1);
         var morph6 = dom.createMorphAt(dom.childAt(element3, [19]),0,1);
-        var morph7 = dom.createMorphAt(dom.childAt(element6, [1, 1]),0,1);
-        var morph8 = dom.createMorphAt(dom.childAt(element7, [3]),0,1);
-        var morph9 = dom.createMorphAt(dom.childAt(element7, [7]),0,1);
-        var morph10 = dom.createMorphAt(dom.childAt(element7, [11]),0,1);
-        var morph11 = dom.createMorphAt(dom.childAt(element7, [15]),0,1);
+        var morph7 = dom.createMorphAt(dom.childAt(element3, [23]),0,1);
+        var morph8 = dom.createMorphAt(dom.childAt(element6, [1, 1]),0,1);
+        var morph9 = dom.createMorphAt(dom.childAt(element7, [3]),0,1);
+        var morph10 = dom.createMorphAt(dom.childAt(element7, [7]),0,1);
+        var morph11 = dom.createMorphAt(dom.childAt(element7, [11]),0,1);
+        var morph12 = dom.createMorphAt(dom.childAt(element7, [15]),0,1);
         content(env, morph0, context, "model.name");
         content(env, morph1, context, "model.name");
         inline(env, morph2, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "name")});
@@ -2541,12 +2560,13 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         inline(env, morph4, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "args")});
         inline(env, morph5, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "cwd")});
         inline(env, morph6, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.stopcmd")});
+        inline(env, morph7, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.checkcmd")});
         element(env, element4, context, "action", ["save"], {});
-        content(env, morph7, context, "model.name");
         content(env, morph8, context, "model.name");
-        content(env, morph9, context, "model.command");
-        inline(env, morph10, context, "to-string", [get(env, context, "model.args")], {});
-        content(env, morph11, context, "model.cwd");
+        content(env, morph9, context, "model.name");
+        content(env, morph10, context, "model.command");
+        inline(env, morph11, context, "to-string", [get(env, context, "model.args")], {});
+        content(env, morph12, context, "model.cwd");
         element(env, element8, context, "action", ["revert"], {});
         element(env, element9, context, "action", ["remove"], {});
         return fragment;
@@ -2568,7 +2588,8 @@ define('client/templates/process/list', ['exports'], function (exports) {
           cachedFragment: null,
           hasRendered: false,
           build: function build(dom) {
-            var el0 = dom.createTextNode("edit");
+            var el0 = dom.createElement("i");
+            dom.setAttribute(el0,"class","fa fa-fw fa-pencil");
             return el0;
           },
           render: function render(context, env, contextualElement) {
@@ -2608,7 +2629,8 @@ define('client/templates/process/list', ['exports'], function (exports) {
           var el2 = dom.createTextNode("\n                            ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("span");
-          dom.setAttribute(el2,"class","badge");
+          dom.setAttribute(el2,"class","pull-right");
+          dom.setAttribute(el2,"style","font-size: 24px; font-weight: 300");
           var el3 = dom.createTextNode("\n                                ");
           dom.appendChild(el2, el3);
           var el3 = dom.createTextNode("\n                            ");
@@ -2616,10 +2638,13 @@ define('client/templates/process/list', ['exports'], function (exports) {
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n                            ");
           dom.appendChild(el1, el2);
-          var el2 = dom.createElement("i");
-          dom.setAttribute(el2,"class","fa fa-fw fa-gear");
-          dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode(" ");
+          var el2 = dom.createElement("span");
+          dom.setAttribute(el2,"style","width:calc(100% - 143px); font-size: 24px; font-weight: 300");
+          var el3 = dom.createElement("i");
+          dom.setAttribute(el3,"class","fa fa-fw fa-gear");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(" ");
+          dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n                        ");
           dom.appendChild(el1, el2);
@@ -2650,7 +2675,7 @@ define('client/templates/process/list', ['exports'], function (exports) {
           }
           var element0 = dom.childAt(fragment, [1]);
           var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),0,1);
-          var morph1 = dom.createMorphAt(element0,4,5);
+          var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),1,-1);
           block(env, morph0, context, "link-to", ["process.edit", get(env, context, "process.id")], {}, child0, null);
           content(env, morph1, context, "process.name");
           return fragment;
@@ -3149,6 +3174,22 @@ define('client/templates/process/new', ['exports'], function (exports) {
         var el8 = dom.createTextNode("\n                        ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:100px;");
+        var el8 = dom.createTextNode("CHECK CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:calc(100% - 105px)");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                    ");
         dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
@@ -3231,11 +3272,13 @@ define('client/templates/process/new', ['exports'], function (exports) {
         var morph2 = dom.createMorphAt(dom.childAt(element1, [11]),0,1);
         var morph3 = dom.createMorphAt(dom.childAt(element1, [15]),0,1);
         var morph4 = dom.createMorphAt(dom.childAt(element1, [19]),0,1);
+        var morph5 = dom.createMorphAt(dom.childAt(element1, [23]),0,1);
         inline(env, morph0, context, "input", [], {"class": "full", "placeholder": "My Simple Python Service", "value": get(env, context, "model.name")});
         inline(env, morph1, context, "input", [], {"class": "full", "placeholder": "python", "value": get(env, context, "model.command")});
         inline(env, morph2, context, "input", [], {"class": "full", "placeholder": "-m, SimpleHTTPServer, 8080", "value": get(env, context, "controller.args")});
         inline(env, morph3, context, "input", [], {"class": "full", "placeholder": "/Users/charlie/servers/myservice/", "value": get(env, context, "model.cwd")});
         inline(env, morph4, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.stopcmd")});
+        inline(env, morph5, context, "input", [], {"class": "full", "placeholder": "nc -zv localhost 1338", "value": get(env, context, "model.checkcmd")});
         element(env, element2, context, "action", ["save"], {});
         return fragment;
       }
@@ -3269,7 +3312,7 @@ define('client/tests/controllers/process/edit.jshint', function () {
 
   module('JSHint - controllers/process');
   test('controllers/process/edit.js should pass jshint', function() { 
-    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 43, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 44, col 63, Missing semicolon.\n\n2 errors'); 
+    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 44, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 45, col 63, Missing semicolon.\n\n2 errors'); 
   });
 
 });
@@ -4151,7 +4194,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.1587cd52"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.567dd9c1"});
 }
 
 /* jshint ignore:end */

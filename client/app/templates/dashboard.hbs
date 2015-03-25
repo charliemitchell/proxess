@@ -118,16 +118,16 @@
                     {{#each process in model.processes}}
                     <a class="list-group-item" id="{{unbound process.id}}">
                         <span class="text-right">
-                            {{#if process.running}}
-                                <a class="btn btn-danger" {{action 'kill' process}}>stop</a>
-                            {{else}}
-                                <a {{bind-attr class=":btn :btn-success"}} {{action 'start' process}}>start</a>
-                            {{/if}}
-                            </span>
+                        {{#if process.running}}
+                            <a class="btn btn-danger" {{action 'kill' process}}>stop</a>
+                        {{else}}
+                            <a {{bind-attr class=":btn :btn-success"}} {{action 'start' process}}>start</a>
+                        {{/if}}
+                        </span>
 
                         <span class="text-right">
-                                <a class="btn btn-primary" {{action 'logs' process}}>logs</a>
-                            </span>
+                            <a class="btn btn-primary" {{action 'logs' process}}>logs</a>
+                        </span>
 
                         <span class="pull-left" style="width:calc(100% - 143px); font-size: 24px; font-weight: 300"><i class="fa fa-fw fa-gear"></i> {{process.name}} <i class="fa fa-fw fa-comment"></i></span>
                     </a>
