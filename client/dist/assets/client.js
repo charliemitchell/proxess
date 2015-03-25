@@ -2296,19 +2296,13 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("div");
         dom.setAttribute(el5,"class","panel-footer");
-        var el6 = dom.createTextNode("\n                    ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("span");
-        dom.setAttribute(el6,"class","pull-left");
-        var el7 = dom.createTextNode("Save");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
+        dom.setAttribute(el5,"style","font-size:23px");
         var el6 = dom.createTextNode("\n                    ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("span");
         dom.setAttribute(el6,"class","pull-right");
         var el7 = dom.createElement("i");
-        dom.setAttribute(el7,"class","fa fa-arrow-circle-right");
+        dom.setAttribute(el7,"class","fa fa-fw fa-save");
         dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n                    ");
@@ -2498,7 +2492,7 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         dom.appendChild(el2, el3);
         var el3 = dom.createElement("button");
         dom.setAttribute(el3,"type","button");
-        dom.setAttribute(el3,"class","btn btn-primary");
+        dom.setAttribute(el3,"class","btn btn-danger");
         var el4 = dom.createTextNode("Delete This Process");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
@@ -4194,7 +4188,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.567dd9c1"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.4c955af3"});
 }
 
 /* jshint ignore:end */
