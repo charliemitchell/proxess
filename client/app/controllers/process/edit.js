@@ -14,14 +14,14 @@ export default Ember.Controller.extend({
 
         save: function() {
             var data = {
-                command: this.get('command'),
-                args: this.transformArgs(),
-                cwd: this.get('cwd'),
-                name: this.get('name'),
-                id: this.get('model.id'),
-                _id: this.get('model._id'),
+                command : this.get('command'),
+                args : this.transformArgs(),
+                cwd  : this.get('cwd'),
+                name : this.get('name'),
+                id : this.get('model.id'),
+                _id : this.get('model._id'),
                 stopcmd: this.get('model.stopcmd'),
-                statuscmd: this.get('model.statuscmd')
+                checkcmd: this.get('model.checkcmd')
             };
 
             Ember.$.ajax({

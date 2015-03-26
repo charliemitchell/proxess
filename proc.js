@@ -9,45 +9,51 @@ var cp = require('child_process'),
 //         status : status
 //     };
 // };
-exports.start = function (proc, stdout) {
+exports.start = function(proc, stdout) {
     var options = {
         cwd: proc.cwd || undefined
     };
-    console.log(proc)
     var process = spawn(proc.command, proc.args, options);
     // var process = spawn('sh', ['build.sh'], {
     //     cwd: '/root/defie/FS/fs-admin-client'
     // });
     process.stdout.setEncoding('utf8');
-    process.stdout.on('data', function (chunk) {
+    process.stdout.on('data', function(chunk) {
         //stdout(chunk.replace(/\[([0-9]*)m/g, ''));
         stdout(chunk);
     });
     return process;
 }
-exports.exec = function (service) {
+exports.exec = function(cmd, cwd, callback) {
     function puts(error, stdout, stderr) {
-        console.log(error, stdout, stderr);
+        if (error) {
+            callback(false);
+        } else {
+            callback(true);
+        }
+        // console.log('error', error);
+        // console.log('stdout', stdout);
+        // console.log('stderr', stderr);
         //will be logged on svc.close
     }
 
-    exec(service.stopcmd, {
-        cwd: service.cwd
+    exec(cmd, {
+        cwd: cwd
     }, puts);
 }
-exports.pcpu = function (childSpawn, callback) {
+exports.pcpu = function(childSpawn, callback) {
     if (childSpawn) {
         if (childSpawn.pid) {
-            exec('ps -p ' + childSpawn.pid + ' -o pcpu', function (error, stdout, stderr) {
+            exec('ps -p ' + childSpawn.pid + ' -o pcpu', function(error, stdout, stderr) {
                 callback(stdout);
             });
         }
     }
 }
-exports.pmem = function (childSpawn, callback) {
+exports.pmem = function(childSpawn, callback) {
         if (childSpawn) {
             if (childSpawn.pid) {
-                exec('ps -p ' + childSpawn.pid + ' -o pmem', function (error, stdout, stderr) {
+                exec('ps -p ' + childSpawn.pid + ' -o pmem', function(error, stdout, stderr) {
                     callback(stdout);
                 });
             }
