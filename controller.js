@@ -140,6 +140,7 @@ module.exports = {
 
             function start() {
                 var started = false;
+                // console.log('started', started);
                 var svc = require('./proc').start(service, function (stdout) {
                     stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + service.name + ' >  ');
                     console.log(service.name + ' >  ' + stdout);
@@ -147,7 +148,6 @@ module.exports = {
                         id: service.id,
                         log: (ansi(stdout) + "<br/>").replace(/\n/g, '<br/>')
                     });
-                    console.log('started', started);
                     if (!started) {
                         Model.findByIdAndUpdate(service.id, { //update service status into mongodb
                             running: true

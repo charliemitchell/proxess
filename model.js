@@ -28,7 +28,10 @@ var process = new Schema({
     },
     running: {
         type: Boolean
-    }
+    },
+    statuscmd: {
+        type: String
+    },
 });
 process.virtual('id').get(function () {
     return this._id.toHexString();

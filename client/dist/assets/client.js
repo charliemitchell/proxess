@@ -134,7 +134,8 @@ define('client/controllers/process/edit', ['exports', 'ember'], function (export
                     name: this.get("name"),
                     id: this.get("model.id"),
                     _id: this.get("model._id"),
-                    stopcmd: this.get("model.stopcmd")
+                    stopcmd: this.get("model.stopcmd"),
+                    statuscmd: this.get("model.statuscmd")
                 };
 
                 Ember['default'].$.ajax({
@@ -445,7 +446,8 @@ define('client/routes/process/new', ['exports', 'ember'], function (exports, Emb
                 cmd: "",
                 cwd: "",
                 args: [],
-                stopcmd: ""
+                stopcmd: "",
+                statuscmd: ""
             };
         }
     });
@@ -3148,6 +3150,22 @@ define('client/templates/process/new', ['exports'], function (exports) {
         var el8 = dom.createTextNode("\n                        ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:100px;");
+        var el8 = dom.createTextNode("STATUS CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"style","display:inline-block; width:calc(100% - 105px)");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                    ");
         dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
@@ -3230,11 +3248,13 @@ define('client/templates/process/new', ['exports'], function (exports) {
         var morph2 = dom.createMorphAt(dom.childAt(element1, [11]),0,1);
         var morph3 = dom.createMorphAt(dom.childAt(element1, [15]),0,1);
         var morph4 = dom.createMorphAt(dom.childAt(element1, [19]),0,1);
+        var morph5 = dom.createMorphAt(dom.childAt(element1, [23]),0,1);
         inline(env, morph0, context, "input", [], {"class": "full", "placeholder": "My Simple Python Service", "value": get(env, context, "model.name")});
         inline(env, morph1, context, "input", [], {"class": "full", "placeholder": "python", "value": get(env, context, "model.command")});
         inline(env, morph2, context, "input", [], {"class": "full", "placeholder": "-m, SimpleHTTPServer, 8080", "value": get(env, context, "controller.args")});
         inline(env, morph3, context, "input", [], {"class": "full", "placeholder": "/Users/charlie/servers/myservice/", "value": get(env, context, "model.cwd")});
         inline(env, morph4, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.stopcmd")});
+        inline(env, morph5, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.statuscmd")});
         element(env, element2, context, "action", ["save"], {});
         return fragment;
       }
@@ -3268,7 +3288,7 @@ define('client/tests/controllers/process/edit.jshint', function () {
 
   module('JSHint - controllers/process');
   test('controllers/process/edit.js should pass jshint', function() { 
-    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 43, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 44, col 63, Missing semicolon.\n\n2 errors'); 
+    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 44, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 45, col 63, Missing semicolon.\n\n2 errors'); 
   });
 
 });
