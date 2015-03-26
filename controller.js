@@ -110,12 +110,10 @@ module.exports = {
         });
     },
     checkStatus: function(req, res) {
-        console.log(req.params.id);
         Model.findById(req.params.id, function(err, doc) {
             if (err) {
                 console.log(err);
             } else {
-                console.log(doc)
                 if (doc) {
                     if (doc.checkcmd) {
                         require('./proc').exec(doc.checkcmd, doc.cwd, function(alive) {

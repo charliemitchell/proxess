@@ -13,7 +13,6 @@ exports.start = function(proc, stdout) {
     var options = {
         cwd: proc.cwd || undefined
     };
-    console.log(proc)
     var process = spawn(proc.command, proc.args, options);
     // var process = spawn('sh', ['build.sh'], {
     //     cwd: '/root/defie/FS/fs-admin-client'
@@ -32,9 +31,9 @@ exports.exec = function(cmd, cwd, callback) {
         } else {
             callback(true);
         }
-        console.log('error', error);
-        console.log('stdout', stdout);
-        console.log('stderr', stderr);
+        // console.log('error', error);
+        // console.log('stdout', stdout);
+        // console.log('stderr', stderr);
         //will be logged on svc.close
     }
 

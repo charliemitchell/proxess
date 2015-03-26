@@ -4023,7 +4023,7 @@ define('client/tests/views/dashboard.jshint', function () {
 
   module('JSHint - views');
   test('views/dashboard.js should pass jshint', function() { 
-    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 24, col 55, Missing semicolon.\nviews/dashboard.js: line 34, col 11, Missing semicolon.\nviews/dashboard.js: line 6, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 12, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 18, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 29, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 32, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 42, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 43, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 44, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 45, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 6, col 48, \'data\' is defined but never used.\nviews/dashboard.js: line 12, col 45, \'data\' is defined but never used.\n\n13 errors'); 
+    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 27, col 14, Don\'t make functions within a loop.\nviews/dashboard.js: line 36, col 55, Missing semicolon.\nviews/dashboard.js: line 46, col 11, Missing semicolon.\nviews/dashboard.js: line 30, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 41, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 44, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 54, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 55, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 56, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 57, col 9, \'socket\' is not defined.\n\n10 errors'); 
   });
 
 });
@@ -4065,18 +4065,30 @@ define('client/views/dashboard', ['exports', 'ember'], function (exports, Ember)
         didInsertElement: function didInsertElement() {
             var controller = this.get("controller");
 
-            socket.on("service_started", (function (data) {
-                console.log("service_started");
-                this.updateUI(function (model) {
-                    controller.set("model", model);
-                });
-            }).bind(this));
-            socket.on("service_died", (function (data) {
-                console.log("service_died");
-                this.updateUI(function (model) {
-                    controller.set("model", model);
-                });
-            }).bind(this));
+            // socket.on('service_started', function (data) {
+            //     console.log('service_started');
+            //     this.updateUI(function (model) {
+            //         controller.set('model', model);
+            //     });
+            // }.bind(this));
+            // socket.on('service_died', function (data) {
+            //     console.log('service_died');
+            //     this.updateUI(function (model) {
+            //         controller.set('model', model);
+            //     });
+            // }.bind(this));
+            var process;
+            for (var i = 0; i < controller.get("model").processes.length; i++) {
+                process = controller.get("model.processes")[i];
+                (function (process, id, i) {
+                    setInterval(function () {
+                        Ember['default'].$.getJSON("/status/" + id).then(function (res) {
+                            controller.get("model.processes").set(i + ".running", res.status);
+                        });
+                    }, 2000);
+                })(process, process._id, i);
+            }
+
             socket.on("log", (function (data) {
                 controller.get("logs").pushObject(data);
                 // Cap The Amount of Logs to Hold In The Front End
@@ -4188,7 +4200,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.4c955af3"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.84bcbed5"});
 }
 
 /* jshint ignore:end */

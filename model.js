@@ -25,10 +25,7 @@ var process = new Schema({
     },
     stopcmd: {
         type: String
-    },
-    running: {
-        type: Boolean
-    },
+    },    
     checkcmd: {
         type: String
     }
