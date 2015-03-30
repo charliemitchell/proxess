@@ -25,20 +25,13 @@ var process = new Schema({
     },
     stopcmd: {
         type: String
-<<<<<<< HEAD
-    },
-    running: {
-        type: Boolean
-    },
-    statuscmd: {
-        type: String
-    },
-=======
     },    
     checkcmd: {
         type: String
+    },
+    pid: {
+        type: String
     }
->>>>>>> def19fce443c45c0a9fb7aeaae20ab482d656ec3
 });
 process.virtual('id').get(function () {
     return this._id.toHexString();

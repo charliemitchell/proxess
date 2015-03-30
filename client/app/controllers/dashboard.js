@@ -9,7 +9,14 @@ export default Ember.Controller.extend({
     totalPCPU: 0,
     service: false,
     id: '',
+    running: function () {
+        var runningprocesses = this.get('model.processes').filter(function (x) {
+            return x.running === true;
+        });
+        return runningprocesses.length;
+    }.property('model.processes.@each.running'),
     updatePMEM: function (proc) {
+        console.log('proc', proc);
         var total = 0;
         proc.mem = parseFloat(proc.mem.replace(/[^0-9\.]+/g, ""));
         var process = this.get('model.processes').findBy('id', proc.id),
