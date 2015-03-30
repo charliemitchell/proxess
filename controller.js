@@ -187,7 +187,8 @@ module.exports = {
             }
 
             function start() {
-                var svc = require('./proc').start(service, function (stdout) {
+
+                var svc = require('./proc').start(service, function(stdout) {
                     stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + service.name + ' >  ');
                     console.log(service.name + ' >  ' + stdout);
                     global.io.emit("log", {
