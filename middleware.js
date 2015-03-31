@@ -6,7 +6,7 @@ var middleware = require('nimbleservice').middleware.extend({
 
     // Will get called on every request, befor anything is handled
     onRequest : function (req, res, next) {
-        console.log(("  > Nimble: " + req.method + ":").cyan, (req.url).cyan);
+        // console.log(("  > Nimble: " + req.method + ":").cyan, (req.url).cyan);
         next();
     },
 
