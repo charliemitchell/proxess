@@ -8,7 +8,8 @@ export default Ember.Route.extend({
             cwd : '',
             args : [],
             stopcmd: '',
-            checkcmd: ''
+            checkcmd: '',
+            port: ''
         };
     }
 });

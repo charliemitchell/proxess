@@ -1,111 +1,115 @@
-<h3> Editing {{model.name}}</h3>
-<hr/>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="panel">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        {{model.name}}
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div>New Configuration</div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div style="display:inline-block; width:100px;">Name</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=name}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=command}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">ARGS</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=args}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CWD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=cwd}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">STOP CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=model.stopcmd}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CHECK CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=model.checkcmd}}
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <a {{action 'save'}} style="cursor:pointer">
-                <div class="panel-footer" style="font-size:23px">
-                    <span class="pull-right"><i class="fa fa-fw fa-save"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading" style="min-height:159px">
-                <div class="row">
-                    <div class="col-xs-3">
-                        {{model.name}}
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div>Current Configuration</div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div style="display:inline-block; width:100px;">Name</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
+<div class="edit">
+    <h3> Editing {{model.name}}</h3>
+    <hr/>
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="panel">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
                             {{model.name}}
                         </div>
-
-                        <div style="display:inline-block; width:100px;">CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{model.command}}
+                        <div class="col-xs-9 text-right">
+                            <div>New Configuration</div>
                         </div>
-
-                        <div style="display:inline-block; width:100px;">ARGS</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{to-string model.args}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CWD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{model.cwd}}
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div style="display:inline-block; width:100px;">Name</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="" value=name}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="" value=command}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">ARGS</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="" value=args}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CWD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="" value=cwd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">STOP CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="" value=model.stopcmd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CHECK CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="" value=model.checkcmd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">PORT</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="1338" value=model.port}}
+                            </div>
                         </div>
                     </div>
                 </div>
-
+                <a {{action 'save'}} style="cursor:pointer">
+                    <div class="panel-footer" style="font-size:23px">
+                        <span class="pull-right"><i class="fa fa-fw fa-save"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
             </div>
-            <a {{action 'revert'}} style="cursor:pointer">
-                <div class="panel-footer">
-                    <span class="pull-left">Revert to This Configuration</span>
-                    <div class="clearfix"></div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading" style="min-height:159px">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            {{model.name}}
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div>Current Configuration</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div style="display:inline-block; width:100px;">Name</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.name}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.command}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">ARGS</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{to-string model.args}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CWD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.cwd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">STOP CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.stopcmd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CHECK CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.checkcmd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">PORT</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.port}}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </a>
+                <a {{action 'revert'}} style="cursor:pointer">
+                    <div class="panel-footer">
+                        <span class="pull-left">Revert to This Configuration</span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
-</div>
-
-<div class="row">
-    <div class="col-sm-12 text-right">
-        <button type="button" class="btn btn-danger" {{action 'remove'}}>Delete This Process</button>
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <button type="button" class="btn btn-danger" {{action 'remove'}}>Delete This Process</button>
+        </div>
     </div>
 </div>

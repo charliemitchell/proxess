@@ -21,7 +21,8 @@ export default Ember.Controller.extend({
                 id : this.get('model.id'),
                 _id : this.get('model._id'),
                 stopcmd: this.get('model.stopcmd'),
-                checkcmd: this.get('model.checkcmd')
+                checkcmd: this.get('model.checkcmd'),
+                port: this.get('model.port')
             };
 
             Ember.$.ajax({

@@ -1,61 +1,57 @@
-<h2> Create A New Process </h2>
-<div class="row">
-    <div class="col-lg-12">
-        <div class="panel">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        
+<div class="new">
+    <h3> Create A New Process </h3>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div>New Configuration</div>
+                        </div>
                     </div>
-                    <div class="col-xs-9 text-right">
-                        <div>New Configuration</div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div style="display:inline-block; width:100px;">Name</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="My Simple Python Service" value=model.name}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="python" value=model.command}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">ARGS</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="-m, SimpleHTTPServer, 8080" value=controller.args}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CWD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="/Users/charlie/servers/myservice/" value=model.cwd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">STOP CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="" value=model.stopcmd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CHECK CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="nc -zv localhost 1338" value=model.checkcmd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">PORT</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{input class="full" placeholder="1338" value=model.port}}
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div style="display:inline-block; width:100px;">Name</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="My Simple Python Service" value=model.name}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="python" value=model.command}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">ARGS</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="-m, SimpleHTTPServer, 8080" value=controller.args}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CWD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="/Users/charlie/servers/myservice/" value=model.cwd}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">STOP CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=model.stopcmd}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CHECK CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="nc -zv localhost 1338" value=model.checkcmd}}
-                        </div>
+                <a {{action 'save'}} href="#/process/new">
+                    <div class="panel-footer">
+                        <span class="pull-left">Save</span>
+                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
+                        <div class="clearfix"></div>
                     </div>
-                </div>
-
+                </a>
             </div>
-            <a {{action 'save'}} href="#/process/new">
-                <div class="panel-footer">
-                    <span class="pull-left">Save</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
         </div>
     </div>
-
-    
 </div>

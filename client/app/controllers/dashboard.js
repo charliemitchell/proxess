@@ -9,6 +9,7 @@ export default Ember.Controller.extend({
     totalPCPU: 0,
     service: false,
     id: '',
+    search: '',
     running: function () {
         var runningprocesses = this.get('model.processes').filter(function (x) {
             return x.running === true;
@@ -16,7 +17,6 @@ export default Ember.Controller.extend({
         return runningprocesses.length;
     }.property('model.processes.@each.running'),
     updatePMEM: function (proc) {
-        console.log('proc', proc);
         var total = 0;
         proc.mem = parseFloat(proc.mem.replace(/[^0-9\.]+/g, ""));
         var process = this.get('model.processes').findBy('id', proc.id),
@@ -40,6 +40,15 @@ export default Ember.Controller.extend({
         this.set('totalPCPU', total.toFixed(2));
     },
     actions: {
+        search: function (e, a) {
+            Ember.$.ajax({
+                type: 'GET',
+                url: '/dashboard/?search=' + this.get('search'),                
+                success: function (data) {
+                    this.set('model', data);
+                }.bind(this)
+            });
+        },
         logs: function (process) {
             this.set('log.title', process.name);
             this.set('log.content', this.get('logs').filterBy('id', process.id));

@@ -62,9 +62,20 @@ setInterval(function () {
 module.exports = {
     // GETS All Services from the database
     GET: function (req, res) {
-        Model.find(function (error, services) {
-            res.json(services);
-        });
+        var search = req.query.search;
+        if (search) {
+            Model.find({ //full text search
+                $text: {
+                    $search: "\"" + search + "\""
+                }
+            }, function (error, services) {
+                res.json(services);
+            });
+        } else {
+            Model.find(function (error, services) {
+                res.json(services);
+            });
+        }
     },
     // GETS A Service from the database
     findOne: function (req, res) {
@@ -188,7 +199,7 @@ module.exports = {
 
             function start() {
 
-                var svc = require('./proc').start(service, function(stdout) {
+                var svc = require('./proc').start(service, function (stdout) {
                     stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + service.name + ' >  ');
                     console.log(service.name + ' >  ' + stdout);
                     global.io.emit("log", {
@@ -277,10 +288,23 @@ module.exports = {
         res.send("ok");
     },
     dashboard: function (req, res) {
-        Model.find(function (error, services) {
-            res.json({
-                processes: services
+        var search = req.query.search;
+        if (search) {
+            Model.find({ //full text search
+                $text: {
+                    $search: "\"" + search + "\""
+                }
+            }, function (error, services) {
+                res.json({
+                    processes: services
+                });
             });
-        });
+        } else {
+            Model.find(function (error, services) {
+                res.json({
+                    processes: services
+                });
+            });
+        }
     }
 }

@@ -1,3 +1,13 @@
+.grey {
+    color: #C2C2C2;
+}
+
+.new h3,
+.edit h3 {
+    font-size: 23px;
+    font-weight: 300;
+}
+
 #custombuild .modal-content {
     background: #fff;
 }
@@ -7,23 +17,24 @@
 }
 
 #custombuild .modal-content label {
-  width: 200px;
-  border-radius: 3px;
-  border: 1px solid #D1D3D4
+    width: 200px;
+    border-radius: 3px;
+    border: 1px solid #D1D3D4
 }
-
 /* hide input */
+
 #custombuild .modal-content input.radio:empty {
     margin-left: -999px;
 }
-
 /* style label */
+
 #custombuild .modal-content input.radio:empty ~ label {
     position: relative;
     float: left;
     line-height: 2.5em;
     text-indent: 3.25em;
     /*margin-top: 2em;*/
+    
     cursor: pointer;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -43,10 +54,10 @@
     background: #D1D3D4;
     border-radius: 3px 0 0 3px;
 }
-
 /* toggle hover */
+
 #custombuild .modal-content input.radio:hover:not(:checked) ~ label:before {
-    content:'\2714';
+    content: '\2714';
     text-indent: .9em;
     color: #C2C2C2;
 }
@@ -54,10 +65,10 @@
 #custombuild .modal-content input.radio:hover:not(:checked) ~ label {
     color: #888;
 }
-
 /* toggle on */
+
 #custombuild .modal-content input.radio:checked ~ label:before {
-    content:'\2714';
+    content: '\2714';
     text-indent: .9em;
     color: #9CE2AE;
     background-color: #4DCB6D;
@@ -66,8 +77,8 @@
 #custombuild .modal-content input.radio:checked ~ label {
     color: #777;
 }
-
 /* radio focus */
+
 #custombuild .modal-content input.radio:focus ~ label:before {
     /*box-shadow: 0 0 0 3px #999;*/
 }
@@ -81,29 +92,38 @@
 }
 
 .modal-title {
-    color : #FFF;
+    color: #FFF;
+}
+/* Correct Bootstrap's Modal.*/
+
+.modal {
+    position: fixed!important;
+    width: 100%;
+    height: 100%;
 }
 
-/* Correct Bootstrap's Modal.*/
-.modal {
-    position:fixed!important;
-    width: 100%;
-    height : 100%;
+.list-group-item {
+    padding: 6px 16px;
+}
+
+.list-group-item .btn {
+    border-radius: 21px;
+    padding: 7px 10px;
 }
 
 a.list-group-item i.fa-comment {
-    display:none;
+    display: none;
 }
 
 a.list-group-item:hover {
     background-color: #E8E8E8;
 }
 
-a.list-group-item.activity i.fa-comment{
-    display:inline-block;
-    margin-left:10px;
+a.list-group-item.activity i.fa-comment {
+    display: inline-block;
+    margin-left: 10px;
     color: rgb(33, 150, 243);
-    font-size:23px;
+    font-size: 23px;
     -webkit-animation-name: spinnerRotate;
     -webkit-animation-duration: 0.3s;
     -webkit-animation-iteration-count: infinite;
@@ -119,15 +139,12 @@ a.list-group-item.activity i.fa-comment{
 }
 
 input.full {
-  width: 100% !important;
+    width: 100% !important;
 }
 
 .alert-success {
     background-color: #4caf50!important;
 }
-
-
-
 /* Custom Colored Panels */
 
 .huge {
@@ -188,42 +205,34 @@ input.full {
     color: #df8a13;
 }
 
-
-
-
-
-
-@-webkit-keyframes spinnerRotate
-{
-    from{
-        color: rgb(33, 150, 243);
-        
-    }
-    to{
-        color: #e51c23;
-        
-    }
+.inline {
+    display: inline-block;
 }
-@-moz-keyframes spinnerRotate
-{
-    from{
+
+@-webkit-keyframes spinnerRotate {
+    from {
         color: rgb(33, 150, 243);
-        font-size:23px;
     }
-    to{
+    to {
         color: #e51c23;
-        
-    }
-}
-@-ms-keyframes spinnerRotate
-{
-    from{
-        color: rgb(33, 150, 243);
-        
-    }
-    to{
-        color: #e51c23;
-        
     }
 }
 
+@-moz-keyframes spinnerRotate {
+    from {
+        color: rgb(33, 150, 243);
+        font-size: 23px;
+    }
+    to {
+        color: #e51c23;
+    }
+}
+
+@-ms-keyframes spinnerRotate {
+    from {
+        color: rgb(33, 150, 243);
+    }
+    to {
+        color: #e51c23;
+    }
+}

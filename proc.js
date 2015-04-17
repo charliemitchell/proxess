@@ -58,9 +58,9 @@ exports.pmem = function (childSpawn, callback) {
         if (childSpawn.pid) {
             // console.log('childSpawn.pid', parseInt(childSpawn.pid) ? parseInt(childSpawn.pid) + 1 : childSpawn.pid);
             exec('ps -p ' + parseInt(childSpawn.pid) ? parseInt(childSpawn.pid) + 1 : childSpawn.pid + ' -o pmem', function (error, stdout, stderr) {
-                console.log('error', error);
-                console.log('stdout', stdout);
-                console.log('stdout', stdout);
+                // console.log('error', error);
+                // console.log('stdout', stdout);
+                // console.log('stdout', stdout);
                 callback(stdout);
             });
         }

@@ -31,6 +31,9 @@ var process = new Schema({
     },
     pid: {
         type: String
+    },
+    port: {
+        type: String
     }
 });
 process.virtual('id').get(function () {
