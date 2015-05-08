@@ -30,7 +30,7 @@ define('client/controllers/dashboard', ['exports', 'ember'], function (exports, 
 
     'use strict';
 
-    exports['default'] = Ember['default'].Controller.extend({
+    exports['default'] = Ember['default'].Controller.extend(Ember['default'].Evented, {
         logs: Ember['default'].A(),
         log: {
             title: "",
@@ -77,6 +77,7 @@ define('client/controllers/dashboard', ['exports', 'ember'], function (exports, 
                     url: "/dashboard/?search=" + this.get("search"),
                     success: (function (data) {
                         this.set("model", data);
+                        this.trigger("setupint");
                     }).bind(this)
                 });
             },
@@ -3463,7 +3464,7 @@ define('client/tests/controllers/dashboard.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/dashboard.js should pass jshint', function() { 
-    ok(false, 'controllers/dashboard.js should pass jshint.\ncontrollers/dashboard.js: line 67, col 31, \'$\' is not defined.\ncontrollers/dashboard.js: line 69, col 42, \'$\' is not defined.\ncontrollers/dashboard.js: line 43, col 30, \'a\' is defined but never used.\ncontrollers/dashboard.js: line 43, col 27, \'e\' is defined but never used.\n\n4 errors'); 
+    ok(false, 'controllers/dashboard.js should pass jshint.\ncontrollers/dashboard.js: line 68, col 31, \'$\' is not defined.\ncontrollers/dashboard.js: line 70, col 42, \'$\' is not defined.\ncontrollers/dashboard.js: line 43, col 30, \'a\' is defined but never used.\ncontrollers/dashboard.js: line 43, col 27, \'e\' is defined but never used.\n\n4 errors'); 
   });
 
 });
@@ -4190,7 +4191,7 @@ define('client/tests/views/dashboard.jshint', function () {
 
   module('JSHint - views');
   test('views/dashboard.js should pass jshint', function() { 
-    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 20, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 31, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 34, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 44, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 45, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 46, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 47, col 9, \'socket\' is not defined.\n\n7 errors'); 
+    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 10, col 13, Expected \'{\' and instead saw \'window\'.\nviews/dashboard.js: line 20, col 20, \'i\' is already defined.\nviews/dashboard.js: line 30, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 41, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 44, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 60, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 61, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 62, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 63, col 9, \'socket\' is not defined.\n\n9 errors'); 
   });
 
 });
@@ -4229,9 +4230,13 @@ define('client/views/dashboard', ['exports', 'ember'], function (exports, Ember)
     'use strict';
 
     exports['default'] = Ember['default'].View.extend({
-        didInsertElement: function didInsertElement() {
-            var controller = this.get("controller");
+        setupInterval: function setupInterval(self) {
+            var controller = self.get("controller");
             var process;
+
+            console.log(controller.get("model.processes"));
+
+            for (var i = 1; i < 99999; i++) window.clearInterval(i);
 
             function checkstatus(process, id, i) {
                 setInterval(function () {
@@ -4245,6 +4250,11 @@ define('client/views/dashboard', ['exports', 'ember'], function (exports, Ember)
                 process = controller.get("model.processes")[i];
                 checkstatus(process, process._id, i);
             }
+        },
+        didInsertElement: function didInsertElement() {
+            var controller = this.get("controller");
+
+            this.setupInterval(this);
 
             socket.on("log", (function (data) {
                 controller.get("logs").pushObject(data);
@@ -4265,6 +4275,12 @@ define('client/views/dashboard', ['exports', 'ember'], function (exports, Ember)
             });
             Ember['default'].$("li.active").removeClass("active");
             Ember['default'].$("#dashboard").addClass("active");
+
+            controller.on("setupint", this, function () {
+                setTimeout((function () {
+                    this.setupInterval(this);
+                }).bind(this), 1000);
+            });
         },
         willClearRender: function willClearRender() {
             var controller = this.get("controller");
@@ -4357,7 +4373,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.37353f19"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.70c49147"});
 }
 
 /* jshint ignore:end */

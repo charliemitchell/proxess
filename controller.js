@@ -290,10 +290,17 @@ module.exports = {
     dashboard: function (req, res) {
         var search = req.query.search;
         if (search) {
+            // Model.find({ //full text search
+            //     $text: {
+            //         $search: "\"" + search + "\""
+            //     }
+            // }, function (error, services) {
+            //     res.json({
+            //         processes: services
+            //     });
+            // });
             Model.find({ //full text search
-                $text: {
-                    $search: "\"" + search + "\""
-                }
+                name: new RegExp(search, "i")
             }, function (error, services) {
                 res.json({
                     processes: services

@@ -1,5 +1,5 @@
 import Ember from 'ember';
-export default Ember.Controller.extend({
+export default Ember.Controller.extend(Ember.Evented, {
     logs: Ember.A(),
     log: {
         title: "",
@@ -43,9 +43,10 @@ export default Ember.Controller.extend({
         search: function (e, a) {
             Ember.$.ajax({
                 type: 'GET',
-                url: '/dashboard/?search=' + this.get('search'),                
+                url: '/dashboard/?search=' + this.get('search'),
                 success: function (data) {
                     this.set('model', data);
+                    this.trigger('setupint');
                 }.bind(this)
             });
         },
