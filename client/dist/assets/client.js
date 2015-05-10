@@ -2771,6 +2771,13 @@ define('client/templates/process/list', ['exports'], function (exports) {
           dom.appendChild(el2, el3);
           var el3 = dom.createTextNode(" ");
           dom.appendChild(el2, el3);
+          var el3 = dom.createTextNode(" ");
+          dom.appendChild(el2, el3);
+          var el3 = dom.createElement("span");
+          dom.setAttribute(el3,"class","grey");
+          var el4 = dom.createTextNode(":");
+          dom.appendChild(el3, el4);
+          dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
           var el2 = dom.createTextNode("\n                        ");
           dom.appendChild(el1, el2);
@@ -2800,10 +2807,13 @@ define('client/templates/process/list', ['exports'], function (exports) {
             fragment = this.build(dom);
           }
           var element0 = dom.childAt(fragment, [1]);
+          var element1 = dom.childAt(element0, [3]);
           var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),0,1);
-          var morph1 = dom.createMorphAt(dom.childAt(element0, [3]),1,-1);
+          var morph1 = dom.createMorphAt(element1,1,2);
+          var morph2 = dom.createMorphAt(dom.childAt(element1, [3]),0,-1);
           block(env, morph0, context, "link-to", ["process.edit", get(env, context, "process.id")], {}, child0, null);
           content(env, morph1, context, "process.name");
+          content(env, morph2, context, "process.port");
           return fragment;
         }
       };
@@ -2940,9 +2950,9 @@ define('client/templates/process/list', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element1 = dom.childAt(fragment, [6, 1, 1]);
-        var morph0 = dom.createMorphAt(dom.childAt(element1, [1, 3]),-1,-1);
-        var morph1 = dom.createMorphAt(dom.childAt(element1, [3, 1]),0,1);
+        var element2 = dom.childAt(fragment, [6, 1, 1]);
+        var morph0 = dom.createMorphAt(dom.childAt(element2, [1, 3]),-1,-1);
+        var morph1 = dom.createMorphAt(dom.childAt(element2, [3, 1]),0,1);
         inline(env, morph0, context, "input", [], {"action": "search", "onEvent": "enter", "value": get(env, context, "controller.search"), "class": "full", "placeholder": "Search"});
         block(env, morph1, context, "each", [get(env, context, "model")], {"keyword": "process"}, child0, null);
         return fragment;
@@ -4373,7 +4383,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.70c49147"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.7a123d10"});
 }
 
 /* jshint ignore:end */
