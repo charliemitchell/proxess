@@ -9,16 +9,19 @@ var mongoose = require('nimbleservice').mongoose,
     setter = require('nimbleservice').setter;
 var process = new Schema({
     name: {
-        type: String
+        type: String,
+        required: true
     },
     command: {
-        type: String
+        type: String,
+        required: true
     },
     args: {
         type: Array
     },
     cwd: {
-        type: String
+        type: String,
+        required: true
     },
     img: {
         type: String
@@ -27,7 +30,8 @@ var process = new Schema({
         type: String
     },    
     checkcmd: {
-        type: String
+        type: String,
+        required: true
     },
     pid: {
         type: String

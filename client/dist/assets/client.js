@@ -143,6 +143,10 @@ define('client/controllers/process/edit', ['exports', 'ember'], function (export
 
         actions: {
 
+            copy: function copy() {
+                this.transitionToRoute("process.new", this.get("model.id"));
+            },
+
             save: function save() {
                 var data = {
                     command: this.get("command"),
@@ -346,6 +350,7 @@ define('client/router', ['exports', 'ember', 'client/config/environment'], funct
   Router.map(function () {
     this.resource("process", function () {
       this.route("new");
+      this.route("new", { path: "new/:id" });
       this.route("edit", { path: "edit/:id" });
       this.route("manage");
       this.route("list");
@@ -470,16 +475,24 @@ define('client/routes/process/new', ['exports', 'ember'], function (exports, Emb
     'use strict';
 
     exports['default'] = Ember['default'].Route.extend({
-        model: function model() {
-            return {
-                name: "",
-                cmd: "",
-                cwd: "",
-                args: [],
-                stopcmd: "",
-                checkcmd: "",
-                port: ""
-            };
+        model: function model(params) {
+            if (params.id == "0" || !params.id) {
+                return {
+                    name: "",
+                    cmd: "",
+                    cwd: "",
+                    args: [],
+                    stopcmd: "",
+                    checkcmd: "",
+                    port: ""
+                };
+            } else {
+                return Ember['default'].$.getJSON("/process/" + params.id).then(function (data) {
+                    delete data._id;
+                    delete data.id;
+                    return data;
+                });
+            }
         }
     });
 
@@ -599,7 +612,7 @@ define('client/templates/application', ['exports'], function (exports) {
         var el5 = dom.createTextNode("\n                    ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("li");
-        dom.setAttribute(el5,"id","admin");
+        dom.setAttribute(el5,"id","list");
         var el6 = dom.createTextNode("\n                        ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("a");
@@ -2358,30 +2371,47 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var el6 = dom.createTextNode("\n                ");
         dom.appendChild(el5, el6);
         dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n                ");
+        var el5 = dom.createTextNode("\n                \n                ");
         dom.appendChild(el4, el5);
-        var el5 = dom.createElement("a");
-        dom.setAttribute(el5,"style","cursor:pointer");
+        var el5 = dom.createElement("div");
+        dom.setAttribute(el5,"class","panel-footer");
+        dom.setAttribute(el5,"style","font-size:23px");
         var el6 = dom.createTextNode("\n                    ");
         dom.appendChild(el5, el6);
-        var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","panel-footer");
-        dom.setAttribute(el6,"style","font-size:23px");
+        var el6 = dom.createElement("a");
         var el7 = dom.createTextNode("\n                        ");
         dom.appendChild(el6, el7);
         var el7 = dom.createElement("span");
         dom.setAttribute(el7,"class","pull-right");
+        dom.setAttribute(el7,"style","cursor:pointer");
+        dom.setAttribute(el7,"title","Copy");
+        var el8 = dom.createElement("i");
+        dom.setAttribute(el8,"class","fa fa-fw fa-copy");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("a");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("span");
+        dom.setAttribute(el7,"class","pull-right");
+        dom.setAttribute(el7,"style","cursor:pointer; margin-right: 10px;");
+        dom.setAttribute(el7,"title","Save");
         var el8 = dom.createElement("i");
         dom.setAttribute(el8,"class","fa fa-fw fa-save");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n                        ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("div");
-        dom.setAttribute(el7,"class","clearfix");
-        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                    ");
         dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","clearfix");
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n                ");
         dom.appendChild(el5, el6);
@@ -2653,11 +2683,13 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var element3 = dom.childAt(element2, [1]);
         var element4 = dom.childAt(element3, [3, 1]);
         var element5 = dom.childAt(element2, [3]);
-        var element6 = dom.childAt(element1, [3, 1]);
-        var element7 = dom.childAt(element6, [1]);
-        var element8 = dom.childAt(element7, [3, 1]);
-        var element9 = dom.childAt(element6, [3]);
-        var element10 = dom.childAt(element0, [7, 1, 1]);
+        var element6 = dom.childAt(element5, [1]);
+        var element7 = dom.childAt(element5, [3]);
+        var element8 = dom.childAt(element1, [3, 1]);
+        var element9 = dom.childAt(element8, [1]);
+        var element10 = dom.childAt(element9, [3, 1]);
+        var element11 = dom.childAt(element8, [3]);
+        var element12 = dom.childAt(element0, [7, 1, 1]);
         var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),0,-1);
         var morph1 = dom.createMorphAt(dom.childAt(element3, [1, 1]),0,1);
         var morph2 = dom.createMorphAt(dom.childAt(element4, [3]),0,1);
@@ -2667,14 +2699,14 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var morph6 = dom.createMorphAt(dom.childAt(element4, [19]),0,1);
         var morph7 = dom.createMorphAt(dom.childAt(element4, [23]),0,1);
         var morph8 = dom.createMorphAt(dom.childAt(element4, [27]),0,1);
-        var morph9 = dom.createMorphAt(dom.childAt(element7, [1, 1]),0,1);
-        var morph10 = dom.createMorphAt(dom.childAt(element8, [3]),0,1);
-        var morph11 = dom.createMorphAt(dom.childAt(element8, [7]),0,1);
-        var morph12 = dom.createMorphAt(dom.childAt(element8, [11]),0,1);
-        var morph13 = dom.createMorphAt(dom.childAt(element8, [15]),0,1);
-        var morph14 = dom.createMorphAt(dom.childAt(element8, [19]),0,1);
-        var morph15 = dom.createMorphAt(dom.childAt(element8, [23]),0,1);
-        var morph16 = dom.createMorphAt(dom.childAt(element8, [27]),0,1);
+        var morph9 = dom.createMorphAt(dom.childAt(element9, [1, 1]),0,1);
+        var morph10 = dom.createMorphAt(dom.childAt(element10, [3]),0,1);
+        var morph11 = dom.createMorphAt(dom.childAt(element10, [7]),0,1);
+        var morph12 = dom.createMorphAt(dom.childAt(element10, [11]),0,1);
+        var morph13 = dom.createMorphAt(dom.childAt(element10, [15]),0,1);
+        var morph14 = dom.createMorphAt(dom.childAt(element10, [19]),0,1);
+        var morph15 = dom.createMorphAt(dom.childAt(element10, [23]),0,1);
+        var morph16 = dom.createMorphAt(dom.childAt(element10, [27]),0,1);
         content(env, morph0, context, "model.name");
         content(env, morph1, context, "model.name");
         inline(env, morph2, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "name")});
@@ -2684,7 +2716,8 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         inline(env, morph6, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.stopcmd")});
         inline(env, morph7, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.checkcmd")});
         inline(env, morph8, context, "input", [], {"class": "full", "placeholder": "1338", "value": get(env, context, "model.port")});
-        element(env, element5, context, "action", ["save"], {});
+        element(env, element6, context, "action", ["copy"], {});
+        element(env, element7, context, "action", ["save"], {});
         content(env, morph9, context, "model.name");
         content(env, morph10, context, "model.name");
         content(env, morph11, context, "model.command");
@@ -2693,8 +2726,8 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         content(env, morph14, context, "model.stopcmd");
         content(env, morph15, context, "model.checkcmd");
         content(env, morph16, context, "model.port");
-        element(env, element9, context, "action", ["revert"], {});
-        element(env, element10, context, "action", ["remove"], {});
+        element(env, element11, context, "action", ["revert"], {});
+        element(env, element12, context, "action", ["remove"], {});
         return fragment;
       }
     };
@@ -3484,7 +3517,7 @@ define('client/tests/controllers/process/edit.jshint', function () {
 
   module('JSHint - controllers/process');
   test('controllers/process/edit.js should pass jshint', function() { 
-    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 45, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 46, col 63, Missing semicolon.\n\n2 errors'); 
+    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 49, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 50, col 63, Missing semicolon.\n\n2 errors'); 
   });
 
 });
@@ -3691,7 +3724,7 @@ define('client/tests/routes/process/new.jshint', function () {
 
   module('JSHint - routes/process');
   test('routes/process/new.js should pass jshint', function() { 
-    ok(true, 'routes/process/new.js should pass jshint.'); 
+    ok(false, 'routes/process/new.js should pass jshint.\nroutes/process/new.js: line 5, col 25, Expected \'===\' and instead saw \'==\'.\n\n1 error'); 
   });
 
 });
@@ -4383,7 +4416,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.7a123d10"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.7f31ca2c"});
 }
 
 /* jshint ignore:end */

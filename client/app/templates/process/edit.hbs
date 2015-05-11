@@ -46,12 +46,16 @@
                         </div>
                     </div>
                 </div>
-                <a {{action 'save'}} style="cursor:pointer">
-                    <div class="panel-footer" style="font-size:23px">
-                        <span class="pull-right"><i class="fa fa-fw fa-save"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
+                
+                <div class="panel-footer" style="font-size:23px">
+                    <a {{action 'copy'}}>
+                        <span class="pull-right" style="cursor:pointer" title="Copy"><i class="fa fa-fw fa-copy"></i></span>
+                    </a>
+                    <a {{action 'save'}}>
+                        <span class="pull-right" style="cursor:pointer; margin-right: 10px;" title="Save"><i class="fa fa-fw fa-save"></i></span>
+                    </a>
+                    <div class="clearfix"></div>
+                </div>
             </div>
         </div>
         <div class="col-lg-6">
