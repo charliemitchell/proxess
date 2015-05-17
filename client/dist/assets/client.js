@@ -70,16 +70,44 @@ define('client/controllers/dashboard', ['exports', 'ember'], function (exports, 
             total = total > 100 ? 100 : total;
             this.set("totalPCPU", total.toFixed(2));
         },
-        actions: {
-            search: function search(e, a) {
-                Ember['default'].$.ajax({
-                    type: "GET",
-                    url: "/dashboard/?search=" + this.get("search"),
-                    success: (function (data) {
-                        this.set("model", data);
-                        this.trigger("setupint");
-                    }).bind(this)
+        filter: (function () {
+            if (this.get("search")) {
+                var arr = this.get("model").processes;
+                arr = arr.filter((function (item) {
+                    return item.name.match(new RegExp(this.get("search"), "ig"));
+                }).bind(this));
+                this.set("mirror", {
+                    processes: arr
                 });
+            } else {
+                this.set("mirror", this.get("model"));
+            }
+        }).observes("search"),
+        mirror: (function () {
+            return this.get("model");
+        }).property("mirror"),
+        actions: {
+            runningonly: function runningonly() {
+                var arr = this.get("model.processes").filter(function (x) {
+                    return x.running === true;
+                });
+                this.set("mirror", {
+                    processes: arr
+                });
+            },
+            all: function all() {
+                this.set("mirror", this.get("model"));
+            },
+            search: function search(e, a) {
+                console.log("Search submission is deprecated");
+                // Ember.$.ajax({
+                //     type: 'GET',
+                //     url: '/dashboard/?search=' + this.get('search'),
+                //     success: function (data) {
+                //         this.set('mirror', data);
+                //         this.trigger('setupint');
+                //     }.bind(this)
+                // });
             },
             logs: function logs(process) {
                 this.set("log.title", process.name);
@@ -136,6 +164,10 @@ define('client/controllers/process/edit', ['exports', 'ember'], function (export
         args: "",
         cwd: "",
         name: "",
+        stopcmd: "",
+        checkcmd: "",
+        port: "",
+        hidden: false,
 
         transformArgs: function transformArgs() {
             return this.get("args").split(",").without("");
@@ -155,15 +187,16 @@ define('client/controllers/process/edit', ['exports', 'ember'], function (export
                     name: this.get("name"),
                     id: this.get("model.id"),
                     _id: this.get("model._id"),
-                    stopcmd: this.get("model.stopcmd"),
-                    checkcmd: this.get("model.checkcmd"),
-                    port: this.get("model.port")
+                    stopcmd: this.get("stopcmd"),
+                    checkcmd: this.get("checkcmd"),
+                    port: this.get("port"),
+                    hidden: this.get("hidden")
                 };
 
                 Ember['default'].$.ajax({
                     type: "PUT",
                     url: "process/" + data.id,
-                    data: JSON.stringify(data),
+                    data: JSON.stringify(this.get("model")),
                     success: (function () {
                         this.notify.success("Process Updated");
                     }).bind(this)
@@ -185,7 +218,7 @@ define('client/controllers/process/edit', ['exports', 'ember'], function (export
             },
 
             revert: function revert() {
-                this.set("command", this.get("model.command")).set("cwd", this.get("model.cwd")).set("args", this.get("model.args").join(", ")).set("name", this.get("model.name"));
+                this.set("command", this.get("model.command")).set("cwd", this.get("model.cwd")).set("args", this.get("model.args").join(", ")).set("name", this.get("model.name")).set("stopcmd", this.get("model.stopcmd")).set("checkcmd", this.get("model.checkcmd")).set("port", this.get("model.port")).set("hidden", this.get("model.hidden"));
             }
         }
     });
@@ -197,15 +230,30 @@ define('client/controllers/process/list', ['exports', 'ember'], function (export
 
     exports['default'] = Ember['default'].Controller.extend({
         search: "",
+        filter: (function () {
+            if (this.get("search")) {
+                var arr = this.get("model");
+                arr = arr.filter((function (item) {
+                    return item.name.match(new RegExp(this.get("search"), "ig"));
+                }).bind(this));
+                this.set("mirror", arr);
+            } else {
+                this.set("mirror", this.get("model"));
+            }
+        }).observes("search"),
+        mirror: (function () {
+            return this.get("model");
+        }).property("mirror"),
         actions: {
             search: function search(e, a) {
-                Ember['default'].$.ajax({
-                    type: "GET",
-                    url: "/process/?search=" + this.get("search"),
-                    success: (function (data) {
-                        this.set("model", data);
-                    }).bind(this)
-                });
+                console.log("Search submission is deprecated");
+                // Ember.$.ajax({
+                //     type: 'GET',
+                //     url: '/process/?search=' + this.get('search'),
+                //     success: function (data) {
+                //         this.set('model', data);
+                //     }.bind(this)
+                // });
             } }
     });
 
@@ -484,7 +532,8 @@ define('client/routes/process/new', ['exports', 'ember'], function (exports, Emb
                     args: [],
                     stopcmd: "",
                     checkcmd: "",
-                    port: ""
+                    port: "",
+                    hidden: false
                 };
             } else {
                 return Ember['default'].$.getJSON("/process/" + params.id).then(function (data) {
@@ -888,7 +937,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
             var el1 = dom.createTextNode("                            ");
             dom.appendChild(el0, el1);
             var el1 = dom.createElement("a");
-            dom.setAttribute(el1,"class","btn btn-danger");
+            dom.setAttribute(el1,"class","btn btn-success");
             var el2 = dom.createElement("i");
             dom.setAttribute(el2,"class","fa fa-stop fa-fw");
             dom.appendChild(el1, el2);
@@ -963,7 +1012,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
               fragment = this.build(dom);
             }
             var element3 = dom.childAt(fragment, [1]);
-            element(env, element3, context, "bind-attr", [], {"class": ":btn :btn-success"});
+            element(env, element3, context, "bind-attr", [], {"class": ":btn :btn-danger"});
             element(env, element3, context, "action", ["start", get(env, context, "process")], {});
             return fragment;
           }
@@ -1672,24 +1721,30 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("h3");
         dom.setAttribute(el5,"class","panel-title inline");
-        var el6 = dom.createElement("i");
-        dom.setAttribute(el6,"class","fa fa-database fa-fw");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode(" Total Processes : ");
+        var el6 = dom.createElement("a");
+        dom.setAttribute(el6,"class","btn btn-primary btn-sm");
+        var el7 = dom.createElement("i");
+        dom.setAttribute(el7,"class","fa fa-database fa-fw");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode(" Total Processes : ");
+        dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("   ");
         dom.appendChild(el5, el6);
-        var el6 = dom.createElement("i");
-        dom.setAttribute(el6,"class","fa fa-cogs fa-fw");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode(" Running Processes : ");
+        var el6 = dom.createElement("a");
+        dom.setAttribute(el6,"class","btn btn-success btn-sm");
+        var el7 = dom.createElement("i");
+        dom.setAttribute(el7,"class","fa fa-cogs fa-fw");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("  Running Processes : ");
+        dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
         dom.appendChild(el4, el5);
         var el5 = dom.createTextNode("\n                ");
         dom.appendChild(el4, el5);
         var el5 = dom.createElement("span");
         dom.setAttribute(el5,"class","inline pull-right");
-        dom.setAttribute(el5,"style","margin-top:-3px");
+        dom.setAttribute(el5,"style","margin-top:-5px");
         dom.appendChild(el4, el5);
         var el5 = dom.createTextNode("\n            ");
         dom.appendChild(el4, el5);
@@ -1861,7 +1916,7 @@ define('client/templates/dashboard', ['exports'], function (exports) {
       },
       render: function render(context, env, contextualElement) {
         var dom = env.dom;
-        var hooks = env.hooks, content = hooks.content, get = hooks.get, inline = hooks.inline, block = hooks.block, element = hooks.element;
+        var hooks = env.hooks, content = hooks.content, element = hooks.element, get = hooks.get, inline = hooks.inline, block = hooks.block;
         dom.detectNamespace(contextualElement);
         var fragment;
         if (env.useFragmentCache && dom.canClone) {
@@ -1883,28 +1938,32 @@ define('client/templates/dashboard', ['exports'], function (exports) {
         var element9 = dom.childAt(fragment, [10, 1, 1]);
         var element10 = dom.childAt(element9, [1]);
         var element11 = dom.childAt(element10, [1]);
-        var element12 = dom.childAt(fragment, [14, 1, 1]);
-        var element13 = dom.childAt(element12, [5, 3]);
-        var element14 = dom.childAt(fragment, [16, 1, 1]);
+        var element12 = dom.childAt(element11, [0]);
+        var element13 = dom.childAt(element11, [2]);
+        var element14 = dom.childAt(fragment, [14, 1, 1]);
+        var element15 = dom.childAt(element14, [5, 3]);
+        var element16 = dom.childAt(fragment, [16, 1, 1]);
         var morph0 = dom.createMorphAt(dom.childAt(element8, [1, 1, 1, 1, 3, 1]),-1,-1);
         var morph1 = dom.createMorphAt(dom.childAt(element8, [5, 1, 1, 1, 3, 1]),-1,0);
         var morph2 = dom.createMorphAt(dom.childAt(element8, [7, 1, 1, 1, 3, 1]),-1,0);
-        var morph3 = dom.createMorphAt(element11,1,2);
-        var morph4 = dom.createMorphAt(element11,4,-1);
+        var morph3 = dom.createMorphAt(element12,1,-1);
+        var morph4 = dom.createMorphAt(element13,1,-1);
         var morph5 = dom.createMorphAt(dom.childAt(element10, [3]),-1,-1);
         var morph6 = dom.createMorphAt(dom.childAt(element9, [3, 1]),0,1);
-        var morph7 = dom.createMorphAt(dom.childAt(element12, [3]),0,1);
-        var morph8 = dom.createMorphAt(dom.childAt(element14, [1, 1]),-1,-1);
-        var morph9 = dom.createMorphAt(dom.childAt(element14, [3, 1]),0,1);
+        var morph7 = dom.createMorphAt(dom.childAt(element14, [3]),0,1);
+        var morph8 = dom.createMorphAt(dom.childAt(element16, [1, 1]),-1,-1);
+        var morph9 = dom.createMorphAt(dom.childAt(element16, [3, 1]),0,1);
         content(env, morph0, context, "running");
         content(env, morph1, context, "totalPMEM");
         content(env, morph2, context, "totalPCPU");
+        element(env, element12, context, "action", ["all"], {});
         content(env, morph3, context, "model.processes.length");
+        element(env, element13, context, "action", ["runningonly"], {});
         content(env, morph4, context, "running");
-        inline(env, morph5, context, "input", [], {"action": "search", "onEvent": "enter", "value": get(env, context, "controller.search"), "class": "full", "placeholder": "Search"});
-        block(env, morph6, context, "each", [get(env, context, "model.processes")], {"keyword": "process"}, child0, null);
+        inline(env, morph5, context, "input", [], {"action": "search", "onEvent": "enter", "value": get(env, context, "controller.search"), "class": "full", "placeholder": "Search", "class": "form-control"});
+        block(env, morph6, context, "each", [get(env, context, "mirror.processes")], {"keyword": "process"}, child0, null);
         block(env, morph7, context, "each", [get(env, context, "controller.service.args")], {"keyword": "arg"}, child1, null);
-        element(env, element13, context, "action", ["start"], {});
+        element(env, element15, context, "action", ["start"], {});
         content(env, morph8, context, "log.title");
         block(env, morph9, context, "each", [get(env, context, "log.content")], {"keyword": "entry"}, child2, null);
         return fragment;
@@ -2186,16 +2245,14 @@ define('client/templates/process/edit', ['exports'], function (exports) {
       build: function build(dom) {
         var el0 = dom.createDocumentFragment();
         var el1 = dom.createElement("div");
-        dom.setAttribute(el1,"class","edit");
         var el2 = dom.createTextNode("\n    ");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
+        var el2 = dom.createElement("legend");
+        var el3 = dom.createElement("i");
+        dom.setAttribute(el3,"class","fa fa-pencil fa-fw");
+        dom.appendChild(el2, el3);
         var el3 = dom.createTextNode(" Editing ");
         dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n    ");
-        dom.appendChild(el1, el2);
-        var el2 = dom.createElement("hr");
         dom.appendChild(el1, el2);
         var el2 = dom.createTextNode("\n    ");
         dom.appendChild(el1, el2);
@@ -2207,34 +2264,28 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         dom.setAttribute(el3,"class","col-lg-6");
         var el4 = dom.createTextNode("\n            ");
         dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4,"class","panel");
+        var el4 = dom.createElement("form");
+        dom.setAttribute(el4,"class","form-horizontal");
         var el5 = dom.createTextNode("\n                ");
         dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","panel-heading");
+        var el5 = dom.createElement("fieldset");
         var el6 = dom.createTextNode("\n                    ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","row");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","name");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("Name");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                        ");
         dom.appendChild(el6, el7);
         var el7 = dom.createElement("div");
-        dom.setAttribute(el7,"class","col-xs-3");
+        dom.setAttribute(el7,"class","col-lg-10");
         var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                        ");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n                        ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("div");
-        dom.setAttribute(el7,"class","col-xs-9 text-right");
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        var el9 = dom.createTextNode("New Configuration");
-        dom.appendChild(el8, el9);
         dom.appendChild(el7, el8);
         var el8 = dom.createTextNode("\n                        ");
         dom.appendChild(el7, el8);
@@ -2245,119 +2296,174 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var el6 = dom.createTextNode("\n                    ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","row");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","command");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                        ");
         dom.appendChild(el6, el7);
         var el7 = dom.createElement("div");
-        dom.setAttribute(el7,"class","col-sm-12");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","args");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("ARGS");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","cwd");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("CWD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","stopcmd");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("STOP CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","checkcmd");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("CHECK CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","port");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("PORT");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","hidden");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("HIDDEN");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
         var el8 = dom.createTextNode("\n                            ");
         dom.appendChild(el7, el8);
         var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("Name");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
+        dom.setAttribute(el8,"class","checkbox");
         var el9 = dom.createTextNode("\n                            ");
         dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("CMD");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("ARGS");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("CWD");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("STOP CMD");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("CHECK CMD");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("PORT");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
+        var el9 = dom.createElement("label");
+        var el10 = dom.createTextNode("\n                                ");
+        dom.appendChild(el9, el10);
+        var el10 = dom.createTextNode("\n                            ");
+        dom.appendChild(el9, el10);
         dom.appendChild(el8, el9);
         var el9 = dom.createTextNode("\n                            ");
         dom.appendChild(el8, el9);
@@ -2368,50 +2474,44 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var el7 = dom.createTextNode("\n                    ");
         dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n                ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n                \n                ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","panel-footer");
-        dom.setAttribute(el5,"style","font-size:23px");
-        var el6 = dom.createTextNode("\n                    ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("a");
-        var el7 = dom.createTextNode("\n                        ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("span");
-        dom.setAttribute(el7,"class","pull-right");
-        dom.setAttribute(el7,"style","cursor:pointer");
-        dom.setAttribute(el7,"title","Copy");
-        var el8 = dom.createElement("i");
-        dom.setAttribute(el8,"class","fa fa-fw fa-copy");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n                    ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n                    ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("a");
-        var el7 = dom.createTextNode("\n                        ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("span");
-        dom.setAttribute(el7,"class","pull-right");
-        dom.setAttribute(el7,"style","cursor:pointer; margin-right: 10px;");
-        dom.setAttribute(el7,"title","Save");
-        var el8 = dom.createElement("i");
-        dom.setAttribute(el8,"class","fa fa-fw fa-save");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n                    ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n                    ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","clearfix");
+        dom.setAttribute(el6,"class","form-group");
+        dom.setAttribute(el6,"style","font-size:23px");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10 col-lg-offset-2");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createElement("a");
+        dom.setAttribute(el8,"class","btn btn-default btn-sm");
+        var el9 = dom.createTextNode("\n                                ");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createElement("i");
+        dom.setAttribute(el9,"class","fa fa-fw fa-copy");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createTextNode(" Copy\n                            ");
+        dom.appendChild(el8, el9);
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createElement("a");
+        dom.setAttribute(el8,"class","btn btn-primary btn-sm");
+        var el9 = dom.createTextNode("\n                                ");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createElement("i");
+        dom.setAttribute(el9,"class","fa fa-fw fa-save");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createTextNode(" Save\n                            ");
+        dom.appendChild(el8, el9);
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
         dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n                ");
         dom.appendChild(el5, el6);
@@ -2584,6 +2684,22 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         var el9 = dom.createTextNode("\n                            ");
         dom.appendChild(el8, el9);
         dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createElement("div");
+        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
+        var el9 = dom.createTextNode("HIDDEN");
+        dom.appendChild(el8, el9);
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createElement("div");
+        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
+        var el9 = dom.createTextNode("\n                                ");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createTextNode("\n                            ");
+        dom.appendChild(el8, el9);
+        dom.appendChild(el7, el8);
         var el8 = dom.createTextNode("\n                        ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
@@ -2640,7 +2756,7 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         dom.appendChild(el3, el4);
         var el4 = dom.createElement("button");
         dom.setAttribute(el4,"type","button");
-        dom.setAttribute(el4,"class","btn btn-danger");
+        dom.setAttribute(el4,"class","btn btn-danger btn-sm");
         var el5 = dom.createTextNode("Delete This Process");
         dom.appendChild(el4, el5);
         dom.appendChild(el3, el4);
@@ -2678,46 +2794,45 @@ define('client/templates/process/edit', ['exports'], function (exports) {
           fragment = this.build(dom);
         }
         var element0 = dom.childAt(fragment, [0]);
-        var element1 = dom.childAt(element0, [5]);
-        var element2 = dom.childAt(element1, [1, 1]);
-        var element3 = dom.childAt(element2, [1]);
-        var element4 = dom.childAt(element3, [3, 1]);
-        var element5 = dom.childAt(element2, [3]);
-        var element6 = dom.childAt(element5, [1]);
-        var element7 = dom.childAt(element5, [3]);
-        var element8 = dom.childAt(element1, [3, 1]);
-        var element9 = dom.childAt(element8, [1]);
-        var element10 = dom.childAt(element9, [3, 1]);
-        var element11 = dom.childAt(element8, [3]);
-        var element12 = dom.childAt(element0, [7, 1, 1]);
-        var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),0,-1);
-        var morph1 = dom.createMorphAt(dom.childAt(element3, [1, 1]),0,1);
-        var morph2 = dom.createMorphAt(dom.childAt(element4, [3]),0,1);
-        var morph3 = dom.createMorphAt(dom.childAt(element4, [7]),0,1);
-        var morph4 = dom.createMorphAt(dom.childAt(element4, [11]),0,1);
-        var morph5 = dom.createMorphAt(dom.childAt(element4, [15]),0,1);
-        var morph6 = dom.createMorphAt(dom.childAt(element4, [19]),0,1);
-        var morph7 = dom.createMorphAt(dom.childAt(element4, [23]),0,1);
-        var morph8 = dom.createMorphAt(dom.childAt(element4, [27]),0,1);
-        var morph9 = dom.createMorphAt(dom.childAt(element9, [1, 1]),0,1);
-        var morph10 = dom.createMorphAt(dom.childAt(element10, [3]),0,1);
-        var morph11 = dom.createMorphAt(dom.childAt(element10, [7]),0,1);
-        var morph12 = dom.createMorphAt(dom.childAt(element10, [11]),0,1);
-        var morph13 = dom.createMorphAt(dom.childAt(element10, [15]),0,1);
-        var morph14 = dom.createMorphAt(dom.childAt(element10, [19]),0,1);
-        var morph15 = dom.createMorphAt(dom.childAt(element10, [23]),0,1);
-        var morph16 = dom.createMorphAt(dom.childAt(element10, [27]),0,1);
+        var element1 = dom.childAt(element0, [3]);
+        var element2 = dom.childAt(element1, [1, 1, 1]);
+        var element3 = dom.childAt(element2, [17, 1]);
+        var element4 = dom.childAt(element3, [1]);
+        var element5 = dom.childAt(element3, [3]);
+        var element6 = dom.childAt(element1, [3, 1]);
+        var element7 = dom.childAt(element6, [1]);
+        var element8 = dom.childAt(element7, [3, 1]);
+        var element9 = dom.childAt(element6, [3]);
+        var element10 = dom.childAt(element0, [5, 1, 1]);
+        var morph0 = dom.createMorphAt(dom.childAt(element0, [1]),1,-1);
+        var morph1 = dom.createMorphAt(dom.childAt(element2, [1, 3]),0,1);
+        var morph2 = dom.createMorphAt(dom.childAt(element2, [3, 3]),0,1);
+        var morph3 = dom.createMorphAt(dom.childAt(element2, [5, 3]),0,1);
+        var morph4 = dom.createMorphAt(dom.childAt(element2, [7, 3]),0,1);
+        var morph5 = dom.createMorphAt(dom.childAt(element2, [9, 3]),0,1);
+        var morph6 = dom.createMorphAt(dom.childAt(element2, [11, 3]),0,1);
+        var morph7 = dom.createMorphAt(dom.childAt(element2, [13, 3]),0,1);
+        var morph8 = dom.createMorphAt(dom.childAt(element2, [15, 3, 1, 1]),0,1);
+        var morph9 = dom.createMorphAt(dom.childAt(element7, [1, 1]),0,1);
+        var morph10 = dom.createMorphAt(dom.childAt(element8, [3]),0,1);
+        var morph11 = dom.createMorphAt(dom.childAt(element8, [7]),0,1);
+        var morph12 = dom.createMorphAt(dom.childAt(element8, [11]),0,1);
+        var morph13 = dom.createMorphAt(dom.childAt(element8, [15]),0,1);
+        var morph14 = dom.createMorphAt(dom.childAt(element8, [19]),0,1);
+        var morph15 = dom.createMorphAt(dom.childAt(element8, [23]),0,1);
+        var morph16 = dom.createMorphAt(dom.childAt(element8, [27]),0,1);
+        var morph17 = dom.createMorphAt(dom.childAt(element8, [31]),0,1);
         content(env, morph0, context, "model.name");
-        content(env, morph1, context, "model.name");
-        inline(env, morph2, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "name")});
-        inline(env, morph3, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "command")});
-        inline(env, morph4, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "args")});
-        inline(env, morph5, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "cwd")});
-        inline(env, morph6, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.stopcmd")});
-        inline(env, morph7, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.checkcmd")});
-        inline(env, morph8, context, "input", [], {"class": "full", "placeholder": "1338", "value": get(env, context, "model.port")});
-        element(env, element6, context, "action", ["copy"], {});
-        element(env, element7, context, "action", ["save"], {});
+        inline(env, morph1, context, "input", [], {"class": "form-control", "id": "name", "placeholder": "", "value": get(env, context, "name")});
+        inline(env, morph2, context, "input", [], {"class": "form-control", "id": "command", "placeholder": "", "value": get(env, context, "command")});
+        inline(env, morph3, context, "input", [], {"class": "form-control", "id": "args", "placeholder": "", "value": get(env, context, "args")});
+        inline(env, morph4, context, "input", [], {"class": "form-control", "id": "cwd", "placeholder": "", "value": get(env, context, "cwd")});
+        inline(env, morph5, context, "input", [], {"class": "form-control", "id": "stopcmd", "placeholder": "", "value": get(env, context, "stopcmd")});
+        inline(env, morph6, context, "input", [], {"class": "form-control", "id": "checkcmd", "placeholder": "", "value": get(env, context, "checkcmd")});
+        inline(env, morph7, context, "input", [], {"class": "form-control", "id": "port", "placeholder": "", "value": get(env, context, "port")});
+        inline(env, morph8, context, "input", [], {"type": "checkbox", "name": "hidden", "checked": get(env, context, "hidden")});
+        element(env, element4, context, "action", ["copy"], {});
+        element(env, element5, context, "action", ["save"], {});
         content(env, morph9, context, "model.name");
         content(env, morph10, context, "model.name");
         content(env, morph11, context, "model.command");
@@ -2726,8 +2841,9 @@ define('client/templates/process/edit', ['exports'], function (exports) {
         content(env, morph14, context, "model.stopcmd");
         content(env, morph15, context, "model.checkcmd");
         content(env, morph16, context, "model.port");
-        element(env, element11, context, "action", ["revert"], {});
-        element(env, element12, context, "action", ["remove"], {});
+        content(env, morph17, context, "model.hidden");
+        element(env, element9, context, "action", ["revert"], {});
+        element(env, element10, context, "action", ["remove"], {});
         return fragment;
       }
     };
@@ -2781,21 +2897,21 @@ define('client/templates/process/list', ['exports'], function (exports) {
         hasRendered: false,
         build: function build(dom) {
           var el0 = dom.createDocumentFragment();
-          var el1 = dom.createTextNode("                        ");
+          var el1 = dom.createTextNode("            ");
           dom.appendChild(el0, el1);
           var el1 = dom.createElement("a");
           dom.setAttribute(el1,"class","list-group-item");
-          var el2 = dom.createTextNode("\n                            ");
+          var el2 = dom.createTextNode("\n                ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("span");
           dom.setAttribute(el2,"class","pull-right");
           dom.setAttribute(el2,"style","font-size: 24px; font-weight: 300");
-          var el3 = dom.createTextNode("\n                                ");
+          var el3 = dom.createTextNode("\n                    ");
           dom.appendChild(el2, el3);
-          var el3 = dom.createTextNode("\n                            ");
+          var el3 = dom.createTextNode("\n                ");
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                            ");
+          var el2 = dom.createTextNode("\n                ");
           dom.appendChild(el1, el2);
           var el2 = dom.createElement("span");
           dom.setAttribute(el2,"style","width:calc(100% - 143px); font-size: 24px; font-weight: 300");
@@ -2812,7 +2928,7 @@ define('client/templates/process/list', ['exports'], function (exports) {
           dom.appendChild(el3, el4);
           dom.appendChild(el2, el3);
           dom.appendChild(el1, el2);
-          var el2 = dom.createTextNode("\n                        ");
+          var el2 = dom.createTextNode("\n            ");
           dom.appendChild(el1, el2);
           dom.appendChild(el0, el1);
           var el1 = dom.createTextNode("\n");
@@ -2897,7 +3013,7 @@ define('client/templates/process/list', ['exports'], function (exports) {
         dom.appendChild(el0, el1);
         var el1 = dom.createComment(" /.row ");
         dom.appendChild(el0, el1);
-        var el1 = dom.createTextNode("\n\n\n\n");
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createElement("div");
         dom.setAttribute(el1,"class","row");
@@ -2907,48 +3023,28 @@ define('client/templates/process/list', ['exports'], function (exports) {
         dom.setAttribute(el2,"class","col-lg-12");
         var el3 = dom.createTextNode("\n        ");
         dom.appendChild(el2, el3);
+        var el3 = dom.createElement("legend");
+        dom.setAttribute(el3,"class","inline");
+        var el4 = dom.createTextNode(" ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("i");
+        dom.setAttribute(el4,"class","fa fa-database fa-fw");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createTextNode(" Your Stored Processes ");
+        dom.appendChild(el3, el4);
+        var el4 = dom.createElement("span");
+        dom.setAttribute(el4,"class","inline pull-right");
+        var el5 = dom.createTextNode("\n        ");
+        dom.appendChild(el4, el5);
+        dom.appendChild(el3, el4);
+        dom.appendChild(el2, el3);
+        var el3 = dom.createTextNode("\n        \n        ");
+        dom.appendChild(el2, el3);
         var el3 = dom.createElement("div");
-        dom.setAttribute(el3,"class","panel panel-default");
-        var el4 = dom.createTextNode("\n            ");
+        dom.setAttribute(el3,"class","list-group");
+        var el4 = dom.createTextNode("\n");
         dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4,"class","panel-heading");
-        var el5 = dom.createTextNode("\n                ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("h3");
-        dom.setAttribute(el5,"class","panel-title inline");
-        var el6 = dom.createElement("i");
-        dom.setAttribute(el6,"class","fa fa-database fa-fw");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode(" Your Stored Processes");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n                ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("span");
-        dom.setAttribute(el5,"class","inline pull-right");
-        dom.setAttribute(el5,"style","margin-top:-3px");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n            ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n            ");
-        dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4,"class","panel-body");
-        var el5 = dom.createTextNode("\n                ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","list-group");
-        var el6 = dom.createTextNode("\n");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("                    \n                ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n            ");
-        dom.appendChild(el4, el5);
-        dom.appendChild(el3, el4);
-        var el4 = dom.createTextNode("\n        ");
+        var el4 = dom.createTextNode("        ");
         dom.appendChild(el3, el4);
         dom.appendChild(el2, el3);
         var el3 = dom.createTextNode("\n    ");
@@ -2960,6 +3056,8 @@ define('client/templates/process/list', ['exports'], function (exports) {
         var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         var el1 = dom.createComment(" /.row ");
+        dom.appendChild(el0, el1);
+        var el1 = dom.createTextNode("\n");
         dom.appendChild(el0, el1);
         return el0;
       },
@@ -2983,11 +3081,11 @@ define('client/templates/process/list', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element2 = dom.childAt(fragment, [6, 1, 1]);
-        var morph0 = dom.createMorphAt(dom.childAt(element2, [1, 3]),-1,-1);
-        var morph1 = dom.createMorphAt(dom.childAt(element2, [3, 1]),0,1);
-        inline(env, morph0, context, "input", [], {"action": "search", "onEvent": "enter", "value": get(env, context, "controller.search"), "class": "full", "placeholder": "Search"});
-        block(env, morph1, context, "each", [get(env, context, "model")], {"keyword": "process"}, child0, null);
+        var element2 = dom.childAt(fragment, [6, 1]);
+        var morph0 = dom.createMorphAt(dom.childAt(element2, [1, 3]),-1,0);
+        var morph1 = dom.createMorphAt(dom.childAt(element2, [3]),0,1);
+        inline(env, morph0, context, "input", [], {"class": "form-control", "action": "search", "onEvent": "enter", "value": get(env, context, "controller.search"), "placeholder": "Search"});
+        block(env, morph1, context, "each", [get(env, context, "mirror")], {"keyword": "process"}, child0, null);
         return fragment;
       }
     };
@@ -3221,12 +3319,6 @@ define('client/templates/process/new', ['exports'], function (exports) {
         dom.setAttribute(el1,"class","new");
         var el2 = dom.createTextNode("\n    ");
         dom.appendChild(el1, el2);
-        var el2 = dom.createElement("h3");
-        var el3 = dom.createTextNode(" Create A New Process ");
-        dom.appendChild(el2, el3);
-        dom.appendChild(el1, el2);
-        var el2 = dom.createTextNode("\n    ");
-        dom.appendChild(el1, el2);
         var el2 = dom.createElement("div");
         dom.setAttribute(el2,"class","row");
         var el3 = dom.createTextNode("\n        ");
@@ -3235,31 +3327,217 @@ define('client/templates/process/new', ['exports'], function (exports) {
         dom.setAttribute(el3,"class","col-lg-12");
         var el4 = dom.createTextNode("\n            ");
         dom.appendChild(el3, el4);
-        var el4 = dom.createElement("div");
-        dom.setAttribute(el4,"class","panel");
+        var el4 = dom.createElement("form");
+        dom.setAttribute(el4,"class","form-horizontal");
         var el5 = dom.createTextNode("\n                ");
         dom.appendChild(el4, el5);
-        var el5 = dom.createElement("div");
-        dom.setAttribute(el5,"class","panel-heading");
+        var el5 = dom.createElement("fieldset");
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("legend");
+        var el7 = dom.createElement("i");
+        dom.setAttribute(el7,"class","fa fa-pencil fa-fw");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode(" Create A New Process");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
         var el6 = dom.createTextNode("\n                    ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","row");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","name");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("Name");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                        ");
         dom.appendChild(el6, el7);
         var el7 = dom.createElement("div");
-        dom.setAttribute(el7,"class","col-xs-3");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
         var el8 = dom.createTextNode("\n                        ");
         dom.appendChild(el7, el8);
         dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","command");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                        ");
         dom.appendChild(el6, el7);
         var el7 = dom.createElement("div");
-        dom.setAttribute(el7,"class","col-xs-9 text-right");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","args");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("ARGS");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","cwd");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("CWD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","stopcmd");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("STOP CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","checkcmd");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("CHECK CMD");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","port");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("PORT");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
+        var el8 = dom.createTextNode("\n                            ");
+        dom.appendChild(el7, el8);
+        var el8 = dom.createTextNode("\n                        ");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                    ");
+        dom.appendChild(el6, el7);
+        dom.appendChild(el5, el6);
+        var el6 = dom.createTextNode("\n                    ");
+        dom.appendChild(el5, el6);
+        var el6 = dom.createElement("div");
+        dom.setAttribute(el6,"class","form-group");
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("label");
+        dom.setAttribute(el7,"for","hidden");
+        dom.setAttribute(el7,"class","col-lg-2 control-label");
+        var el8 = dom.createTextNode("HIDDEN");
+        dom.appendChild(el7, el8);
+        dom.appendChild(el6, el7);
+        var el7 = dom.createTextNode("\n                        ");
+        dom.appendChild(el6, el7);
+        var el7 = dom.createElement("div");
+        dom.setAttribute(el7,"class","col-lg-10");
         var el8 = dom.createTextNode("\n                            ");
         dom.appendChild(el7, el8);
         var el8 = dom.createElement("div");
-        var el9 = dom.createTextNode("New Configuration");
+        dom.setAttribute(el8,"class","checkbox");
+        var el9 = dom.createTextNode("\n                            ");
+        dom.appendChild(el8, el9);
+        var el9 = dom.createElement("label");
+        var el10 = dom.createTextNode("\n                                ");
+        dom.appendChild(el9, el10);
+        var el10 = dom.createTextNode("\n                            ");
+        dom.appendChild(el9, el10);
+        dom.appendChild(el8, el9);
+        var el9 = dom.createTextNode("\n                            ");
         dom.appendChild(el8, el9);
         dom.appendChild(el7, el8);
         var el8 = dom.createTextNode("\n                        ");
@@ -3271,159 +3549,27 @@ define('client/templates/process/new', ['exports'], function (exports) {
         var el6 = dom.createTextNode("\n                    ");
         dom.appendChild(el5, el6);
         var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","row");
+        dom.setAttribute(el6,"class","form-group");
+        dom.setAttribute(el6,"style","font-size:23px");
         var el7 = dom.createTextNode("\n                        ");
         dom.appendChild(el6, el7);
         var el7 = dom.createElement("div");
-        dom.setAttribute(el7,"class","col-sm-12");
+        dom.setAttribute(el7,"class","col-lg-10 col-lg-offset-2");
         var el8 = dom.createTextNode("\n                            ");
         dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("Name");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
+        var el8 = dom.createElement("a");
+        dom.setAttribute(el8,"class","btn btn-primary btn-sm");
+        dom.setAttribute(el8,"href","#/process/new");
         var el9 = dom.createTextNode("\n                                ");
         dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
+        var el9 = dom.createElement("i");
+        dom.setAttribute(el9,"class","fa fa-fw fa-save");
         dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("CMD");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("ARGS");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("CWD");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("STOP CMD");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("CHECK CMD");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:100px;");
-        var el9 = dom.createTextNode("PORT");
-        dom.appendChild(el8, el9);
-        dom.appendChild(el7, el8);
-        var el8 = dom.createTextNode("\n                            ");
-        dom.appendChild(el7, el8);
-        var el8 = dom.createElement("div");
-        dom.setAttribute(el8,"style","display:inline-block; width:calc(100% - 105px)");
-        var el9 = dom.createTextNode("\n                                ");
-        dom.appendChild(el8, el9);
-        var el9 = dom.createTextNode("\n                            ");
+        var el9 = dom.createTextNode(" Save\n                            ");
         dom.appendChild(el8, el9);
         dom.appendChild(el7, el8);
         var el8 = dom.createTextNode("\n                        ");
         dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n                    ");
-        dom.appendChild(el6, el7);
-        dom.appendChild(el5, el6);
-        var el6 = dom.createTextNode("\n                ");
-        dom.appendChild(el5, el6);
-        dom.appendChild(el4, el5);
-        var el5 = dom.createTextNode("\n                ");
-        dom.appendChild(el4, el5);
-        var el5 = dom.createElement("a");
-        dom.setAttribute(el5,"href","#/process/new");
-        var el6 = dom.createTextNode("\n                    ");
-        dom.appendChild(el5, el6);
-        var el6 = dom.createElement("div");
-        dom.setAttribute(el6,"class","panel-footer");
-        var el7 = dom.createTextNode("\n                        ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("span");
-        dom.setAttribute(el7,"class","pull-left");
-        var el8 = dom.createTextNode("Save");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n                        ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("span");
-        dom.setAttribute(el7,"class","pull-right");
-        var el8 = dom.createElement("i");
-        dom.setAttribute(el8,"class","fa fa-arrow-circle-right");
-        dom.appendChild(el7, el8);
-        dom.appendChild(el6, el7);
-        var el7 = dom.createTextNode("\n                        ");
-        dom.appendChild(el6, el7);
-        var el7 = dom.createElement("div");
-        dom.setAttribute(el7,"class","clearfix");
         dom.appendChild(el6, el7);
         var el7 = dom.createTextNode("\n                    ");
         dom.appendChild(el6, el7);
@@ -3467,24 +3613,25 @@ define('client/templates/process/new', ['exports'], function (exports) {
         } else {
           fragment = this.build(dom);
         }
-        var element0 = dom.childAt(fragment, [0, 3, 1, 1]);
-        var element1 = dom.childAt(element0, [1, 3, 1]);
-        var element2 = dom.childAt(element0, [3]);
-        var morph0 = dom.createMorphAt(dom.childAt(element1, [3]),0,1);
-        var morph1 = dom.createMorphAt(dom.childAt(element1, [7]),0,1);
-        var morph2 = dom.createMorphAt(dom.childAt(element1, [11]),0,1);
-        var morph3 = dom.createMorphAt(dom.childAt(element1, [15]),0,1);
-        var morph4 = dom.createMorphAt(dom.childAt(element1, [19]),0,1);
-        var morph5 = dom.createMorphAt(dom.childAt(element1, [23]),0,1);
-        var morph6 = dom.createMorphAt(dom.childAt(element1, [27]),0,1);
-        inline(env, morph0, context, "input", [], {"class": "full", "placeholder": "My Simple Python Service", "value": get(env, context, "model.name")});
-        inline(env, morph1, context, "input", [], {"class": "full", "placeholder": "python", "value": get(env, context, "model.command")});
-        inline(env, morph2, context, "input", [], {"class": "full", "placeholder": "-m, SimpleHTTPServer, 8080", "value": get(env, context, "controller.args")});
-        inline(env, morph3, context, "input", [], {"class": "full", "placeholder": "/Users/charlie/servers/myservice/", "value": get(env, context, "model.cwd")});
-        inline(env, morph4, context, "input", [], {"class": "full", "placeholder": "", "value": get(env, context, "model.stopcmd")});
-        inline(env, morph5, context, "input", [], {"class": "full", "placeholder": "nc -zv localhost 1338", "value": get(env, context, "model.checkcmd")});
-        inline(env, morph6, context, "input", [], {"class": "full", "placeholder": "1338", "value": get(env, context, "model.port")});
-        element(env, element2, context, "action", ["save"], {});
+        var element0 = dom.childAt(fragment, [0, 1, 1, 1, 1]);
+        var element1 = dom.childAt(element0, [19, 1, 1]);
+        var morph0 = dom.createMorphAt(dom.childAt(element0, [3, 3]),0,1);
+        var morph1 = dom.createMorphAt(dom.childAt(element0, [5, 3]),0,1);
+        var morph2 = dom.createMorphAt(dom.childAt(element0, [7, 3]),0,1);
+        var morph3 = dom.createMorphAt(dom.childAt(element0, [9, 3]),0,1);
+        var morph4 = dom.createMorphAt(dom.childAt(element0, [11, 3]),0,1);
+        var morph5 = dom.createMorphAt(dom.childAt(element0, [13, 3]),0,1);
+        var morph6 = dom.createMorphAt(dom.childAt(element0, [15, 3]),0,1);
+        var morph7 = dom.createMorphAt(dom.childAt(element0, [17, 3, 1, 1]),0,1);
+        inline(env, morph0, context, "input", [], {"class": "form-control", "id": "name", "placeholder": "My Simple Service", "value": get(env, context, "model.name")});
+        inline(env, morph1, context, "input", [], {"class": "form-control", "id": "command", "placeholder": "sh", "value": get(env, context, "model.command")});
+        inline(env, morph2, context, "input", [], {"class": "form-control", "id": "args", "placeholder": "build.sh, [?notbuild:build], [?notrun:run]", "value": get(env, context, "model.args")});
+        inline(env, morph3, context, "input", [], {"class": "form-control", "id": "cwd", "placeholder": "/home/myfolder/", "value": get(env, context, "model.cwd")});
+        inline(env, morph4, context, "input", [], {"class": "form-control", "id": "stopcmd", "placeholder": "sh build.sh notbuild notrun stop", "value": get(env, context, "model.stopcmd")});
+        inline(env, morph5, context, "input", [], {"class": "form-control", "id": "checkcmd", "placeholder": "nc -zv localhost 1338", "value": get(env, context, "model.checkcmd")});
+        inline(env, morph6, context, "input", [], {"class": "form-control", "id": "port", "placeholder": "1338", "value": get(env, context, "model.port")});
+        inline(env, morph7, context, "input", [], {"type": "checkbox", "name": "hidden", "checked": get(env, context, "model.hidden")});
+        element(env, element1, context, "action", ["save"], {});
         return fragment;
       }
     };
@@ -3507,7 +3654,7 @@ define('client/tests/controllers/dashboard.jshint', function () {
 
   module('JSHint - controllers');
   test('controllers/dashboard.js should pass jshint', function() { 
-    ok(false, 'controllers/dashboard.js should pass jshint.\ncontrollers/dashboard.js: line 68, col 31, \'$\' is not defined.\ncontrollers/dashboard.js: line 70, col 42, \'$\' is not defined.\ncontrollers/dashboard.js: line 43, col 30, \'a\' is defined but never used.\ncontrollers/dashboard.js: line 43, col 27, \'e\' is defined but never used.\n\n4 errors'); 
+    ok(false, 'controllers/dashboard.js should pass jshint.\ncontrollers/dashboard.js: line 96, col 31, \'$\' is not defined.\ncontrollers/dashboard.js: line 98, col 42, \'$\' is not defined.\ncontrollers/dashboard.js: line 70, col 30, \'a\' is defined but never used.\ncontrollers/dashboard.js: line 70, col 27, \'e\' is defined but never used.\n\n4 errors'); 
   });
 
 });
@@ -3517,7 +3664,7 @@ define('client/tests/controllers/process/edit.jshint', function () {
 
   module('JSHint - controllers/process');
   test('controllers/process/edit.js should pass jshint', function() { 
-    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 49, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 50, col 63, Missing semicolon.\n\n2 errors'); 
+    ok(false, 'controllers/process/edit.js should pass jshint.\ncontrollers/process/edit.js: line 54, col 63, Missing semicolon.\ncontrollers/process/edit.js: line 55, col 63, Missing semicolon.\n\n2 errors'); 
   });
 
 });
@@ -3527,7 +3674,7 @@ define('client/tests/controllers/process/list.jshint', function () {
 
   module('JSHint - controllers/process');
   test('controllers/process/list.js should pass jshint', function() { 
-    ok(false, 'controllers/process/list.js should pass jshint.\ncontrollers/process/list.js: line 6, col 30, \'a\' is defined but never used.\ncontrollers/process/list.js: line 6, col 27, \'e\' is defined but never used.\n\n2 errors'); 
+    ok(false, 'controllers/process/list.js should pass jshint.\ncontrollers/process/list.js: line 20, col 30, \'a\' is defined but never used.\ncontrollers/process/list.js: line 20, col 27, \'e\' is defined but never used.\n\n2 errors'); 
   });
 
 });
@@ -4234,7 +4381,7 @@ define('client/tests/views/dashboard.jshint', function () {
 
   module('JSHint - views');
   test('views/dashboard.js should pass jshint', function() { 
-    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 10, col 13, Expected \'{\' and instead saw \'window\'.\nviews/dashboard.js: line 20, col 20, \'i\' is already defined.\nviews/dashboard.js: line 30, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 41, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 44, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 60, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 61, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 62, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 63, col 9, \'socket\' is not defined.\n\n9 errors'); 
+    ok(false, 'views/dashboard.js should pass jshint.\nviews/dashboard.js: line 8, col 13, Expected \'{\' and instead saw \'window\'.\nviews/dashboard.js: line 18, col 20, \'i\' is already defined.\nviews/dashboard.js: line 28, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 39, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 42, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 58, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 59, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 60, col 9, \'socket\' is not defined.\nviews/dashboard.js: line 61, col 9, \'socket\' is not defined.\n\n9 errors'); 
   });
 
 });
@@ -4276,8 +4423,6 @@ define('client/views/dashboard', ['exports', 'ember'], function (exports, Ember)
         setupInterval: function setupInterval(self) {
             var controller = self.get("controller");
             var process;
-
-            console.log(controller.get("model.processes"));
 
             for (var i = 1; i < 99999; i++) window.clearInterval(i);
 
@@ -4358,7 +4503,7 @@ define('client/views/process/edit', ['exports', 'ember'], function (exports, Emb
 
             (function () {
                 // @this --> controller
-                this.set("cwd", this.get("model.cwd")).set("name", this.get("model.name")).set("args", this.get("model.args").join(", ")).set("command", this.get("model.command"));
+                this.set("cwd", this.get("model.cwd")).set("name", this.get("model.name")).set("args", this.get("model.args").join(", ")).set("command", this.get("model.command")).set("stopcmd", this.get("model.stopcmd")).set("checkcmd", this.get("model.checkcmd")).set("port", this.get("model.port")).set("hidden", this.get("model.hidden"));
             }).call(this.get("controller"));
         }
     });
@@ -4416,7 +4561,7 @@ catch(err) {
 if (runningTests) {
   require("client/tests/test-helper");
 } else {
-  require("client/app")["default"].create({"name":"client","version":"0.0.0.7f31ca2c"});
+  require("client/app")["default"].create({"name":"client","version":"0.0.0.b54e8e0f"});
 }
 
 /* jshint ignore:end */

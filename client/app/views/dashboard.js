@@ -4,8 +4,6 @@ export default Ember.View.extend({
         var controller = self.get('controller');
         var process;
 
-        console.log(controller.get('model.processes'));
-
         for (var i = 1; i < 99999; i++)
             window.clearInterval(i);
 

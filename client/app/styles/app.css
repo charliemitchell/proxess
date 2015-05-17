@@ -1,5 +1,9 @@
-.navbar-inverse {
-  background-color: #005394;
+.modal-backdrop {
+    background-color: #fff;
+}
+
+.panel-title {
+    color: #fff;
 }
 
 .grey {
@@ -91,13 +95,13 @@
     color: rgba(0, 0, 0, 0.73);
 }
 
-.modal-content {
+/*.modal-content {
     background: rgba(0, 0, 0, 0.73);
-}
+}*/
 
-.modal-title {
+/*.modal-title {
     color: #FFF;
-}
+}*/
 /* Correct Bootstrap's Modal.*/
 
 .modal {

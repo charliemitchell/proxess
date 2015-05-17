@@ -38,6 +38,9 @@ var process = new Schema({
     },
     port: {
         type: String
+    },
+    hidden: {
+        type: Boolean
     }
 });
 process.virtual('id').get(function () {

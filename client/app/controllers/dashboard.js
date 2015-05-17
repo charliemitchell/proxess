@@ -39,16 +39,44 @@ export default Ember.Controller.extend(Ember.Evented, {
         total = total > 100 ? 100 : total;
         this.set('totalPCPU', total.toFixed(2));
     },
-    actions: {
-        search: function (e, a) {
-            Ember.$.ajax({
-                type: 'GET',
-                url: '/dashboard/?search=' + this.get('search'),
-                success: function (data) {
-                    this.set('model', data);
-                    this.trigger('setupint');
-                }.bind(this)
+    filter: function () {
+        if (this.get('search')) {
+            var arr = this.get('model').processes;
+            arr = arr.filter(function (item) {
+                return item.name.match(new RegExp(this.get('search'), 'ig'));
+            }.bind(this));
+            this.set('mirror', {
+                processes: arr
             });
+        } else {
+            this.set('mirror', this.get('model'));
+        }
+    }.observes('search'),
+    mirror: function () {
+        return this.get('model');
+    }.property('mirror'),
+    actions: {
+        runningonly: function () {
+            var arr = this.get('model.processes').filter(function (x) {
+                return x.running === true;
+            });
+            this.set('mirror', {
+                processes: arr
+            });
+        },
+        all: function () {
+            this.set('mirror', this.get('model'));
+        },
+        search: function (e, a) {
+            console.log('Search submission is deprecated');
+            // Ember.$.ajax({
+            //     type: 'GET',
+            //     url: '/dashboard/?search=' + this.get('search'),
+            //     success: function (data) {
+            //         this.set('mirror', data);
+            //         this.trigger('setupint');
+            //     }.bind(this)
+            // });
         },
         logs: function (process) {
             this.set('log.title', process.name);

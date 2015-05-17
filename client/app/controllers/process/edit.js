@@ -5,6 +5,10 @@ export default Ember.Controller.extend({
     args: '',
     cwd: '',
     name: '',
+    stopcmd: '',
+    checkcmd: '',
+    port: '',
+    hidden: false,
 
     transformArgs: function () {
         return this.get('args').split(',').without('');
@@ -24,15 +28,16 @@ export default Ember.Controller.extend({
                 name: this.get('name'),
                 id: this.get('model.id'),
                 _id: this.get('model._id'),
-                stopcmd: this.get('model.stopcmd'),
-                checkcmd: this.get('model.checkcmd'),
-                port: this.get('model.port')
+                stopcmd: this.get('stopcmd'),
+                checkcmd: this.get('checkcmd'),
+                port: this.get('port'),
+                hidden: this.get('hidden')
             };
 
             Ember.$.ajax({
                 type: 'PUT',
                 url: 'process/' + data.id,
-                data: JSON.stringify(data),
+                data: JSON.stringify(this.get('model')),
                 success: function () {
                     this.notify.success("Process Updated");
                 }.bind(this)
@@ -57,7 +62,11 @@ export default Ember.Controller.extend({
             this.set('command', this.get('model.command'))
                 .set('cwd', this.get('model.cwd'))
                 .set('args', this.get('model.args').join(', '))
-                .set('name', this.get('model.name'));
+                .set('name', this.get('model.name'))
+                .set('stopcmd', this.get('model.stopcmd'))
+                .set('checkcmd', this.get('model.checkcmd'))
+                .set('port', this.get('model.port'))
+                .set('hidden', this.get('model.hidden'));
         }
     }
 });

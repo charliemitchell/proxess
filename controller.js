@@ -305,14 +305,17 @@ module.exports = {
             //     });
             // });
             Model.find({ //full text search
-                name: new RegExp(search, "i")
+                name: new RegExp(search, "i"),
+                hidden: false
             }, function (error, services) {
                 res.json({
                     processes: services
                 });
             });
         } else {
-            Model.find(function (error, services) {
+            Model.find({
+                hidden: false
+            }, function (error, services) {
                 res.json({
                     processes: services
                 });

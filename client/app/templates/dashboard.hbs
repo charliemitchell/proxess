@@ -111,18 +111,18 @@
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title inline"><i class="fa fa-database fa-fw"></i> Total Processes : {{model.processes.length}}&nbsp;&nbsp;&nbsp;<i class="fa fa-cogs fa-fw"></i> Running Processes : {{running}}</h3>
-                <span class="inline pull-right" style="margin-top:-3px">{{input action="search" onEvent="enter" value=controller.search class="full" placeholder="Search"}}</span>
+                <h3 class="panel-title inline"><a class="btn btn-primary btn-sm" {{action 'all'}}><i class="fa fa-database fa-fw"></i> Total Processes : {{model.processes.length}}</a>&nbsp;&nbsp;&nbsp;<a class="btn btn-success btn-sm" {{action 'runningonly'}}><i class="fa fa-cogs fa-fw"></i>  Running Processes : {{running}}</a></h3>
+                <span class="inline pull-right" style="margin-top:-5px">{{input action="search" onEvent="enter" value=controller.search class="full" placeholder="Search" class="form-control"}}</span>
             </div>
             <div class="panel-body">
                 <div class="list-group">
-                    {{#each process in model.processes}}
+                    {{#each process in mirror.processes}}
                     <a class="list-group-item" id="{{unbound process.id}}">
                         <span class="text-right">
                         {{#if process.running}}
-                            <a class="btn btn-danger" {{action 'kill' process}}><i class="fa fa-stop fa-fw"></i></a>
+                            <a class="btn btn-success" {{action 'kill' process}}><i class="fa fa-stop fa-fw"></i></a>
                         {{else}}
-                            <a {{bind-attr class=":btn :btn-success"}} {{action 'start' process}}><i class="fa fa-play fa-fw"></i></a>
+                            <a {{bind-attr class=":btn :btn-danger"}} {{action 'start' process}}><i class="fa fa-play fa-fw"></i></a>
                         {{/if}}
                         </span>
 
