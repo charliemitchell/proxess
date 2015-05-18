@@ -8,6 +8,7 @@ var Router = Ember.Router.extend({
 Router.map(function() {
   this.resource('process', function() {
     this.route('new');
+    this.route('new' , {path : 'new/:id'});
     this.route('edit' , {path : 'edit/:id'});
     this.route('manage');
     this.route('list');

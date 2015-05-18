@@ -64,10 +64,15 @@ module.exports = {
     GET: function (req, res) {
         var search = req.query.search;
         if (search) {
+            // Model.find({ //full text search
+            //     $text: {
+            //         $search: "\"" + search + "\""
+            //     }
+            // }, function (error, services) {
+            //     res.json(services);
+            // });
             Model.find({ //full text search
-                $text: {
-                    $search: "\"" + search + "\""
-                }
+                name: new RegExp(search, "i")
             }, function (error, services) {
                 res.json(services);
             });
@@ -290,17 +295,27 @@ module.exports = {
     dashboard: function (req, res) {
         var search = req.query.search;
         if (search) {
+            // Model.find({ //full text search
+            //     $text: {
+            //         $search: "\"" + search + "\""
+            //     }
+            // }, function (error, services) {
+            //     res.json({
+            //         processes: services
+            //     });
+            // });
             Model.find({ //full text search
-                $text: {
-                    $search: "\"" + search + "\""
-                }
+                name: new RegExp(search, "i"),
+                hidden: false
             }, function (error, services) {
                 res.json({
                     processes: services
                 });
             });
         } else {
-            Model.find(function (error, services) {
+            Model.find({
+                hidden: false
+            }, function (error, services) {
                 res.json({
                     processes: services
                 });

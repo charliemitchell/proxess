@@ -1,21 +1,29 @@
 import Ember from 'ember';
 export default Ember.View.extend({
-    didInsertElement: function () {
-        var controller = this.get('controller');
+    setupInterval: function (self) {
+        var controller = self.get('controller');
         var process;
+
+        for (var i = 1; i < 99999; i++)
+            window.clearInterval(i);
 
         function checkstatus(process, id, i) {
             setInterval(function () {
                 Ember.$.getJSON('/status/' + id).then(function (res) {
-                    controller.get('model.processes').set(i + '.running', res.status);
+                    controller.get('mirror.processes').set(i + '.running', res.status);
                 });
             }, 2000);
         }
 
-        for (var i = 0; i < controller.get('model').processes.length; i++) {
-            process = controller.get('model.processes')[i];
+        for (var i = 0; i < controller.get('mirror').processes.length; i++) {
+            process = controller.get('mirror.processes')[i];
             checkstatus(process, process._id, i);
         }
+    },
+    didInsertElement: function () {
+        var controller = this.get('controller');
+
+        this.setupInterval(this);
 
         socket.on('log', function (data) {
             controller.get('logs').pushObject(data);
@@ -36,6 +44,12 @@ export default Ember.View.extend({
         });
         Ember.$("li.active").removeClass('active');
         Ember.$("#dashboard").addClass('active');
+
+        controller.on('setupint', this, function () {
+            setTimeout(function () {
+                this.setupInterval(this);
+            }.bind(this), 1000);
+        });
     },
     willClearRender: function () {
         var controller = this.get('controller');

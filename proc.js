@@ -20,7 +20,9 @@ exports.start = function (proc, stdout) {
     var options = {
         cwd: proc.cwd || undefined
     };
+
     var process = spawn(proc.command, proc.args, options);
+
     // var process = spawn('sh', ['build.sh'], {
     //     cwd: '/root/defie/FS/fs-admin-client'
     // });

@@ -1,5 +1,5 @@
 import Ember from 'ember';
-export default Ember.Controller.extend({
+export default Ember.Controller.extend(Ember.Evented, {
     logs: Ember.A(),
     log: {
         title: "",
@@ -11,43 +11,72 @@ export default Ember.Controller.extend({
     id: '',
     search: '',
     running: function () {
-        var runningprocesses = this.get('model.processes').filter(function (x) {
+        var runningprocesses = this.get('mirror.processes').filter(function (x) {
             return x.running === true;
         });
         return runningprocesses.length;
-    }.property('model.processes.@each.running'),
-    updatePMEM: function (proc) {
-        var total = 0;
-        proc.mem = parseFloat(proc.mem.replace(/[^0-9\.]+/g, ""));
-        var process = this.get('model.processes').findBy('id', proc.id),
-            idx = this.get('model.processes').indexOf(process);
-        this.set('model.processes.' + idx + '.pmem', proc.mem);
-        this.get('model.processes').forEach(function (p) {
-            total += p.pmem || 0;
-        });
-        this.set('totalPMEM', total.toFixed(2));
-    },
-    updatePCPU: function (proc) {
-        var total = 0;
-        proc.cpu = parseFloat(proc.cpu.replace(/[^0-9\.]+/g, ""));
-        var process = this.get('model.processes').findBy('id', proc.id),
-            idx = this.get('model.processes').indexOf(process);
-        this.set('model.processes.' + idx + '.pcpu', proc.cpu);
-        this.get('model.processes').forEach(function (p) {
-            total += p.pcpu || 0;
-        });
-        total = total > 100 ? 100 : total;
-        this.set('totalPCPU', total.toFixed(2));
-    },
-    actions: {
-        search: function (e, a) {
-            Ember.$.ajax({
-                type: 'GET',
-                url: '/dashboard/?search=' + this.get('search'),                
-                success: function (data) {
-                    this.set('model', data);
-                }.bind(this)
+    }.property('mirror.processes.@each.running'),
+    // updatePMEM: function (proc) {
+    //     var total = 0;
+    //     proc.mem = parseFloat(proc.mem.replace(/[^0-9\.]+/g, ""));
+    //     var process = this.get('model.processes').findBy('id', proc.id),
+    //         idx = this.get('model.processes').indexOf(process);
+    //     this.set('model.processes.' + idx + '.pmem', proc.mem);
+    //     this.get('model.processes').forEach(function (p) {
+    //         total += p.pmem || 0;
+    //     });
+    //     this.set('totalPMEM', total.toFixed(2));
+    // },
+    // updatePCPU: function (proc) {
+    //     var total = 0;
+    //     proc.cpu = parseFloat(proc.cpu.replace(/[^0-9\.]+/g, ""));
+    //     var process = this.get('model.processes').findBy('id', proc.id),
+    //         idx = this.get('model.processes').indexOf(process);
+    //     this.set('model.processes.' + idx + '.pcpu', proc.cpu);
+    //     this.get('model.processes').forEach(function (p) {
+    //         total += p.pcpu || 0;
+    //     });
+    //     total = total > 100 ? 100 : total;
+    //     this.set('totalPCPU', total.toFixed(2));
+    // },
+    filter: function () {
+        if (this.get('search')) {
+            var arr = this.get('model').processes;
+            arr = arr.filter(function (item) {
+                return item.name.match(new RegExp(this.get('search'), 'ig'));
+            }.bind(this));
+            this.set('mirror', {
+                processes: arr
             });
+        } else {
+            this.set('mirror', this.get('model'));
+        }
+    }.observes('search'),
+    mirror: function () {
+        return this.get('model');
+    }.property('mirror'),
+    actions: {
+        runningonly: function () {
+            var arr = this.get('mirror.processes').filter(function (x) {
+                return x.running === true;
+            });
+            this.set('mirror', {
+                processes: arr
+            });
+        },
+        all: function () {
+            this.set('mirror', this.get('model'));
+        },
+        search: function (e, a) {
+            console.log('Search submission is deprecated');
+            // Ember.$.ajax({
+            //     type: 'GET',
+            //     url: '/dashboard/?search=' + this.get('search'),
+            //     success: function (data) {
+            //         this.set('mirror', data);
+            //         this.trigger('setupint');
+            //     }.bind(this)
+            // });
         },
         logs: function (process) {
             this.set('log.title', process.name);

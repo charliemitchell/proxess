@@ -9,29 +9,24 @@
     </div>
 </div>
 <!-- /.row -->
-
-
-
 <div class="row">
     <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title inline"><i class="fa fa-database fa-fw"></i> Your Stored Processes</h3>
-                <span class="inline pull-right" style="margin-top:-3px">{{input action="search" onEvent="enter" value=controller.search class="full" placeholder="Search"}}</span>
-            </div>
-            <div class="panel-body">
-                <div class="list-group">
-                    {{#each process in model}}
-                        <a class="list-group-item">
-                            <span class="pull-right" style="font-size: 24px; font-weight: 300">
-                                {{#link-to 'process.edit' process.id}}<i class="fa fa-fw fa-pencil"></i>{{/link-to}}
-                            </span>
-                            <span style="width:calc(100% - 143px); font-size: 24px; font-weight: 300"><i class="fa fa-fw fa-gear"></i> {{process.name}}</span>
-                        </a>
-                    {{/each}}
-                    
-                </div>
-            </div>
+        <legend class="inline"> <i class="fa fa-database fa-fw"></i> Your Stored Processes <span class="inline pull-right">{{input class="form-control" action="search" onEvent="enter" value=controller.search placeholder="Search"}}
+        </span></legend>
+        
+        <div class="list-group">
+            {{#if mirror}}
+            {{#each process in mirror}}
+            <a class="list-group-item">
+                <span class="pull-right" style="font-size: 24px; font-weight: 300">
+                    {{#link-to 'process.edit' process.id}}<i class="fa fa-fw fa-pencil"></i>{{/link-to}}
+                </span>
+                <span style="width:calc(100% - 143px); font-size: 24px; font-weight: 300"><i class="fa fa-fw fa-gear"></i> {{process.name}} <span class="grey">:{{process.port}}</span></span>
+            </a>
+            {{/each}}
+            {{else}}
+                No process found. Click <a href="#/process/new" >new</a> process to create one.
+            {{/if}}
         </div>
     </div>
 </div>
