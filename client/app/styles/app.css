@@ -1,3 +1,13 @@
+@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+.fa.spin {
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation:spin 4s linear infinite;
+}
+
 .modal-backdrop {
     background-color: #fff;
 }
@@ -79,7 +89,7 @@
     content: '\2714';
     text-indent: .9em;
     color: #9CE2AE;
-    background-color: #4DCB6D;
+    background-color: #18BC9C;
 }
 
 #custombuild .modal-content input.radio:checked ~ label {
@@ -151,7 +161,7 @@ input.full {
 }
 
 .alert-success {
-    /*background-color: #4caf50!important;*/
+    background-color: #18BC9C!important;
 }
 /* Custom Colored Panels */
 
