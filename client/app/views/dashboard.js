@@ -1,11 +1,8 @@
 import Ember from 'ember';
 export default Ember.View.extend({
     setupInterval: function(self) {
-        
         var controller = self.get('controller');
         var process;
-        for (var i = 1; i < 99999; i++)
-            window.clearInterval(i);
 
         function checkstatus(process, id, i) {
             setInterval(function() {
@@ -19,11 +16,11 @@ export default Ember.View.extend({
         for (var i = 0; i < length; i++) {
             process = controller.get('mirror.processes')[i];
             checkstatus(process, process._id, i);
-            if (i == length - 1) {
-                setTimeout(function() {
-                    Ember.$('#reload').modal('hide');
-                }, 1000);
-            }
+            // if (i == length - 1) {
+            //     setTimeout(function() {
+            //         Ember.$('#reload').modal('hide');
+            //     }, 1000);
+            // }
         }
     },
     didInsertElement: function() {
@@ -42,18 +39,21 @@ export default Ember.View.extend({
                 this.$('#' + data.id).removeClass('activity');
             }.bind(this), 1000);
         }.bind(this));
-        socket.on('pmem', function(data) {
+        // socket.on('pmem', function(data) {
             // controller.updatePMEM(data);
-        }.bind(this));
-        socket.on('pcpu', function(data) {
+        // }.bind(this));
+        // socket.on('pcpu', function(data) {
             // controller.updatePCPU(data);
-        });
+        // });
         Ember.$("li.active").removeClass('active');
         Ember.$("#dashboard").addClass('active');
 
         controller.on('setupint', this, function() {
-            Ember.$('#reload').modal('show');
-            setTimeout(function () { //DO NOT REMOVE, this is to make sure the array is loaded completely
+            // Ember.$('#reload').modal('show');
+            for (var i = 1; i < 99999; i++) //clear all the previous interval
+                window.clearInterval(i);
+
+            setTimeout(function() { //DO NOT REMOVE, need this delay to make sure the array is loaded completely
                 this.setupInterval(this);
             }.bind(this), 1000);
         });

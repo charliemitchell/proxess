@@ -96,6 +96,8 @@ export default Ember.Controller.extend(Ember.Evented, {
             Ember.$('#logs').modal('show');
         },
         kill: function(process) {
+            Ember.set(process, 'starting', false); //this is for the animation
+            Ember.set(process, 'stopping', true); //this is for the animation
             Ember.$.ajax({
                 type: 'DELETE',
                 url: '/execute/' + process.id
@@ -109,6 +111,10 @@ export default Ember.Controller.extend(Ember.Evented, {
                 for (var i = 0; i < options.length; i++) {
                     newservice.args[i] = $(options[i]).val();
                 }
+            }
+            if (process) {
+                Ember.set(process, 'stopping', false); //this is for the animation
+                Ember.set(process, 'starting', true); //this is for the animation
             }
             Ember.$.ajax({
                 type: 'POST',

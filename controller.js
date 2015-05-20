@@ -17,51 +17,80 @@ function serviceIsRunning(id) {
     return false;
 };
 
-function updateProcessPID(id, pid) {
-    Model.findById(id).exec(function (err, process) {
+function updateProcessPID(id, pid, log) {
+    Model.findById(id).exec(function(err, process) {
         if (process) {
             process.pid = pid;
-            process.save(function (err, doc) {
+            if (log) {
+                // console.log('----------------');
+                // console.log('HERE, LOGGGGGG: ', log);
+                // console.log('----------------');
+
+                process.logs = process.logs || [];
+                var existed = process.logs.filter(function(item) {
+                    return item.pid == pid;
+                });
+
+                if (existed.length == 0) {
+                    process.logs.push({
+                        pid: pid,
+                        logs: log
+                    });
+                } else {
+                    // console.log('shoudl be append')
+
+                    process.logs = process.logs.map(function(item) {
+                        if (item.pid == pid) {
+                            item.logs += log;
+                            // console.log('log.logs', item.logs);
+                        }
+                        return item;
+                    });
+                    console.log(JSON.stringify(process.logs));
+                }
+            }
+            process.save(function(err, doc) {
                 console.log(require('util').format('Update PID for process %s succeeded', doc.name));
             });
         }
     });
 };
+
 var ansi = require('ansi-html'),
     proc = require('./proc');
-setInterval(function () {
-    Model.find({
-        pid: {
-            "$exists": true,
-            "$ne": ""
-        }
-    }).exec(function (err, processes) {
-        if (processes.length > 0) {
-            var process;
-            for (var i = 0; i < processes.length; i++) {
-                process = processes[i];
-                proc.pmem(process, function (pct) {
-                    // console.log('pct', pct);
-                    process.pmem = pct;
-                    global.io.emit('pmem', {
-                        id: process.id,
-                        mem: pct
-                    });
-                });
-                proc.pcpu(process, function (pct) {
-                    process.pcpu = pct;
-                    global.io.emit('pcpu', {
-                        id: process.id,
-                        cpu: pct
-                    });
-                });
-            }
-        }
-    });
-}, 1200);
+// setInterval(function () {
+//     Model.find({
+//         pid: {
+//             "$exists": true,
+//             "$ne": ""
+//         }
+//     }).exec(function (err, processes) {
+//         if (processes.length > 0) {
+//             var process;
+//             for (var i = 0; i < processes.length; i++) {
+//                 process = processes[i];
+//                 proc.pmem(process, function (pct) {
+//                     // console.log('pct', pct);
+//                     process.pmem = pct;
+//                     global.io.emit('pmem', {
+//                         id: process.id,
+//                         mem: pct
+//                     });
+//                 });
+//                 proc.pcpu(process, function (pct) {
+//                     process.pcpu = pct;
+//                     global.io.emit('pcpu', {
+//                         id: process.id,
+//                         cpu: pct
+//                     });
+//                 });
+//             }
+//         }
+//     });
+// }, 1200);
 module.exports = {
     // GETS All Services from the database
-    GET: function (req, res) {
+    GET: function(req, res) {
         var search = req.query.search;
         if (search) {
             // Model.find({ //full text search
@@ -73,26 +102,26 @@ module.exports = {
             // });
             Model.find({ //full text search
                 name: new RegExp(search, "i")
-            }, function (error, services) {
+            }, function(error, services) {
                 res.json(services);
             });
         } else {
-            Model.find(function (error, services) {
+            Model.find(function(error, services) {
                 res.json(services);
             });
         }
     },
     // GETS A Service from the database
-    findOne: function (req, res) {
+    findOne: function(req, res) {
         Model.find({
             _id: req.params.id
-        }, function (a, b) {
+        }, function(a, b) {
             res.send(b[0]);
         });
     },
     // Creates A New Service
-    POST: function (req, res) {
-        new Model(req.body).save(function (err, doc) {
+    POST: function(req, res) {
+        new Model(req.body).save(function(err, doc) {
             if (err) {
                 console.log('oops! Could not save the model'.red);
                 res.json({
@@ -108,10 +137,10 @@ module.exports = {
         });
     },
     // Updates A Service Entry
-    PUT: function (req, res) {
+    PUT: function(req, res) {
         Model.findOne({
             _id: req.params.id
-        }).remove(function () {
+        }).remove(function() {
             req.body._id = req.params.id;
             for (var i = 0; i < req.body.args.length; i++) {
                 req.body.args[i] = req.body.args[i].trim();
@@ -121,15 +150,15 @@ module.exports = {
         });
     },
     // DELETES A Service From The Service List
-    DELETE: function (req, res) {
+    DELETE: function(req, res) {
         Model.findOne({
             _id: req.params.id
-        }).remove(function () {});
+        }).remove(function() {});
         res.send(req.params.id)
     },
     // Gets Stats on All Services
-    stats: function (req, res) {
-        res.json(pid.map(function (process) {
+    stats: function(req, res) {
+        res.json(pid.map(function(process) {
             return {
                 model: process.model,
                 pcpu: process.pcpu,
@@ -138,24 +167,24 @@ module.exports = {
         }));
     },
     // Gets Stats on Single Service
-    findStat: function (req, res) {
+    findStat: function(req, res) {
         Model.find({
             _id: req.params.id
-        }, function (a, b) {
+        }, function(a, b) {
             res.json({
                 stat: 0,
                 process: b
             })
         });
     },
-    checkStatus: function (req, res) {
-        Model.findById(req.params.id, function (err, doc) {
+    checkStatus: function(req, res) {
+        Model.findById(req.params.id, function(err, doc) {
             if (err) {
                 console.log(err);
             } else {
                 if (doc) {
                     if (doc.checkcmd) {
-                        require('./proc').exec(doc.checkcmd, doc.cwd, function (alive) {
+                        require('./proc').exec(doc.checkcmd, doc.cwd, function(alive) {
                             res.status(200).json({
                                 status: alive
                             })
@@ -174,7 +203,7 @@ module.exports = {
         });
     },
     // Starts A Service By It's ID (HTTP POST) path : '/execute/:id',
-    StartService: function (req, res) {
+    StartService: function(req, res) {
         if (!serviceIsRunning(req.params.id)) {
             var service = req.body.service;
             if (service) {
@@ -182,7 +211,7 @@ module.exports = {
             } else {
                 Model.find({
                     _id: req.params.id
-                }, function (err, process) {
+                }, function(err, process) {
                     service = process[0];
                     var custom = false;
                     for (var i = 0; i < service.args.length; i++) {
@@ -203,20 +232,22 @@ module.exports = {
             }
 
             function start() {
-
-                var svc = require('./proc').start(service, function (stdout) {
+                var log, pid;
+                var svc = require('./proc').start(service, function(stdout) {
                     stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + service.name + ' >  ');
                     console.log(service.name + ' >  ' + stdout);
                     global.io.emit("log", {
                         id: service.id,
                         log: (ansi(stdout) + "<br/>").replace(/\n/g, '<br/>')
                     });
+                    log = stdout;
+                    updateProcessPID(req.params.id, pid, log);
                 });
-
+                pid = svc.pid;
                 // Update PID to database
                 updateProcessPID(req.params.id, svc.pid);
 
-                svc.on('close', function (code) {
+                svc.on('close', function(code) {
                     console.log('\n--------------------------------------------------------'.red)
                     console.log((service.name + " has died with code " + code).red);
                     console.log('--------------------------------------------------------\n'.red)
@@ -235,20 +266,20 @@ module.exports = {
     },
 
     // Stops A Service By It's ID (HTTP DELETE) path : '/execute/:id',
-    StopService: function (req, res) {
+    StopService: function(req, res) {
         var response = "could not find the process";
-        Model.findById(req.params.id, function (err, doc) {
+        Model.findById(req.params.id, function(err, doc) {
             if (err) {
                 console.log(err);
             } else {
                 if (doc) {
                     if (doc.stopcmd) {
-                        require('./proc').exec(doc.stopcmd, doc.cwd, function (status) {
+                        require('./proc').exec(doc.stopcmd, doc.cwd, function(status) {
                             // Update PID to database
                             updateProcessPID(req.params.id, '');
                         });
                     } else if (doc.pid) {
-                        require('./proc').exec(doc, function (status) {
+                        require('./proc').exec(doc, function(status) {
                             // Update PID to database
                             updateProcessPID(req.params.id, '');
                         });
@@ -258,41 +289,41 @@ module.exports = {
             }
         });
     },
-    startAll: function (req, res) {
-        Model.find(function (err, models) {
-            models.forEach(function (service) {
-                if (!serviceIsRunning(service.id)) {
-                    var svc = require('./proc').start(service, function (stdout) {
-                        stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + service.name + ' >  ');
-                        console.log(service.name + ' >  ' + stdout);
-                    });
-                    svc.on('close', function (code) {
-                        console.log('\n--------------------------------------------------------'.red)
-                        console.log((service.name + " has died with code " + code).red);
-                        console.log('--------------------------------------------------------\n'.red)
-                            // Update PID to database
-                        updateProcessPID(req.params.id, '');
-                    });
+    // startAll: function (req, res) {
+    //     Model.find(function (err, models) {
+    //         models.forEach(function (service) {
+    //             if (!serviceIsRunning(service.id)) {
+    //                 var svc = require('./proc').start(service, function (stdout) {
+    //                     stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + service.name + ' >  ');
+    //                     console.log(service.name + ' >  ' + stdout);
+    //                 });
+    //                 svc.on('close', function (code) {
+    //                     console.log('\n--------------------------------------------------------'.red)
+    //                     console.log((service.name + " has died with code " + code).red);
+    //                     console.log('--------------------------------------------------------\n'.red)
+    //                         // Update PID to database
+    //                     updateProcessPID(req.params.id, '');
+    //                 });
 
-                    // Update PID to database
-                    updateProcessPID(service.id, svc.pid);
+    //                 // Update PID to database
+    //                 updateProcessPID(service.id, svc.pid);
 
-                } else {
-                    console.log("  > Nimble: Refusing To Start ".red + (service.name).red + " Because it is already running".red)
-                }
-            });
-            res.send("ok")
-        });
-    },
-    stopAll: function (req, res) {
-        // Replace by process from model
-        // pid.forEach(function (entry) {
-        //     entry.service.kill('SIGINT');
-        // });
-        // pid = [];
-        res.send("ok");
-    },
-    dashboard: function (req, res) {
+    //             } else {
+    //                 console.log("  > Nimble: Refusing To Start ".red + (service.name).red + " Because it is already running".red)
+    //             }
+    //         });
+    //         res.send("ok")
+    //     });
+    // },
+    // stopAll: function (req, res) {
+    //     // Replace by process from model
+    //     // pid.forEach(function (entry) {
+    //     //     entry.service.kill('SIGINT');
+    //     // });
+    //     // pid = [];
+    //     res.send("ok");
+    // },
+    dashboard: function(req, res) {
         var search = req.query.search;
         if (search) {
             // Model.find({ //full text search
@@ -307,7 +338,7 @@ module.exports = {
             Model.find({ //full text search
                 name: new RegExp(search, "i"),
                 hidden: false
-            }, function (error, services) {
+            }, function(error, services) {
                 res.json({
                     processes: services
                 });
@@ -315,7 +346,7 @@ module.exports = {
         } else {
             Model.find({
                 hidden: false
-            }, function (error, services) {
+            }, function(error, services) {
                 res.json({
                     processes: services
                 });

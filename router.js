@@ -8,14 +8,14 @@ module.exports = {
         path : '/process/:id',
         action : 'findOne',
         // policy : 'authenticated'
-    },{
-        path : '/stats',
-        action : 'stats',
-        // policy : 'authenticated'
-    },{
-        path : '/stats/:id',
-        action : 'findStat',
-        // policy : 'authenticated'
+    // },{
+    //     path : '/stats',
+    //     action : 'stats',
+    //     // policy : 'authenticated'
+    // },{
+    //     path : '/stats/:id',
+    //     action : 'findStat',
+    //     // policy : 'authenticated'
     },{
         path : '/dashboard',
         action : 'dashboard',
@@ -36,11 +36,12 @@ module.exports = {
         action : 'StartService',
         // policy : 'authenticated'
     },
-    {
-        path : '/all',
-        action : 'startAll',
-        // policy : 'authenticated'
-    }],
+    // {
+    //     path : '/all',
+    //     action : 'startAll',
+    //     // policy : 'authenticated'
+    // }
+    ],
     
     PUT : [{
         path : '/process/:id',
@@ -57,9 +58,10 @@ module.exports = {
         action : 'StopService',
         // policy : 'authenticated'
     },
-    {
-        path : '/all',
-        action : 'stopAll',
-        // policy : 'authenticated'
-    }]
+    // {
+    //     path : '/all',
+    //     action : 'stopAll',
+    //     // policy : 'authenticated'
+    // }
+    ]
 }

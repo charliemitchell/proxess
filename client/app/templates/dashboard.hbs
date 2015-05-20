@@ -121,9 +121,9 @@
                     <a class="list-group-item" id="{{unbound process.id}}">
                         <span class="text-right">
                         {{#if process.running}}
-                            <a class="btn btn-success" {{action 'kill' process}}><i class="fa fa-stop fa-fw"></i></a>
+                            <a class="btn btn-success" {{action 'kill' process}}><i {{bind-attr class=":fa :fa-stop :fa-fw process.stopping:spin"}}></i></a>
                         {{else}}
-                            <a {{bind-attr class=":btn :btn-danger"}} {{action 'start' process}}><i class="fa fa-play fa-fw"></i></a>
+                            <a {{bind-attr class=":btn :btn-danger"}} {{action 'start' process}}><i {{bind-attr class=":fa :fa-play :fa-fw process.starting:spin"}}></i></a>
                         {{/if}}
                         </span>
 
@@ -131,7 +131,7 @@
                             <a class="btn btn-primary" {{action 'logs' process}}><i class="fa fa-bullhorn fa-fw"></i></a>
                         </span>
 
-                        <span class="pull-left" style="width:calc(100% - 143px); font-size: 24px; font-weight: 300"><i class="fa fa-fw fa-gear"></i> {{process.name}} <i class="fa fa-fw fa-comment"></i> <span class="grey">:{{process.port}}</span></span>
+                        <span class="pull-left" style="width:calc(100% - 143px); font-size: 24px; font-weight: 300"><i class="fa fa-fw fa-gear"></i> {{process.name}} <span class="grey">:{{process.port}}</span></span>
                     </a>
                     {{/each}}
                 {{else}}
