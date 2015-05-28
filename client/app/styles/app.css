@@ -1,13 +1,30 @@
+a:hover {
+    cursor: pointer;
+}
+
 #logs .modal-body p {
     height: 440px;
     overflow: auto;
 }
 
-@-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
-@-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
-@keyframes spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+@-moz-keyframes spin {
+    100% {
+        -moz-transform: rotate(360deg);
+    }
+}
 
+@-webkit-keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+    }
+}
 
+@keyframes spin {
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
+}
 /*@-moz-keyframes spin {
     from {
         background-color: #18BC9C;
@@ -43,10 +60,6 @@
 
 .modal-backdrop {
     background-color: #fff;
-}
-
-.panel-title {
-    color: #fff;
 }
 
 .grey {
@@ -160,20 +173,26 @@
     padding: 7px 10px;
 }
 
-a.list-group-item i.fa-comment {
+.list-group-item .title {
+    font-weight: 300;
+    font-size: 26px;
+}
+
+div.list-group-item i.fa-comment {
     display: none;
 }
 
-a.list-group-item:hover {
+div.list-group-item:hover {
     background-color: #E8E8E8;
 }
 
-a.list-group-item.activity i.fa-bullhorn {
+div.list-group-item.activity i.fa-bullhorn {
     display: inline-block;
     /*margin-left: 10px;*/
     
     color: rgb(33, 150, 243);
     /*font-size: 23px;*/
+    
     -webkit-animation-name: spinnerRotate;
     -webkit-animation-duration: 0.3s;
     -webkit-animation-iteration-count: infinite;
@@ -194,6 +213,10 @@ input.full {
 
 .alert-success {
     background-color: #18BC9C!important;
+}
+
+.alert-danger {
+    background-color: #e74c3c!important;
 }
 /* Custom Colored Panels */
 

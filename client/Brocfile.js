@@ -6,6 +6,8 @@ var app = new EmberApp({
     'ember-cli-bootswatch': 'flatly'
 });
 
+// app.import('app/styles/checkbox.css');
+
 // Use `app.import` to add additional libraries to the generated
 // output files.
 //

@@ -44,6 +44,9 @@ var process = new Schema({
     },
     logs: {
         type: Array
+    },
+    file: {
+        type: String
     }
 });
 process.virtual('id').get(function () {

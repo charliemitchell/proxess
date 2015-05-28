@@ -56,6 +56,12 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="buildfile" class="col-lg-2 control-label">BUILD.SH</label>
+                        <div class="col-lg-10">
+                            {{#if model.file}} {{textarea rows="10" class="form-control" id="buildfile" value=model.file }} {{else}} <div class="checkbox">No file has been added, <a {{action 'createfile'}}> create one </a></div> {{/if}}
+                        </div>
+                    </div>
                     <div class="form-group"  style="font-size:23px">
                         <div class="col-lg-10 col-lg-offset-2">
                             <a class="btn btn-primary btn-sm" {{action 'save'}} href="#/process/new">

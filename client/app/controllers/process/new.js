@@ -10,12 +10,15 @@ export default Ember.Controller.extend({
     }.observes('args'),
 
     actions : {
+        createfile: function(){
+            this.set('model.file', '#Some bash script here')
+        },
         save : function () {
             Ember.$.ajax({
                 type : 'POST',
                 url : '/process',
                 data : JSON.stringify(this.get('model')),
-                success : function (response) {
+                success : function (response) {                    
                     this.notify.success('Process Saved!');
                     this.transitionToRoute('process.list');
                 }.bind(this)

@@ -9,6 +9,7 @@ export default Ember.Controller.extend({
     checkcmd: '',
     port: '',
     hidden: false,
+    file: '',
 
     transformArgs: function () {
         return this.get('args').split(',').without(' ');
@@ -16,12 +17,16 @@ export default Ember.Controller.extend({
 
     actions: {
 
+        createfile: function(){
+            this.set('model.file', '#Some bash script here')
+        },
+
         copy: function () {
-            this.transitionToRoute('process.new', this.get('model.id'));
+            this.transitionToRoute('process.new', this.get('model._id'));
         },
 
         save: function () {
-            
+
             var args = this.get('args');
 
             var data = {
@@ -34,15 +39,21 @@ export default Ember.Controller.extend({
                 stopcmd: this.get('stopcmd'),
                 checkcmd: this.get('checkcmd'),
                 port: this.get('port'),
-                hidden: this.get('hidden')
+                hidden: this.get('hidden'),
+                file: this.get('file')
             };
+
+
 
             Ember.$.ajax({
                 type: 'PUT',
-                url: 'process/' + data.id,
+                url: 'process/' + (data.id || data._id),
                 data: JSON.stringify(data),
-                success: function () {
+                success: function (res) {
                     this.notify.success("Process Updated");
+                }.bind(this),
+                error: function (res) {
+                    this.notify.alert(res.responseJSON.err);
                 }.bind(this)
             });
         },
@@ -52,7 +63,7 @@ export default Ember.Controller.extend({
             if (confirmed) {
                 Ember.$.ajax({
                     type: 'DELETE',
-                    url: 'process/' + this.get('model.id'),
+                    url: 'process/' + this.get('model._id'),
                     success: function () {
                         this.notify.success("Process Removed")
                         this.transitionToRoute('process.list')
@@ -69,7 +80,8 @@ export default Ember.Controller.extend({
                 .set('stopcmd', this.get('model.stopcmd'))
                 .set('checkcmd', this.get('model.checkcmd'))
                 .set('port', this.get('model.port'))
-                .set('hidden', this.get('model.hidden'));
+                .set('hidden', this.get('model.hidden'))
+                .set('file', this.get('model.file'));
         }
     }
 });

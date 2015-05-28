@@ -13,7 +13,8 @@ export default Ember.View.extend({
                 .set('stopcmd', this.get('model.stopcmd'))
                 .set('checkcmd', this.get('model.checkcmd'))
                 .set('port', this.get('model.port'))
-                .set('hidden', this.get('model.hidden'));
+                .set('hidden', this.get('model.hidden'))
+                .set('file', this.get('model.file') || '#Some bash script');
         }.call(this.get('controller')));
 
     }

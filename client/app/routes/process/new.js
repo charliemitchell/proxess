@@ -11,7 +11,8 @@ export default Ember.Route.extend({
                 stopcmd: '',
                 checkcmd: '',
                 port: '',
-                hidden: false
+                hidden: false,
+                file: ''
             };
         } else {
             return Ember.$.getJSON('/process/' + params.id).then(function (data) {
