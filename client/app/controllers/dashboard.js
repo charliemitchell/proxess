@@ -4,9 +4,7 @@ export default Ember.Controller.extend(Ember.Evented, {
     log: {
         title: "",
         content: []
-    },
-    totalPMEM: 0,
-    totalPCPU: 0,
+    },   
     service: false,
     id: '',
     search: '',
@@ -16,29 +14,6 @@ export default Ember.Controller.extend(Ember.Evented, {
         });
         return runningprocesses.length;
     }.property('mirror.processes.@each.running'),
-    // updatePMEM: function (proc) {
-    //     var total = 0;
-    //     proc.mem = parseFloat(proc.mem.replace(/[^0-9\.]+/g, ""));
-    //     var process = this.get('model.processes').findBy('id', proc.id),
-    //         idx = this.get('model.processes').indexOf(process);
-    //     this.set('model.processes.' + idx + '.pmem', proc.mem);
-    //     this.get('model.processes').forEach(function (p) {
-    //         total += p.pmem || 0;
-    //     });
-    //     this.set('totalPMEM', total.toFixed(2));
-    // },
-    // updatePCPU: function (proc) {
-    //     var total = 0;
-    //     proc.cpu = parseFloat(proc.cpu.replace(/[^0-9\.]+/g, ""));
-    //     var process = this.get('model.processes').findBy('id', proc.id),
-    //         idx = this.get('model.processes').indexOf(process);
-    //     this.set('model.processes.' + idx + '.pcpu', proc.cpu);
-    //     this.get('model.processes').forEach(function (p) {
-    //         total += p.pcpu || 0;
-    //     });
-    //     total = total > 100 ? 100 : total;
-    //     this.set('totalPCPU', total.toFixed(2));
-    // },
     filter: function() {
         if (this.get('search')) {
             var arr = this.get('model').processes;

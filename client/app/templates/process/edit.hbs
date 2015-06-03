@@ -5,7 +5,7 @@
             <form class="form-horizontal">
                 <fieldset>
                     <div class="form-group">
-                        <label for="name" class="col-lg-2 control-label">Name</label>
+                        <label for="name" class="col-lg-2 control-label">NAME</label>
                         <div class="col-lg-10">
                             {{input class="form-control" id="name" placeholder="My Simple Service" value=name}}
                         </div>
@@ -19,7 +19,7 @@
                     <div class="form-group">
                         <label for="args" class="col-lg-2 control-label">ARGS</label>
                         <div class="col-lg-10">
-                            {{input class="form-control" id="args" placeholder="build.sh, [?notbuild:build], [?notrun:run]" value=args}}
+                            {{input class="form-control" disabled=true id="args" placeholder="build.sh, [?notbuild:build], [?notrun:run]" value=args}}
                         </div>
                     </div>
                     <div class="form-group">
@@ -51,7 +51,7 @@
                         <div class="col-lg-10">
                             <div class="checkbox">
                                 <label>
-                                    {{input type="checkbox" id='hidden' checked=hidden}}
+                                    {{input type="checkbox" class="css-checkbox" id='hidden' checked=hidden}}
                                 </label>
                             </div>
                         </div>
@@ -83,7 +83,7 @@
                 <div class="panel-body">
                     <div class="row">
                         <div class="col-sm-12">
-                            <div style="display:inline-block; width:100px;">Name</div>
+                            <div style="display:inline-block; width:100px;">NAME</div>
                             <div style="display:inline-block; width:calc(100% - 105px)">
                                 {{model.name}}
                             </div>
@@ -128,7 +128,7 @@
     </div>
     <div class="row">
         <div class="col-sm-12 text-right">
-            <button type="button" class="btn btn-danger btn-sm" {{action 'remove'}}>Delete This Process</button>
+            <button type="button" class="btn btn-danger btn-sm" {{action 'remove'}}><i class="fa fa-fw fa-trash"></i> Delete This Process</button>
         </div>
     </div>
 </div>

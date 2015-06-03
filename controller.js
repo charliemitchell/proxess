@@ -44,22 +44,22 @@ function updateProcessPID(id, pid, log) {
                 } else {
                     // console.log('shoudl be append')
 
-                    // process.logs = process.logs.map(function(item) {
-                    //     if (item.pid == pid) {
-                    //         // item.logs += log;
-                    //         item.logs += 'aaaaaaaaaaaaaaaaa';
-                    //         // console.log('log.logs', item.logs);
-                    //     }
-                    //     return item;
-                    // });
+                    process.logs = process.logs.map(function(item) {
+                        if (item.pid == pid) {
+                            item.logs += log;
+                            // item.logs += 'aaaaaaaaaaaaaaaaa';
+                            // console.log('log.logs', item.logs);
+                        }
+                        return item;
+                    });
                 }
             }
             // console.log(JSON.stringify(process.logs));
             process.save(function (err, doc) {
                 if (err) {
-                    console.log(err);
+                    console.log('Error when update process info : ' ,err);
                 } else {
-                    console.log(require('util').format('Update PID for process %s succeeded', doc.name));
+                    // console.log(require('util').format('Update PID for process %s succeeded', doc.name));
                 }
             });
         }
@@ -78,7 +78,9 @@ module.exports = {
         if (search) {
             Model.find({ //full text search
                 name: new RegExp(search, "i")
-            }, function (err, services) {
+            }).sort({
+                name: 'asc'
+            }).exec(function (err, services) {
                 if (err) {
                     onError(err, res);
                 } else {
@@ -86,7 +88,9 @@ module.exports = {
                 }
             });
         } else {
-            Model.find(function (err, services) {
+            Model.find().sort({
+                name: 'asc'
+            }).exec(function (err, services) {
                 if (err) {
                     onError(err, res);
                 } else {
@@ -153,7 +157,6 @@ module.exports = {
                     if (err) {
                         onError(err, res);
                     } else {
-                        console.log(req.body)
                         if (service.file) {
                             if (!fs.existsSync(service.cwd)) {
                                 mkdirp.sync(service.cwd);
@@ -318,7 +321,9 @@ module.exports = {
             Model.find({ //full text search
                 name: new RegExp(search, "i"),
                 hidden: false
-            }, function (err, services) {
+            }).sort({
+                name: 'asc'
+            }).exec(function (err, services) {
                 if (err) {
                     onError(err, res);
                 } else {
@@ -330,7 +335,9 @@ module.exports = {
         } else {
             Model.find({
                 hidden: false
-            }, function (err, services) {
+            }).sort({
+                name: 'asc'
+            }).exec(function (err, services) {
                 if (err) {
                     onError(err, res);
                 } else {

@@ -7,7 +7,7 @@ export default Ember.View.extend({
         function checkstatus(process, id, i) {
             setInterval(function() {
                 Ember.$.getJSON('/status/' + id).then(function(res) {
-                    controller.get('mirror.processes').set(i + '.running', res.status);
+                    controller.get('mirror.processes').set(i + '.running', res.status);                    
                 });
             }, 2000);
         }
@@ -38,13 +38,7 @@ export default Ember.View.extend({
             setTimeout(function() {
                 this.$('#' + data.id).removeClass('activity');
             }.bind(this), 1000);
-        }.bind(this));
-        // socket.on('pmem', function(data) {
-            // controller.updatePMEM(data);
-        // }.bind(this));
-        // socket.on('pcpu', function(data) {
-            // controller.updatePCPU(data);
-        // });
+        }.bind(this));        
         Ember.$("li.active").removeClass('active');
         Ember.$("#dashboard").addClass('active');
 

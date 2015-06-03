@@ -15,10 +15,23 @@ export default Ember.Controller.extend({
         return this.get('args').split(',').without(' ');
     },
 
+    filechanged: function () {
+        var args = this.get('file').match(/(\$\d \= \")\w+\"/g),
+            key;
+        if (args) {
+            args = args.map(function (x) {
+                key = x.replace(/\"/g, '').replace(/\$\d = /g, '');
+                return '[?not' + key + ':' + key + ']'
+            });
+
+            this.set('args', 'build.sh,' + args.join(','));
+        }
+    }.observes('file'),
+
     actions: {
 
-        createfile: function(){
-            this.set('model.file', '#Some bash script here')
+        createfile: function () {
+            this.set('model.file', 'if [ $1 = "build" ]; then \n#Enter some commands here for here building service \nfi\n\nif [ $2 = "run" ]; then \n#Enter some commands here for running service \nfi')
         },
 
         copy: function () {
