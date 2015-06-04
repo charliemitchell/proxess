@@ -3,12 +3,13 @@
 ##### Is another version of Proxess but modifed to be fast and lightweight. A process manager for your service pool. The idea is, it should be easy to manage all of the servers running on your local machine. Proxess aims to improve the developer experience by allowing you to store all of your terminal commands in a database and start / stop & monitor proccesses
 
 ## Features
+* Edit the shell script right on app.
 * Support shortcode which is helpful to run the service with args from the client.
 * Live time checking service status.
-* Search for a service
+* Search for a service.
 
 ## Upcoming Features
-* Edit the shell script right on app
+* Generate and run Dockerfile.
 
 ## Prerequisites
 * [Node.js](http://nodejs.org/) (with NPM)
@@ -62,8 +63,10 @@ fi
 
 #### The Dashboard
 ![Client Application](/screens/screen1.png?raw=true "The Dashboard")
-#### Adding A Process
-![Client Application](/screens/screen2.png?raw=true "Add A Process")
+#### Create a process
+![Client Application](/screens/screen2.png?raw=true "Create a process")
+#### Edit a process
+![Client Application](/screens/screen3.png?raw=true "Edit a process")
 
 ## Useful Links
 * [NimbleService](https://www.npmjs.com/package/nimbleservice) (This is what we built the backend on top of)
