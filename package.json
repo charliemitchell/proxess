@@ -1,8 +1,8 @@
 {
-  "name": "proxess",
-  "version": "0.2.1",
+  "name": "prox",
+  "version": "0.3.0",
   "description": "Manages Processes running on your computer",
-  "author": "Charlie Mitchell <charliesemailis@gmail.com>",
+  "author": "Vincent Pham <anhvu.phamduong@gmail.com>",
   "main": "./app.js",
   "bin": {
     "proxess": "./bin/proxess.js"
@@ -18,12 +18,12 @@
     "process management"
   ],
   "bugs": {
-    "url": "http://github.com/charliemitchell/proxess",
-    "email": "charliesemailis@gmail.com"
+    "url": "https://github.com/anhvupham/prox.git",
+    "email": "anhvu.phamduong@gmail.com"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/charliemitchell/proxess.git"
+    "url": "https://github.com/anhvupham/prox.git"
   },
   "dependencies": {
     "ansi-html": "0.0.4",
