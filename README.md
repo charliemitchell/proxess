@@ -14,6 +14,7 @@
 ## Prerequisites
 * [Node.js](http://nodejs.org/) (with NPM)
 * [MONGO DB >3.0](http://www.mongodb.org/)
+* [Ember CLI](http://www.ember-cli.com/)
 
 ## Installation 
 Clone the src
@@ -27,6 +28,12 @@ Install required package in client folder and build client folder
 
 ## Running Prox
 `cd prox && node app`
+Then visit your app at [http://localhost:9911/](http://localhost:9911/).
+
+## Run from Docker image
+```
+docker run -t proxapp -p 9911:9911 anhvupham/proxapp
+```
 Then visit your app at [http://localhost:9911/](http://localhost:9911/).
 
 ## Sample of a Node service using shellscript with shortcode
