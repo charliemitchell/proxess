@@ -7,6 +7,7 @@ var app = new EmberApp({
 });
 
 // app.import('app/styles/checkbox.css');
+app.import('bower_components/underscore/underscore-min.js')
 
 // Use `app.import` to add additional libraries to the generated
 // output files.

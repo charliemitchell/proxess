@@ -1,47 +1,55 @@
 import Ember from 'ember';
+
 export default Ember.Controller.extend(Ember.Evented, {
     logs: Ember.A(),
     log: {
         title: "",
         content: []
-    },   
+    },
     service: false,
     id: '',
     search: '',
     running: function() {
-        var runningprocesses = this.get('mirror.processes').filter(function(x) {
+        var runningprocesses = this.get('model.processes').filter(function(x) {
             return x.running === true;
         });
         return runningprocesses.length;
-    }.property('mirror.processes.@each.running'),
-    filter: function() {
-        if (this.get('search')) {
-            var arr = this.get('model').processes;
-            arr = arr.filter(function(item) {
-                return item.name.match(new RegExp(this.get('search'), 'ig'));
-            }.bind(this));
-            this.set('mirror', {
-                processes: arr
-            });
-        } else {
-            this.set('mirror', this.get('model'));
-        }
-        this.trigger('setupint');
-    }.observes('search'),
-    mirror: function() {
-        return this.get('model');
-    }.property('mirror'),
+    }.property('model.processes.@each.running'),
     actions: {
         runningonly: function() {
-            var arr = this.get('mirror.processes').filter(function(x) {
+            var arr = this.get('model.processes').filter(function(x) {
                 return x.running === true;
             });
             // arr.forEach(function(item) {
             //     Ember.set(item, 'running', false);
             // });
-            this.set('mirror', {
+            this.set('model', {
                 processes: arr
             });
+            this.trigger('setupint');
+        },
+        filter: function() {
+            var search = this.get('search');
+            // if (search) {
+            //     var arr = this.get('model').processes;
+            //     arr = arr.filter(function(item) {
+            //         return item.name.match(new RegExp(search, 'ig'));
+            //     }.bind(this));
+            //     this.set('model', {
+            //         processes: arr
+            //     });
+            // } else {
+            //     this.set('model', this.get('model'));
+            // }
+
+            Ember.$.ajax({
+                type: 'GET',
+                url: '/dashboard?search=' + this.get('search'),
+                success: function(data) {
+                    this.set('model', data);
+                }.bind(this)
+            });
+
             this.trigger('setupint');
         },
         all: function() {
@@ -49,21 +57,10 @@ export default Ember.Controller.extend(Ember.Evented, {
             // arr.forEach(function(item) {
             //     Ember.set(item, 'running', false);
             // });
-            this.set('mirror', {
+            this.set('model', {
                 processes: arr
             });
             this.trigger('setupint');
-        },
-        search: function(e, a) {
-            this.filter();
-            // Ember.$.ajax({
-            //     type: 'GET',
-            //     url: '/dashboard/?search=' + this.get('search'),
-            //     success: function (data) {
-            //         this.set('mirror', data);
-            //         this.trigger('setupint');
-            //     }.bind(this)
-            // });
         },
         logs: function(process) {
             this.set('log.title', process.name);
