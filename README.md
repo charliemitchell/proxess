@@ -30,7 +30,7 @@ Install required package in client folder and build client folder
 `cd prox && node app`
 Then visit your app at [http://localhost:9911/](http://localhost:9911/).
 
-## Run from Docker image
+## OR Skip all installation and Run from Docker image
 ```
 docker run -t proxapp -p 9911:9911 anhvupham/proxapp
 ```

@@ -9,97 +9,6 @@
     </div>
 </div>
 <!-- /.row -->
-<div class="row hidden">
-    <div class="col-lg-3 col-md-3 col-sm-6">
-        <div class="panel panel-green">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-cogs fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{running}}</div>
-                        <div>Processes Running</div>
-                    </div>
-                </div>
-            </div>
-            <a>
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-6">
-        <div class="panel panel-yellow">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-cubes fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">0</div>
-                        <div>Groups Running</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-6">
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-pie-chart fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{totalPMEM}}%</div>
-                        <div>Memory Used</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#/process/memory">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-6">
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-tachometer fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{totalPCPU}}%</div>
-                        <div>CPU Used</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#/process/cpu">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-</div>
-<!-- /.row -->
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
@@ -108,16 +17,16 @@
                     <div class="col-md-7 col-sm-8 col-xs-12">
                         <form class="form-inline">
                             <div class="form-group">
-                                <a class="btn btn-primary btn-sm" {{action 'all'}}><i class="fa fa-database fa-fw"></i> Total Processes : {{mirror.processes.length}}</a></div>
+                                <a class="btn btn-primary btn-sm" {{action 'all'}}><i class="fa fa-database fa-fw"></i> Total Processes : {{model.processes.length}}</a></div>
                             <div class="form-group"><a class="btn btn-success btn-sm" {{action 'runningonly'}}><i class="fa fa-cogs fa-fw"></i>  Running Processes : {{running}}</a></div>
                         </form>
                     </div>
-                    <div class="col-md-5 col-sm-4 col-xs-12 pull-right">{{input action="search" onEvent="enter" value=controller.search class="full" placeholder="Search" class="form-control"}}</div>
+                    <div class="col-md-5 col-sm-4 col-xs-12 pull-right">{{input id="searchbox" value=controller.search class="full" placeholder="Search" class="form-control"}}</div>
                 </div>
             </div>
             <div class="panel-body">
                 <div class="list-group">
-                    {{#if mirror.processes}} {{#each process in mirror.processes}}
+                    {{#if model.processes}} {{#each process in model.processes}}
                     <div class="list-group-item row" id="{{unbound process.id}}">
                         <div class="col-sm-8 col-xs-12 ">
                             <span class="title"><i class="fa fa-fw fa-gear"></i> {{process.name}} <span class="grey">:{{process.port}}</span></span>

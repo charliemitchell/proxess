@@ -7,26 +7,36 @@ export default Ember.View.extend({
         function checkstatus(process, id, i) {
             setInterval(function() {
                 Ember.$.getJSON('/status/' + id).then(function(res) {
-                    controller.get('mirror.processes').set(i + '.running', res.status);                    
+                    controller.get('model.processes').set(i + '.running', res.status);
                 });
             }, 2000);
         }
 
-        var length = controller.get('mirror').processes.length;
-        for (var i = 0; i < length; i++) {
-            process = controller.get('mirror.processes')[i];
-            checkstatus(process, process._id, i);
-            // if (i == length - 1) {
-            //     setTimeout(function() {
-            //         Ember.$('#reload').modal('hide');
-            //     }, 1000);
-            // }
+        if (controller.get('model')) {
+            var length = controller.get('model').processes.length;
+            for (var i = 0; i < length; i++) {
+                process = controller.get('model.processes')[i];
+                checkstatus(process, process._id, i);
+                // if (i == length - 1) {
+                //     setTimeout(function() {
+                //         Ember.$('#reload').modal('hide');
+                //     }, 1000);
+                // }
+            }
         }
+
     },
     didInsertElement: function() {
-        var controller = this.get('controller');
+        var controller = this.get('controller'),
+            refresh = _.debounce(function() {
+                controller.send('filter');
+            }, 500);
 
         this.setupInterval(this);
+
+        Ember.$('#searchbox').on('keyup', function() {
+            refresh();
+        });
 
         socket.on('log', function(data) {
             controller.get('logs').pushObject(data);
@@ -38,7 +48,7 @@ export default Ember.View.extend({
             setTimeout(function() {
                 this.$('#' + data.id).removeClass('activity');
             }.bind(this), 1000);
-        }.bind(this));        
+        }.bind(this));
         Ember.$("li.active").removeClass('active');
         Ember.$("#dashboard").addClass('active');
 
@@ -56,21 +66,6 @@ export default Ember.View.extend({
         var controller = this.get('controller');
         controller.set('service', false);
         controller.set('id', '');
-        socket.off('service_started');
-        socket.off('service_died');
-        socket.off('pmem');
-        socket.off('pcpu');
-    },
-    updateUI: function(callback) {
-        Ember.$.getJSON('/dashboard').then(function(alive) {
-            // alive.processes.forEach(function (process) {
-            //     if (alive.running.findBy('id', process.id)) {
-            //         process.alive = true;
-            //     } else {
-            //         process.alive = false;
-            //     }
-            // });
-            callback(alive);
-        });
+        socket.off('log');
     }
 });
