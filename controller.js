@@ -24,7 +24,7 @@ function serviceIsRunning(id) {
 };
 
 function updateProcessPID(id, pid, log) {
-    Model.findById(id).exec(function (err, process) {
+    Model.findById(id).exec(function(err, process) {
         if (err) {
             console.log(err);
         }
@@ -32,7 +32,7 @@ function updateProcessPID(id, pid, log) {
             process.pid = pid;
             if (log) {
                 process.logs = process.logs || [];
-                var existed = process.logs.filter(function (item) {
+                var existed = process.logs.filter(function(item) {
                     return item.pid == pid;
                 });
 
@@ -55,9 +55,9 @@ function updateProcessPID(id, pid, log) {
                 }
             }
             // console.log(JSON.stringify(process.logs));
-            process.save(function (err, doc) {
+            process.save(function(err, doc) {
                 if (err) {
-                    console.log('Error when update process info : ' ,err);
+                    console.log('Error when update process info : ', err);
                 } else {
                     // console.log(require('util').format('Update PID for process %s succeeded', doc.name));
                 }
@@ -73,14 +73,14 @@ function onError(err, res) {
 }
 
 module.exports = {
-    GET: function (req, res) {
+    GET: function(req, res) {
         var search = req.query.search;
         if (search) {
             Model.find({ //full text search
                 name: new RegExp(search, "i")
             }).sort({
                 name: 'asc'
-            }).exec(function (err, services) {
+            }).exec(function(err, services) {
                 if (err) {
                     onError(err, res);
                 } else {
@@ -90,7 +90,7 @@ module.exports = {
         } else {
             Model.find().sort({
                 name: 'asc'
-            }).exec(function (err, services) {
+            }).exec(function(err, services) {
                 if (err) {
                     onError(err, res);
                 } else {
@@ -100,10 +100,10 @@ module.exports = {
         }
     },
 
-    findOne: function (req, res) {
+    findOne: function(req, res) {
         Model.findOne({
             _id: req.params.id
-        }).lean().exec(function (err, item) {
+        }).lean().exec(function(err, item) {
             if (err) {
                 onError(err, res);
             } else {
@@ -116,8 +116,12 @@ module.exports = {
         });
     },
 
-    POST: function (req, res) {
-        new Model(req.body).save(function (err, doc) {
+    POST: function(req, res) {
+        var service = req.body;
+        for (var i = 0; i < service.args.length; i++) {
+            service.args[i] = service.args[i].trim();
+        }
+        new Model(service).save(function(err, doc) {
             if (err) {
                 onError(err, res);
             } else {
@@ -126,7 +130,7 @@ module.exports = {
                     if (!fs.existsSync(doc.cwd)) {
                         mkdirp.sync(doc.cwd);
                     }
-                    fs.writeFile(filepath, doc.file, function (err) {
+                    fs.writeFile(filepath, doc.file, function(err) {
                         if (err) {
                             onError(err, res);
                         } else {
@@ -141,10 +145,10 @@ module.exports = {
     },
 
     // Updates A Service Entry
-    PUT: function (req, res) {
+    PUT: function(req, res) {
         Model.findOne({
             _id: req.params.id
-        }).remove(function (err) {
+        }).remove(function(err) {
             if (err) {
                 onError(err, res);
             } else {
@@ -153,7 +157,7 @@ module.exports = {
                 for (var i = 0; i < service.args.length; i++) {
                     service.args[i] = service.args[i].trim();
                 }
-                new Model(service).save(function (err, item) {
+                new Model(service).save(function(err, item) {
                     if (err) {
                         onError(err, res);
                     } else {
@@ -161,7 +165,7 @@ module.exports = {
                             if (!fs.existsSync(service.cwd)) {
                                 mkdirp.sync(service.cwd);
                             }
-                            fs.writeFile(path.join(service.cwd, 'build.sh'), service.file, function (err) {
+                            fs.writeFile(path.join(service.cwd, 'build.sh'), service.file, function(err) {
                                 if (err) {
                                     onError(err, res);
                                 } else {
@@ -177,10 +181,10 @@ module.exports = {
         });
     },
     // DELETES A Service From The Service List
-    DELETE: function (req, res) {
+    DELETE: function(req, res) {
         Model.findOne({
             _id: req.params.id
-        }).remove(function (err) {
+        }).remove(function(err) {
             if (err) {
                 onError(err, res);
             } else {
@@ -190,8 +194,8 @@ module.exports = {
             }
         });
     },
-    checkStatus: function (req, res) {
-        Model.findById(req.params.id, function (err, doc) {
+    checkStatus: function(req, res) {
+        Model.findById(req.params.id, function(err, doc) {
             if (err) {
                 res.status(200).json({
                     status: false
@@ -199,7 +203,7 @@ module.exports = {
             } else {
                 if (doc) {
                     if (doc.checkcmd) {
-                        require('./proc').exec(doc.checkcmd, doc.cwd, function (alive) {
+                        require('./proc').exec(doc.checkcmd, doc.cwd, function(alive) {
                             res.status(200).json({
                                 status: alive
                             });
@@ -218,7 +222,7 @@ module.exports = {
         });
     },
     // Starts A Service By It's ID (HTTP POST) path : '/execute/:id',
-    StartService: function (req, res) {
+    StartService: function(req, res) {
         if (!serviceIsRunning(req.params.id)) {
             var service = req.body.service;
             if (service) {
@@ -226,7 +230,7 @@ module.exports = {
             } else {
                 Model.find({
                     _id: req.params.id
-                }, function (err, process) {
+                }, function(err, process) {
                     if (err) {
                         onError(err, res);
                     } else {
@@ -256,7 +260,7 @@ module.exports = {
 
             function start() {
                 var log, pid;
-                var svc = require('./proc').start(service, function (stdout) {
+                var svc = require('./proc').start(service, function(stdout) {
                     stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + service.name + ' >  ');
                     console.log(service.name + ' >  ' + stdout);
                     global.io.emit("log", {
@@ -270,7 +274,7 @@ module.exports = {
                 // Update PID to database
                 updateProcessPID(req.params.id, svc.pid);
 
-                svc.on('close', function (code) {
+                svc.on('close', function(code) {
                     console.log('\n--------------------------------------------------------'.red)
                     console.log((service.name + " has died with code " + code).red);
                     console.log('--------------------------------------------------------\n'.red)
@@ -289,19 +293,19 @@ module.exports = {
     },
 
     // Stops A Service By It's ID (HTTP DELETE) path : '/execute/:id',
-    StopService: function (req, res) {
-        Model.findById(req.params.id, function (err, doc) {
+    StopService: function(req, res) {
+        Model.findById(req.params.id, function(err, doc) {
             if (err) {
                 onError(err, res);
             } else {
                 if (doc) {
                     if (doc.stopcmd) {
-                        require('./proc').exec(doc.stopcmd, doc.cwd, function (status) {
+                        require('./proc').exec(doc.stopcmd, doc.cwd, function(status) {
                             // Update PID to database
                             updateProcessPID(req.params.id, '');
                         });
                     } else if (doc.pid) {
-                        require('./proc').exec(doc, function (status) {
+                        require('./proc').exec(doc, function(status) {
                             // Update PID to database
                             updateProcessPID(req.params.id, '');
                         });
@@ -315,7 +319,7 @@ module.exports = {
             }
         });
     },
-    dashboard: function (req, res) {
+    dashboard: function(req, res) {
         var search = req.query.search;
         if (search) {
             Model.find({ //full text search
@@ -323,7 +327,7 @@ module.exports = {
                 hidden: false
             }).sort({
                 name: 'asc'
-            }).exec(function (err, services) {
+            }).exec(function(err, services) {
                 if (err) {
                     onError(err, res);
                 } else {
@@ -337,7 +341,7 @@ module.exports = {
                 hidden: false
             }).sort({
                 name: 'asc'
-            }).exec(function (err, services) {
+            }).exec(function(err, services) {
                 if (err) {
                     onError(err, res);
                 } else {

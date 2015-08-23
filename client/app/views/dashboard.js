@@ -5,9 +5,10 @@ export default Ember.View.extend({
         var process;
 
         function checkstatus(process, id, i) {
-            setInterval(function() {
+            setTimeout(function() {
                 Ember.$.getJSON('/status/' + id).then(function(res) {
                     controller.get('model.processes').set(i + '.running', res.status);
+                    checkstatus();
                 });
             }, 2000);
         }

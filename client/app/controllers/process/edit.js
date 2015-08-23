@@ -16,8 +16,10 @@ export default Ember.Controller.extend({
     },
 
     filechanged: function () {
-        var args = this.get('file').match(/(\$\d \= \")\w+\"/g),
+        var args = this.get('file').match(/\"\$+\d+\" \= \"\w+\"/g),
             key;
+            console.log(this.get('file'));
+           console.log(args);
         if (args) {
             args = args.map(function (x) {
                 key = x.replace(/\"/g, '').replace(/\$\d = /g, '');
