@@ -4,11 +4,11 @@ export default Ember.View.extend({
         var controller = self.get('controller');
         var process;
 
-        function checkstatus(process, id, i) {
+        function checkstatus(id, i) {
             setTimeout(function() {
                 Ember.$.getJSON('/status/' + id).then(function(res) {
                     controller.get('model.processes').set(i + '.running', res.status);
-                    checkstatus();
+                    checkstatus(id, i);
                 });
             }, 2000);
         }
@@ -17,7 +17,7 @@ export default Ember.View.extend({
             var length = controller.get('model').processes.length;
             for (var i = 0; i < length; i++) {
                 process = controller.get('model.processes')[i];
-                checkstatus(process, process._id, i);
+                checkstatus(process._id, i);
                 // if (i == length - 1) {
                 //     setTimeout(function() {
                 //         Ember.$('#reload').modal('hide');

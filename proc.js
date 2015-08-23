@@ -42,6 +42,8 @@ exports.exec = function (cmd, cwd, callback) {
         }
     }
 
+    // console.log(cmd);
+
     exec(cmd, {
         cwd: cwd
     }, puts);
