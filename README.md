@@ -1,6 +1,6 @@
 
 # PROX
-##### Is another version of Proxess but modifed to be fast and lightweight. A process manager for your service pool. The idea is, it should be easy to manage all of the servers running on your local machine. Proxess aims to improve the developer experience by allowing you to store all of your terminal commands in a database and start / stop & monitor proccesses
+##### A small application to translate UI commands to bash script command executions. All you need is writing the bash script and Prox will give you the UI to manage.
 
 ## Features
 * Edit the shell script right on app.
