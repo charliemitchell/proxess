@@ -8,25 +8,21 @@ module.exports = {
         path : '/process/:id',
         action : 'findOne',
         // policy : 'authenticated'
-    },{
-        path : '/stats',
-        action : 'stats',
-        // policy : 'authenticated'
-    },{
-        path : '/stats/:id',
-        action : 'findStat',
-        // policy : 'authenticated'
-    },{
-        path : '/alive',
-        action : 'getLive',
-        // policy : 'authenticated'
-    },{
-        path : '/count/alive',
-        action : 'countLive',
-        // policy : 'authenticated'
+    // },{
+    //     path : '/stats',
+    //     action : 'stats',
+    //     // policy : 'authenticated'
+    // },{
+    //     path : '/stats/:id',
+    //     action : 'findStat',
+    //     // policy : 'authenticated'
     },{
         path : '/dashboard',
         action : 'dashboard',
+        // policy : 'authenticated'
+    },{
+        path : '/status/:id',
+        action : 'checkStatus',
         // policy : 'authenticated'
     }],
     
@@ -40,11 +36,12 @@ module.exports = {
         action : 'StartService',
         // policy : 'authenticated'
     },
-    {
-        path : '/all',
-        action : 'startAll',
-        // policy : 'authenticated'
-    }],
+    // {
+    //     path : '/all',
+    //     action : 'startAll',
+    //     // policy : 'authenticated'
+    // }
+    ],
     
     PUT : [{
         path : '/process/:id',
@@ -61,9 +58,10 @@ module.exports = {
         action : 'StopService',
         // policy : 'authenticated'
     },
-    {
-        path : '/all',
-        action : 'stopAll',
-        // policy : 'authenticated'
-    }]
+    // {
+    //     path : '/all',
+    //     action : 'stopAll',
+    //     // policy : 'authenticated'
+    // }
+    ]
 }

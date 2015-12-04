@@ -1,102 +1,134 @@
-<h3> Editing {{model.name}}</h3>
-<hr/>
-<div class="row">
-    <div class="col-lg-6">
-        <div class="panel">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        {{model.name}}
+<div>
+    <legend><i class="fa fa-pencil fa-fw"></i> Editing {{model.name}}</legend>
+    <div class="row">
+        <div class="col-lg-6">
+            <form class="form-horizontal">
+                <fieldset>
+                    <div class="form-group">
+                        <label for="name" class="col-lg-2 control-label">NAME</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="name" placeholder="My Simple Service" value=name}}
+                        </div>
                     </div>
-                    <div class="col-xs-9 text-right">
-                        <div>New Configuration</div>
+                    <div class="form-group">
+                        <label for="command" class="col-lg-2 control-label">CMD</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="command" placeholder="sh" value=command}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="args" class="col-lg-2 control-label">ARGS</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="args" placeholder="build.sh, [?notbuild:build], [?notrun:run]" value=args}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cwd" class="col-lg-2 control-label">CWD</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="cwd" placeholder="/home/myfolder/" value=cwd}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="stopcmd" class="col-lg-2 control-label">STOP CMD</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="stopcmd" placeholder="lsof -t -i tcp:1338 | xargs kill" value=stopcmd}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkcmd" class="col-lg-2 control-label">CHECK CMD</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="checkcmd" placeholder="nc -zv localhost 1338" value=checkcmd}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="port" class="col-lg-2 control-label">PORT</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="port" placeholder="1338" value=port}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hidden" class="col-lg-2 control-label">HIDDEN</label>
+                        <div class="col-lg-10">
+                            <div class="checkbox">
+                                <label>
+                                    {{input type="checkbox" class="css-checkbox" id='hidden' checked=hidden}}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="buildfile" class="col-lg-2 control-label">BUILD.SH</label>
+                        <div class="col-lg-10">
+                            {{#if model.file}} {{textarea rows="10" class="form-control" id="buildfile" value=file }} {{else}} <div class="checkbox">No file has been added, <a {{action 'createfile'}}> create one </a></div> {{/if}}
+                        </div>
+                    </div>
+                    <div class="form-group" style="font-size:23px">
+                        <div class="col-lg-10 col-lg-offset-2">
+                            <a class="btn btn-default btn-sm" {{action 'copy'}}>
+                                <i class="fa fa-fw fa-copy"></i> Copy
+                            </a>
+                            <a class="btn btn-primary btn-sm" {{action 'save'}}>
+                                <i class="fa fa-fw fa-save"></i> Save
+                            </a>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Current Configuration</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div style="display:inline-block; width:100px;">NAME</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.name}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.command}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">ARGS</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{to-string model.args}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CWD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.cwd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">STOP CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.stopcmd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">CHECK CMD</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.checkcmd}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">PORT</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.port}}
+                            </div>
+                            <div style="display:inline-block; width:100px;">HIDDEN</div>
+                            <div style="display:inline-block; width:calc(100% - 105px)">
+                                {{model.hidden}}
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div style="display:inline-block; width:100px;">Name</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=name}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=command}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">ARGS</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=args}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CWD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="" value=cwd}}
-                        </div>
-                    </div>
+                <div class="panel-body">
+                    <a class="btn btn-primary btn-sm" {{action 'revert'}}>
+                        <i class="fa fa-fw fa-chevron-left"></i> Revert to This Configuration
+                    </a>
                 </div>
-
             </div>
-            <a {{action 'save'}} style="cursor:pointer">
-                <div class="panel-footer">
-                    <span class="pull-left">Save</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
         </div>
     </div>
-
-    <div class="col-lg-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading" style="min-height:159px">
-                <div class="row">
-                    <div class="col-xs-3">
-                        {{model.name}}
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div>Current Configuration</div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div style="display:inline-block; width:100px;">Name</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{model.name}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{model.command}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">ARGS</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{to-string model.args}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CWD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{model.cwd}}
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-            <a {{action 'revert'}} style="cursor:pointer">
-                <div class="panel-footer">
-                    <span class="pull-left">Revert to This Configuration</span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
+    <div class="row">
+        <div class="col-sm-12 text-right">
+            <button type="button" class="btn btn-danger btn-sm" {{action 'remove'}}><i class="fa fa-fw fa-trash"></i> Delete This Process</button>
         </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-sm-12 text-right">
-        <button type="button" class="btn btn-primary" {{action 'remove'}}>Delete This Process</button>
     </div>
 </div>

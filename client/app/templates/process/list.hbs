@@ -1,5 +1,5 @@
 <!-- Page Heading -->
-<div class="row">
+<div class="row hidden">
     <div class="col-lg-12">
         <ol class="breadcrumb">
             <li class="active">
@@ -9,28 +9,26 @@
     </div>
 </div>
 <!-- /.row -->
-
-
-
 <div class="row">
     <div class="col-lg-12">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-database fa-fw"></i> Your Stored Processes</h3>
-            </div>
-            <div class="panel-body">
-                <div class="list-group">
-                    {{#each process in model}}
-                        <a class="list-group-item">
-                            <span class="badge">
-                                {{#link-to 'process.edit' process.id}}edit{{/link-to}}
-                            </span>
-                            <i class="fa fa-fw fa-gear"></i> {{process.name}}
-                        </a>
-                    {{/each}}
-                    
+        <legend class="inline"> <i class="fa fa-database fa-fw"></i> Your Stored Processes <span class="inline pull-right">{{input class="form-control" id="searchbox" value=controller.search placeholder="Search"}}
+        </span></legend>
+        
+        <div class="list-group">
+            {{#if model}}
+            {{#each process in model}}
+            <div class="list-group-item row">
+                <div class="col-sm-8 col-xs-12 ">
+                    <span class="title"><i class="fa fa-fw fa-gear"></i> {{process.name}} <span class="grey">:{{process.port}}</span></span>
+                </div>
+                <div class="col-sm-4 col-xs-12" style="font-size: 24px; font-weight: 300">
+                    {{#link-to 'process.edit' process.id}}<i class="fa fa-fw fa-pencil"></i>{{/link-to}}
                 </div>
             </div>
+            {{/each}}
+            {{else}}
+                No process found. Click <a href="#/process/new" >new</a> process to create one.
+            {{/if}}
         </div>
     </div>
 </div>

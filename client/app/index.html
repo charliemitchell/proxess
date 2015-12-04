@@ -1,37 +1,38 @@
 <!DOCTYPE html>
 <html>
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Client</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    {{content-for 'head'}}
-
+    <title>Prox</title>
+    <meta name="description" content="Manage services application.">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> {{content-for 'head'}}
+    <link rel="shortcut icon" href="/images.jpg">
     <link rel="stylesheet" href="assets/vendor.css">
     <link rel="stylesheet" href="assets/client.css">
-     <link href="css/sb-admin.css" rel="stylesheet">
-      <link href="css/plugins/morris.css" rel="stylesheet">
-      <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-       <!--[if lt IE 9]>
+    <!-- <link href="css/sb-admin.css" rel="stylesheet">
+    <link href="css/plugins/morris.css" rel="stylesheet"> -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     {{content-for 'head-footer'}}
-  </head>
-  <body>
+</head>
+
+<body>
     {{content-for 'body'}}
 
     <script src="assets/vendor.js"></script>
     <script src="assets/client.js"></script>
 
     <script src="/socket.io/socket.io.js"></script>
-    
+
     <script>
-      var socket = io();
+    var socket = io();
     </script>
 
     {{content-for 'body-footer'}}
-  </body>
+</body>
+
 </html>

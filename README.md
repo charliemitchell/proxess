@@ -1,102 +1,85 @@
 
-# PROXESS
-##### A process manager for your service pool. The idea is, it should be easy to manage all of the servers running on your local machine. Proxess aims to improve the developer experience by allowing you to store all of your terminal commands in a database and start / stop & monitor proccesses
+# PROX
+##### A small application to translate UI commands to bash script command executions. All you need is writing the bash script and Prox will give you the UI to manage.
+
+## Features
+* Edit the shell script right on app.
+* Support shortcode which is helpful to run the service with args from the client.
+* Live time checking service status.
+* Search for a service.
+
+## Upcoming Features
+* Generate and run Dockerfile.
 
 ## Prerequisites
 * [Node.js](http://nodejs.org/) (with NPM)
-* [MONGO DB](http://www.mongodb.org/)
+* [MONGO DB >3.0](http://www.mongodb.org/)
+* [Ember CLI](http://www.ember-cli.com/)
 
 ## Installation 
-Global Installation is reccomended.
-`(sudo) npm install -g proxess`
+Clone the src
+`git clone https://github.com/anhvupham/prox.git`
 
+Install required packages
+`cd prox && npm install`
 
-## Running Proxess
-To manage your running services, just run the proxess command in your terminal. (from any working directory, it doesn't matter, we'll point it to the right location)
+Install required package in client folder and build client folder
+`cd client && npm install && bower install && ember build`
+
+## Running Prox
+`cd prox && node app`
+Then visit your app at [http://localhost:9911/](http://localhost:9911/).
+
+## OR Skip all installation and Run from Docker image
+```
+docker run -t proxapp -p 9911:9911 anhvupham/proxapp
+```
+Then visit your app at [http://localhost:9911/](http://localhost:9911/).
+
+## Sample of a Node service using shellscript with shortcode
+* Name : Node service
+* CMD : sh
+* ARGS : build.sh, [?not-build:build], [?not-run:run], [?not-push:push] <<-- shortcode
+* CWD : /var/www/nodeservice
+* STOP CMD : sh build.sh not-build not-run not-push stop
+* CHECK CMD : nc -zv localhost 1338 
+* PORT : 1338
+
+## Sample of shellscipt for above
 ```sh
-$ proxess
+if [ "$1" = "build" ]
+then
+    echo 'RUN process built'
+fi
+
+if [ "$3" = "push" ]
+then
+    echo 'PUSH process started'
+fi
+
+if [ "$2" = "run" ]
+then
+    node index
+fi
+
+if [ "$4" = "stop" ]
+then
+    fuser -n tcp -k 1337
+fi
 ```
-Then visit your manager at [http://localhost:9911/](http://localhost:9911/).
-
-## THE API
-```
-GET /process          "Returns A List Of All Processes In The Database"
-POST /process         "Creates A New Processes In The Database"
-    
-GET /process/:id      "Returns A Process Model by it's id"
-PUT /process/:id      "Updates A Process Model by it's id"
-DELETE /process/:id   "Removes A Process Model by it's id"
-
-GET /alive            "Returns An array of currently running processes managed by this application"
-
-POST /execute/:id     "Starts A Process By It's ID"
-DELETE /execute/:id   "Kills A Process By It's ID"
-
-POST /all             "Starts Every Dead Process In Your Process Database"
-DELETE /all           "Stops Every Running Process In Your Process Database"
-```
-
-## Additions to the API Coming Soon!
-```
-    // Grouping Processes (To start and stop the group you will still use the /execute/:id route.. We will manage the rest internally.)
-
-    POST /group        "Defines a process group to run together (a named set of processes)"
-    GET /group         "Returns A List Of All Process Groups In The Database"
-    
-    GET /group/:id     "Returns A Process Group By It's ID"
-    PUT /group/:id     "Updates A Process Group By It's ID"
-    DELETE /group/:id  "Deletes A Process Group By It's ID"
-
-    // Memory & CPU Pressure
-    GET /stats            "Returns Memory Pressure and CPU Usage For Each Process"
-    GET /stats/:id        "Returns Memory Pressure and CPU Usage For A Single Process"
-
-```
-
-## Data Structures
-```json
-    // When Creating a process, POST JSON like so... (Same With Updating, But You Should Include The id as well)
-    {
-        "name" : "My Cool Service",
-        "command" : "node",
-        "args" : ["app.js"],
-        "cwd" : "/full/path/to/your/service/"
-    }
-    // ----> Results will be similar to running  'cd /full/path/to/your/service/ && node app.js' in your console.
-
-    // A More Advanced Example
-    {
-        "name" : "My ROOT Service",
-        "command" : "sudo",
-        "args" : ["-p", "mypassword", "dostuff", "--path=", "something"],
-        "cwd" : "/full/path/to/your/service/"
-    }
-    // ----> Results will be similar to running  'cd /full/path/to/your/service/ && sudo -p mypassword dostuff --path= soemthing' in your console.
-```
-
-
-# The Client (BETA NOW AVAILABLE!!)
-The Client is built in Ember JS. In Order to edit the client you need to do the following steps... (on mac)
-```sh
-    cd /usr/local/lib/node_modules/proxess/client
-    npm install
-    bower install
-    ember build
-```
-This was left this way intentionally so that you can have access to The Ember CLI Project in order to make changes to the client as you see fit. For More info about Ember CLI, or Ember in general, see the useful links section below.
-
 
 #### The Dashboard
 ![Client Application](/screens/screen1.png?raw=true "The Dashboard")
-#### Adding A Process
-![Client Application](/screens/screen2.png?raw=true "Add A Process")
+#### Create a process
+![Client Application](/screens/screen2.png?raw=true "Create a process")
+#### Edit a process
+![Client Application](/screens/screen3.png?raw=true "Edit a process")
 
 ## Useful Links
-* [NimbleService](https://www.npmjs.com/package/nimbleservice) (This is what we built the sever on top of)
+* [NimbleService](https://www.npmjs.com/package/nimbleservice) (This is what we built the backend on top of)
 * [Ember.js](http://emberjs.com/) (MVC Client Framework)
 * [Ember CLI](http://www.ember-cli.com/) (CLI for The Ember Framework)
 * [Boot Swatch](http://bootswatch.com/) (A Bootstrap Theming Wrapper)
 
-
 ## GITHUB
-* [proxess](http://github.com/charliemitchell/proxess) 
+* [prox](https://github.com/anhvupham/prox) 

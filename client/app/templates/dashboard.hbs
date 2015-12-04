@@ -1,5 +1,5 @@
 <!-- Page Heading -->
-<div class="row">
+<div class="row hidden">
     <div class="col-lg-12">
         <ol class="breadcrumb">
             <li class="active">
@@ -9,143 +9,79 @@
     </div>
 </div>
 <!-- /.row -->
-
-<div class="row">
-    
-    <div class="col-lg-3 col-md-3 col-sm-6">
-        <div class="panel panel-green">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-cogs fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{model.runningCount}}</div>
-                        <div>Processes Running</div>
-                    </div>
-                </div>
-            </div>
-            <a>
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-3 col-sm-6">
-        <div class="panel panel-yellow">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-cubes fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">0</div>
-                        <div>Groups Running</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-6">
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-pie-chart fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{totalPMEM}}%</div>
-                        <div>Memory Used</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#/process/memory">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-3 col-sm-6">
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-tachometer fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class="huge">{{totalPCPU}}%</div>
-                        <div>CPU Used</div>
-                    </div>
-                </div>
-            </div>
-            <a href="#/process/cpu">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-
-</div>
-<!-- /.row -->
-
-
 <div class="row">
     <div class="col-lg-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><i class="fa fa-database fa-fw"></i> Your Stored Processes</h3>
+                <div class="row">
+                    <div class="col-md-7 col-sm-8 col-xs-12">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <a class="btn btn-primary btn-sm" {{action 'all'}}><i class="fa fa-database fa-fw"></i> Total Processes : {{model.processes.length}}</a></div>
+                            <div class="form-group"><a class="btn btn-success btn-sm" {{action 'runningonly'}}><i class="fa fa-cogs fa-fw"></i>  Running Processes : {{running}}</a></div>
+                        </form>
+                    </div>
+                    <div class="col-md-5 col-sm-4 col-xs-12 pull-right">{{input id="searchbox" value=controller.search class="full" placeholder="Search" class="form-control"}}</div>
+                </div>
             </div>
             <div class="panel-body">
                 <div class="list-group">
-                    {{#each process in model.processes}}
-                        <a class="list-group-item" id="{{unbound process.id}}">
-                            <span class="text-right">
-                            {{#if process.alive}}
-                                <a class="btn btn-danger" {{action 'kill' process}}>stop</a>
-                            {{else}}
-                                <a class="btn btn-success"  {{action 'start' process}}>start</a>
-                            {{/if}}
-                            </span>
-                            
-                            <span class="text-right">
-                                <a class="btn btn-primary" {{action 'logs' process}}>logs</a>
-                            </span>
-                            
-                            <span class="pull-left" style="width:calc(100% - 143px)"><i class="fa fa-fw fa-gear"></i> {{process.name}} <i class="fa fa-fw fa-comment"></i></span>
-                        </a>
-                    {{/each}}
-                    
+                    {{#if model.processes}} {{#each process in model.processes}}
+                    <div class="list-group-item row" id="{{unbound process.id}}">
+                        <div class="col-sm-8 col-xs-12 ">
+                            <span class="title"><i class="fa fa-fw fa-gear"></i> {{process.name}} <span class="grey">:{{process.port}}</span></span>
+                        </div>
+                        <div class="col-sm-4 col-xs-12">
+                            {{#if process.running}}
+                            <a class="btn btn-success" {{action 'kill' process}}><i {{bind-attr class=":fa :fa-stop :fa-fw process.stopping:spin"}}></i></a> {{else}}
+                            <a {{bind-attr class=":btn :btn-danger" }} {{action 'start' process}}><i {{bind-attr class=":fa :fa-play :fa-fw process.starting:spin"}}></i></a> {{/if}}
+                            <a class="btn btn-primary" {{action 'logs' process}}><i class="fa fa-bullhorn fa-fw"></i></a>
+                        </div>
+                    </div>
+                    {{/each}} {{else}} No process found. Click <a href="#/process/new">new</a> process to create one. {{/if}}
                 </div>
             </div>
         </div>
     </div>
 </div>
 <!-- /.row -->
-
-
-
-
-
-
-
+<div class="modal" id="reload">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Reloading status</h4>
+            </div>
+            <div class="modal-body">
+                Loading ...
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="custombuild">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Build Command</h4>
+            </div>
+            <div class="modal-body">
+                {{#each arg in controller.service.args}}
+                <div>
+                    {{#each opt in arg}}
+                    <div style="display: inline-block">
+                        <input type="radio" name="{{unbound arg}}" id="{{unbound opt}}" value="{{unbound opt}}" class="radio">
+                        <label for="{{unbound opt}}">{{unbound opt}}</label>
+                    </div>
+                    {{/each}}
+                </div>
+                {{/each}}
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-default" data-dismiss="modal">Close</a>
+                <a class="btn btn-success" {{action 'start'}} data-dismiss="modal">Run</a>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal" id="logs">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -154,13 +90,11 @@
             </div>
             <div class="modal-body">
                 <p>
-                    {{#each entry in log.content}}
-                        {{{entry.log}}}
-                    {{/each}}
+                    {{#each entry in log.content}} {{{entry.log}}} {{/each}}
                 </p>
             </div>
             <div class="modal-footer">
-                <paper-button raised role="button" data-dismiss="modal">Dismiss</paper-button>
+                <a class="btn btn-default" data-dismiss="modal">Close</a>
             </div>
         </div>
     </div>

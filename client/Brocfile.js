@@ -3,8 +3,11 @@
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
 
 var app = new EmberApp({
-    'ember-cli-bootswatch': 'paper'
+    'ember-cli-bootswatch': 'flatly'
 });
+
+// app.import('app/styles/checkbox.css');
+app.import('bower_components/underscore/underscore-min.js')
 
 // Use `app.import` to add additional libraries to the generated
 // output files.

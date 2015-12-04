@@ -1,51 +1,76 @@
-<h2> Create A New Process </h2>
-<div class="row">
-    <div class="col-lg-12">
-        <div class="panel">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div>New Configuration</div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div style="display:inline-block; width:100px;">Name</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="My Simple Python Service" value=model.name}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CMD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="python" value=model.command}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">ARGS</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="-m, SimpleHTTPServer, 8080" value=controller.args}}
-                        </div>
-
-                        <div style="display:inline-block; width:100px;">CWD</div>
-                        <div style="display:inline-block; width:calc(100% - 105px)">
-                            {{input class="full" placeholder="/Users/charlie/servers/myservice/" value=model.cwd}}
+<div class="new">
+    <div class="row">
+        <div class="col-lg-12">
+            <form class="form-horizontal">
+                <fieldset>
+                    <legend><i class="fa fa-pencil fa-fw"></i> Create A New Process</legend>
+                    <div class="form-group">
+                        <label for="name" class="col-lg-2 control-label">NAME</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="name" placeholder="My Simple Service" value=model.name}}
                         </div>
                     </div>
-                </div>
-
-            </div>
-            <a {{action 'save'}} href="#/process/new">
-                <div class="panel-footer">
-                    <span class="pull-left">Save</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
+                    <div class="form-group">
+                        <label for="command" class="col-lg-2 control-label">CMD</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="command" placeholder="sh" value=model.command}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="args" class="col-lg-2 control-label">ARGS</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" disabled=true id="args" placeholder="build.sh, [?notbuild:build], [?notrun:run]" value=model.args}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cwd" class="col-lg-2 control-label">CWD</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="cwd" placeholder="/home/myfolder/" value=model.cwd}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="stopcmd" class="col-lg-2 control-label">STOP CMD</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="stopcmd" placeholder="lsof -t -i tcp:1338 | xargs kill" value=model.stopcmd}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="checkcmd" class="col-lg-2 control-label">CHECK CMD</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="checkcmd" placeholder="nc -zv localhost 1338" value=model.checkcmd}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="port" class="col-lg-2 control-label">PORT</label>
+                        <div class="col-lg-10">
+                            {{input class="form-control" id="port" placeholder="1338" value=model.port}}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hidden" class="col-lg-2 control-label">HIDDEN</label>
+                        <div class="col-lg-10">
+                            <div class="checkbox">
+                            <label>
+                                {{input type="checkbox" name='hidden' checked=model.hidden}}
+                            </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="buildfile" class="col-lg-2 control-label">BUILD.SH</label>
+                        <div class="col-lg-10">
+                            {{#if model.file}} {{textarea rows="10" class="form-control" id="buildfile" value=model.file }} {{else}} <div class="checkbox">No file has been added, <a {{action 'createfile'}}> create one </a></div> {{/if}}
+                        </div>
+                    </div>
+                    <div class="form-group"  style="font-size:23px">
+                        <div class="col-lg-10 col-lg-offset-2">
+                            <a class="btn btn-primary btn-sm" {{action 'save'}} href="#/process/new">
+                                <i class="fa fa-fw fa-save"></i> Save
+                            </a>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
         </div>
     </div>
-
-    
 </div>
