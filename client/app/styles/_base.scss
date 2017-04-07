@@ -1,0 +1,64 @@
+html, body {
+  margin:0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #444;
+  color: #fff;
+}
+
+
+body * {
+  box-sizing: border-box;
+}
+
+a, a:visited, a:active {
+  color:#fff;
+  text-decoration: none;
+}
+
+ul {
+  list-style: none;
+}
+
+.clearfix {
+  clear: both;
+}
+
+.text-center {
+  text-align: center;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-color: #666;
+}
+
+notification {
+  padding:10px 20px;
+  position: fixed;
+  top:5px;
+  right:5px;
+  background:$blue;
+  border-radius: 4px;
+  -webkit-animation-duration: 0.2s;
+  animation-duration: 0.2s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-name: fadeInDown;
+  animation-name: fadeInDown;
+}
+
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    -webkit-transform: translate3d(100%, 0, 0);
+    transform: translate3d(100%, 0, 0);
+  }
+
+  to {
+    opacity: 1;
+    -webkit-transform: none;
+    transform: none;
+  }
+}

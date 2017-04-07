@@ -1,0 +1,14 @@
+main.create-note
+  h2 Create a note
+  = input value=model.title placeholder="Title"
+  .info
+    | Markdown is supported
+  = textarea value=model.body
+  a.btn.btn-primary.btn-lg click='save' Save
+  = file-up data=model
+  .preview.md
+    = markdown-convert content=model.body style='github'
+
+if model.files
+  = each model.files as |file|
+    object data=file

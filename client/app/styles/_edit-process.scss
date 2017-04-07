@@ -1,0 +1,56 @@
+.edit-process, .process {
+  .panel-left, .panel-right {
+    width: 50%;
+    padding:10px;
+  }
+  .panel-left {
+    float: left;
+  }
+  .panel-right {
+    float: right;
+  }
+
+  .panel-full {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .input-group {
+    padding:5px 0;
+    label {
+      width:156px;
+      display:inline-block;
+    }
+    input, .input {
+      display:inline-block;
+    }
+
+    input {
+      width: calc(100% - 200px);
+      padding: 5px;
+      border-radius: 4px;
+      border: 0;
+      background: #222;
+      color: white;
+    }
+    .input {
+
+    }
+  }
+
+  .revert, .save, .remove {
+    padding:5px 10px;
+    border: 1px solid white;
+    border-radius: 4px;
+    cursor:pointer;
+  }
+
+  .save {
+    margin-right:30px;
+  }
+
+  hr {
+    margin: 60px 0;
+  }
+}

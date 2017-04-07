@@ -26,6 +26,18 @@ var process = new Schema({
     }
 });
 
+var note = new Schema({
+    title : {
+        type : String
+    },
+    body : {
+        type : String
+    },
+    files : [{
+      type : String
+    }]
+});
+
 process.virtual('id').get(function(){
     return this._id.toHexString();
 });
@@ -34,5 +46,8 @@ process.set('toJSON', {
     virtuals: true
 });
 
+
+mongoose.model('note', note);
 mongoose.model('process', process);
-module.exports = mongoose.model('process');
+module.exports.process = mongoose.model('process');
+module.exports.note = mongoose.model('note');

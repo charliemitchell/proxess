@@ -1,0 +1,66 @@
+main.dashboard
+
+  .panels
+    .panel.ps-count
+      .huge = model.runningCount
+      div Processes Running
+    .panel.pmem
+      | Memory Pressure {{totalPMEM}}%
+      = area-chart data=pmem options=lines
+    .panel.pcpu
+      | CPU Usage {{totalPCPU}}% Current, {{avgPCPU}}% Average
+      = area-chart data=pcpu options=lines
+    .clearfix
+  
+  hr
+  
+  .text-center
+    = input class="search" value=searchTerm placeholder="Filter your processes"
+    
+  ul
+    if searchTerm
+      = each searchResults as |process|
+        li class=process.alive:active
+          .ps-name
+            i.fa.fa-fw.fa-microchip
+            | {{process.name}}
+          .actions
+            if process.alive
+              a.stop{action 'kill' process}
+                | Stop
+            else
+              a.start{action 'start' process}
+                | Start
+
+            a.logs{action 'logs' process}
+              | Logs
+          .clearfix
+    else 
+      = each sortedProcesses as |process|
+        li  class=process.alive:active
+          .ps-name
+          .ps-name
+            i.fa.fa-fw.fa-microchip
+            = link-to 'process.edit' process.id | {{process.name}}
+          .actions
+            if process.alive
+              a.stop{action 'kill' process}
+                | Stop
+            else
+              a.start{action 'start' process}
+                | Start
+
+            a.logs{action 'logs' process}
+              | Logs
+          .clearfix
+
+if showingLogs
+  .log-modal
+    .log-body
+      .close-logs click="hideLogs" &times;
+      .clear-log click="clearLog" clear
+      .log-title = log.title
+      .log-content
+        = each log.content as |content|
+          | {{{content.log}}}
+        #log-content-bottom

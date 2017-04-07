@@ -1,0 +1,31 @@
+header
+  nav
+    a.unity href="index.html" 
+      | UNITY
+    a.by-g href="http://www.gladjs.com" target="_blank"
+      img src="/images/glad.jpg"
+      | By Glad
+  ul.nav
+    li
+      a href="#/dashboard"
+        i class="fa fa-fw fa-desktop"
+        |  Dashboard          
+    li
+      a href="#/process/list"
+        i class="fa fa-fw fa-microchip"
+        |  Processes
+    li
+      a href="#/process/new"
+        i class="fa fa-fw fa-plus-square-o"
+        |  New Process
+    li
+      a href="#/notes"
+        i class="fa fa-fw fa-pencil"
+        |  Notes
+    li
+      a href="#/create-note"
+        i class="fa fa-fw fa-sticky-note-o"
+        |  New Note
+
+div style="padding:10px 10px 10px 10px"
+  = outlet

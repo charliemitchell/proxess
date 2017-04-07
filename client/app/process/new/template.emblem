@@ -1,0 +1,22 @@
+main.new-process.process
+  h2.text-center 
+    | New Process
+  
+  .panel-full
+    h3 Configuration
+    .input-group
+      label Name
+      = input value=model.name placeholder="Start my server"
+    .input-group
+      label Command
+      = input value=model.command placeholder="myserver"
+    .input-group
+      label Args
+      = input value=args placeholder="start -v"
+    .input-group
+      label Working Directory
+      = input value=model.cwd placeholder="/Users/foo/servers/myserver"
+    
+    br
+    .text-center
+      a.save click='save' Save process

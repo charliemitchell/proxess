@@ -1,5 +1,5 @@
 module.exports = {
-    
+
     GET : [{
         path : '/process',
         action : 'GET',
@@ -28,8 +28,16 @@ module.exports = {
         path : '/dashboard',
         action : 'dashboard',
         // policy : 'authenticated'
+    },{
+        path : '/notes',
+        action : 'getNotes',
+        // policy : 'authenticated'
+    },{
+        path : '/notes/:id',
+        action : 'getNote',
+        // policy : 'authenticated'
     }],
-    
+
     POST : [{
         path : '/process',
         action : 'POST',
@@ -44,11 +52,19 @@ module.exports = {
         path : '/all',
         action : 'startAll',
         // policy : 'authenticated'
+    }, {
+        path : '/notes',
+        action : 'createNote',
+        // policy : 'authenticated'
     }],
-    
+
     PUT : [{
         path : '/process/:id',
         action : 'PUT',
+        // policy : 'authenticated'
+    }, {
+        path : '/notes/:id',
+        action : 'updateNote',
         // policy : 'authenticated'
     }],
 
@@ -64,6 +80,11 @@ module.exports = {
     {
         path : '/all',
         action : 'stopAll',
+        // policy : 'authenticated'
+    },
+    {
+        path : '/notes/:id',
+        action : 'removeNote',
         // policy : 'authenticated'
     }]
 }

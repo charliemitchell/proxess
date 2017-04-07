@@ -1,0 +1,34 @@
+nav {
+  padding: 15px 10px;
+  background: $yellow;
+  .unity {
+    font-size:22px;
+    font-weight:bold;
+    color: #444;
+    letter-spacing: 3px;
+  }
+  .by-g {
+    float:right;
+    font-size: 10px;
+    color:white;
+    img {
+      object-fit:cover;
+      height: 29px;
+      width: 106px;
+      margin-right:-27px;
+    }
+  }
+}
+
+ul.nav {
+  background:#222;
+  width:100%;
+  margin:0;
+  li {
+    padding:20px 10px;
+    display:inline-block;
+  }
+  a {
+    color:white!important;
+  }
+}

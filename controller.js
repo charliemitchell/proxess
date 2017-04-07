@@ -1,5 +1,7 @@
-var Model = require('./model');
 require('nimbleservice').colors;
+
+var Model = require('./model').process;
+var Note  = require('./model').note;
 var _ = require('nimbleservice').lodash,
     pid = [];
 
@@ -23,19 +25,21 @@ var ansi = require('ansi-html'),
 
 setInterval(function () {
 
-    pid.forEach(function (process) {
-        proc.pmem(process.service, function (pct) {
-            process.pmem = pct;
-            global.io.emit('pmem', {id : process.model.id, mem : pct});
-        });
+  pid.forEach(function (process) {
 
-        proc.pcpu(process.service, function (pct) {
-            process.pcpu = pct;
-            global.io.emit('pcpu', {id : process.model.id, cpu : pct});
-        });
+    proc.pmem(process.service, function (pct) {
+      process.pmem = pct;
+      global.io.emit('pmem', {id : process.model.id, mem : pct});
     });
 
-}, 1200);
+    proc.pcpu(process.service, function (pct) {
+      process.pcpu = pct;
+      global.io.emit('pcpu', {id : process.model.id, cpu : pct});
+    });
+
+  });
+
+}, 5000);
 
 
 
@@ -47,7 +51,7 @@ module.exports = {
             res.json(services);
         });
     },
-    
+
     // GETS A Service from the database
     findOne : function (req, res) {
          Model.find({_id: req.params.id},function (a,b) {
@@ -119,7 +123,7 @@ module.exports = {
                             log : (ansi(stdout) + "<br/>").replace(/\n/g, '<br/>')
                         });
                     });
-                
+
                 pid.push({
                     model : service,
                     pid : svc.pid,
@@ -138,7 +142,7 @@ module.exports = {
                     global.io.emit("service_died", service);
                 });
 
-                res.send(svc.pid);
+                res.json(svc.pid);
                 global.io.emit("service_started", service);
             });
 
@@ -164,7 +168,7 @@ module.exports = {
 
     getLive : function (req, res) {
         var response = [];
-        
+
         pid.forEach(function (entry) {
             response.push(entry.model);
         });
@@ -189,7 +193,7 @@ module.exports = {
                         stdout = stdout.replace(/\n$/, '').replace(/\n/g, '\n' + service.name + ' >  ');
                         console.log(service.name + ' >  ' + stdout);
                     });
-                        
+
                     svc.on('close', function (code) {
                         console.log('\n--------------------------------------------------------'.red)
                         console.log((service.name + " has died with code " + code).red);
@@ -212,7 +216,7 @@ module.exports = {
                 }
             });
 
-            res.send("ok")
+            res.send(200);
         });
     },
 
@@ -234,5 +238,42 @@ module.exports = {
                 runningCount : pid.length
             });
         });
+    },
+
+    createNote (req, res) {
+      new Note(req.body).save(function (err, doc) {
+        if (err) {
+          console.log('oops! Could not save the model'.red);
+          res.json({error : "Error saving the model"})
+        } else {
+          res.json(doc);
+        }
+      });
+    },
+
+    getNote (req, res) {
+      Note.find({_id: req.params.id},function (a,b) {
+       res.send(b[0]);
+     });
+    },
+
+    getNotes (req, res) {
+      Note.find(function (error, services) {
+        res.json(services);
+      });
+    },
+
+    removeNote (req, res) {
+      Note.findOne({_id: req.params.id}).remove(function () {
+        res.json({ok: 1});
+      });
+    },
+
+    updateNote (req, res) {
+      Note.findOne({_id: req.params.id}).remove(function () {
+          req.body._id = req.params.id;
+          new Note(req.body).save();
+          res.send(req.body);
+      });
     }
 }

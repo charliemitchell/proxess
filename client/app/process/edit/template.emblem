@@ -1,0 +1,40 @@
+main.edit-process.process
+  h2.text-center 
+    = model.name
+  
+  .panel-left
+    h3 Edit Configuration
+    .input-group
+      label Name
+      = input value=name
+    .input-group
+      label Command
+      = input value=command
+    .input-group
+      label Args
+      = input value=args
+    .input-group
+      label Working Directory
+      = input value=cwd
+  
+  .panel-right
+    h3 Current Configuration
+    .input-group
+      label Name
+      .input = model.name
+    .input-group
+      label Command
+      .input = model.command
+    .input-group
+      label Args
+      .input = model.args
+    .input-group
+      label Working Directory
+      .input = model.cwd
+    br
+    a.revert click="revert" Revert to this
+  .clearfix
+  hr
+  .text-center
+    a.save click='save' Save changes
+    a.remove click='remove' Delete this process

@@ -3,35 +3,26 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Client</title>
+    <title>Client2</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    {{content-for 'head'}}
+    {{content-for "head"}}
 
-    <link rel="stylesheet" href="assets/vendor.css">
-    <link rel="stylesheet" href="assets/client.css">
-     <link href="css/sb-admin.css" rel="stylesheet">
-      <link href="css/plugins/morris.css" rel="stylesheet">
-      <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-       <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    {{content-for 'head-footer'}}
+    <link rel="stylesheet" href="{{rootURL}}assets/vendor.css">
+    <link rel="stylesheet" href="{{rootURL}}assets/client2.css">
+
+    {{content-for "head-footer"}}
   </head>
   <body>
-    {{content-for 'body'}}
+    {{content-for "body"}}
 
-    <script src="assets/vendor.js"></script>
-    <script src="assets/client.js"></script>
-
+    <script src="{{rootURL}}assets/vendor.js"></script>
+    <script src="{{rootURL}}assets/client2.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    
     <script>
       var socket = io();
     </script>
-
-    {{content-for 'body-footer'}}
+    {{content-for "body-footer"}}
   </body>
 </html>

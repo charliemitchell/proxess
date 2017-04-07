@@ -1,0 +1,10 @@
+main.note
+  = markdown-convert content=model.body style='github'
+if model.files
+  = each model.files as |file|
+    object data=file
+  
+.note.actions
+  = link-to 'edit-note' model._id | Edit This Note
+  a click="remove"
+    | Remove this note

@@ -1,0 +1,4 @@
+main.notes
+  each model as |note|
+    div
+      = link-to 'note' note._id | {{note.title}}

@@ -1,0 +1,40 @@
+main.note {
+  max-width:1100px;
+  margin:0 auto;
+  padding: 30px;
+  background-color: white;
+}
+
+.note.actions {
+  text-align: center;
+  padding: 30px;
+
+  a {
+    cursor: pointer;
+    padding: 5px 10px;
+    margin : 0 30px;
+    border: 1px solid #fff;
+    border-radius: 4px;
+  }
+}
+
+main.notes {
+  a {
+    color: white;
+  }
+}
+
+.preview.md {
+  max-width:1100px;
+  margin:30px auto;
+  padding: 30px;
+  background-color: white;
+  opacity: 0.5;
+}
+
+object {
+  display:block;
+  margin: 30px auto;
+  width: 1100px;
+  height: 100vh
+}
