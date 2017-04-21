@@ -128,9 +128,15 @@ export default Ember.Controller.extend({
   }),
 
   showingLogs : false,
+
   log : {
     content : []
   },
+
+  logLevelMax : Ember.computed('websocket.mode', function () {
+    return this.get('websocket.mode') === 'ALL';
+  }),
+
   currentLogPid : false,
 
   actions : {
@@ -163,7 +169,7 @@ export default Ember.Controller.extend({
       Ember.$.ajax({
         type : 'POST',
         url : '/execute/' + process.id
-      });
+      }).then(data => Ember.set(process, 'pid', data));
     }
 
   }

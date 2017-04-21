@@ -1,13 +1,13 @@
 main.dashboard
 
-  .panels
+  .panels 
     .panel.ps-count
       .huge = model.runningCount
       div Processes Running
-    .panel.pmem
+    .panel.pmem class=logLevelMax::disable
       | Memory Pressure {{totalPMEM}}%
       = area-chart data=pmem options=lines
-    .panel.pcpu
+    .panel.pcpu class=logLevelMax::disable
       | CPU Usage {{totalPCPU}}% Current, {{avgPCPU}}% Average
       = area-chart data=pcpu options=lines
     .clearfix
@@ -37,11 +37,17 @@ main.dashboard
           .clearfix
     else 
       = each sortedProcesses as |process|
-        li  class=process.alive:active
+        li class=process.alive:active
           .ps-name
           .ps-name
             i.fa.fa-fw.fa-microchip
-            = link-to 'process.edit' process.id | {{process.name}}
+            = link-to 'process.edit' process.id 
+              | {{process.name}} 
+              if process.pid
+                if process.alive
+                  span style="font-size: 12px;" (PID: {{process.pid}})
+                else
+                  span style="font-size: 12px;" (Last PID: {{process.pid}})
           .actions
             if process.alive
               a.stop{action 'kill' process}

@@ -11,10 +11,6 @@ header
         i class="fa fa-fw fa-desktop"
         |  Dashboard          
     li
-      a href="#/process/list"
-        i class="fa fa-fw fa-microchip"
-        |  Processes
-    li
       a href="#/process/new"
         i class="fa fa-fw fa-plus-square-o"
         |  New Process
@@ -26,6 +22,29 @@ header
       a href="#/create-note"
         i class="fa fa-fw fa-sticky-note-o"
         |  New Note
+    li
+      a click="toggleOptions"
+        i class="fa fa-fw fa-gear"
+        |  Options
 
 div style="padding:10px 10px 10px 10px"
   = outlet
+
+if showOptions
+  .overlay
+    .content
+      .panel-full
+        h2 Run Time Options
+        .input-group
+          label Log Level
+          = input value=websocket.logLevel placeholder="500"
+        br
+        hr
+        h4 Logging Mode
+        .input-group
+          a click="setModeAll" class=allSelectedClass Logs And Metrics
+          a click="setModeLog" class=logSelectedClass Just Logs
+          
+        br
+        .text-center
+          a.save click='toggleOptions' Exit

@@ -62,3 +62,33 @@ notification {
     transform: none;
   }
 }
+
+
+.overlay {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  top: 0;
+  text-align: center;
+  background: rgba(0,0,0,0.7);
+  .content {
+    display: inline-block;
+    width: 400px;
+    padding: 30px;
+    background: #000;
+    margin-top: 100px;
+  }
+  input {
+    margin-left: 10px;
+  }
+  a {
+    display: block;
+    padding: 10px 5px;
+    margin: 5px 0;
+    cursor: pointer;
+  }
+  .selected {
+    border: 1px solid $yellow;
+  }
+}
